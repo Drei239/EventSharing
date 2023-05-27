@@ -64,8 +64,10 @@ header {
 	display: none;
 	position: absolute;
 	margin-top: 16px;
-	background-color: #f1f1f1;
-	min-width: 160px;
+	padding-top: 8px;
+	background-color: #ffffff;
+	background: none;
+	min-width: 300px;
 	box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
 	z-index: 1;
 }
@@ -80,7 +82,7 @@ header {
 
 /* Change color of dropdown links on hover */
 .dropdown__content a:hover {
-	background-color: #ddd;
+	background-color: #00abe1;
 }
 
 /* Show the dropdown menu on hover */

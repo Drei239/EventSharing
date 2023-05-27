@@ -19,13 +19,13 @@ const Footer = () => {
 						</div>
 						<div className="footer__social">
 							<div className="footer__links">								
-									<a className='footer__link' href="">
+								<a className='footer__link' href="https://www.facebook.com">
 										<img src={"./images/facebook.png"} alt="" />
 									</a>								
-									<a className='footer__link' href="">
+								<a className='footer__link' href="https://www.instagram.com">
 										<img src={"./images/instagram.png"} alt="" />
 									</a>								
-									<a className='footer__link' href="">
+								<a className='footer__link' href="https://www.youtube.com">
 										<img src={"./images/youtube.png"} alt="" />
 									</a>
 							</div>
