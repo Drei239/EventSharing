@@ -26,7 +26,7 @@ const Header = () => {
 					</div>
 					<div className="header__right-block">
 						<div className="create__event">
-							<a className="header_btn" href='' alt=''>Tạo sự kiện</a>
+							<a className="header_btn header__btn-create" href='' alt=''>Tạo sự kiện</a>
 							<img src="" alt="" />
 						</div>
 						<div className='header__log'>

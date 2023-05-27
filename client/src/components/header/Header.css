@@ -41,6 +41,12 @@ header {
 	color: #fff;
 }
 
+.header__btn-create {
+	padding: 10px;
+	background-color: #00abe1;
+	border-radius: 10px;
+}
+
 .dropdown__catergory {
 	padding: 16px 0;
 	border: none;
