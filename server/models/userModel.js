@@ -13,7 +13,7 @@ const userSchema = new schema(
     {
       name: { type: String, min: 6, max: 24, required: true },
       email: { type: String, min: 6, max: 50, required: true },
-      password: { type: String, required: true },
+      password: { type: String, min: 6, max: 24, required: true },
       birthDay: { type: Date, required: true },
       description: { type: String, required: true },
       avatar: { type: String, required: true },

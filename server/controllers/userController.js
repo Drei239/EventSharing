@@ -35,21 +35,6 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new Error('Dữ liệu nhập không hợp lệ');
     }
   });
-`const registerUser = asyncHandler(async (req, res) => {
-    const { name, reviews } = req.body
-    const newUser = await userModel.create({ name, reviews });
-    if (newUser) {
-        res.status(200).json({
-            _id: newUser._id,
-            name: newUser.name,
-            reviews: newUser.reviews,
-            userRating: newUser.userRating
-        });
-    } else {
-        res.status(400);
-        throw new Error('Invalid user data!');
-    }
-});`
 
 //3.GET USER INFO BY ID
 
@@ -68,8 +53,44 @@ const getUserProfile = asyncHandler(async (req, res) => {
     }
 });
 
-//4.REVIEWS
+//4. DELETE USER
+
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await userModel.findByIdAndDelete(req.params.id);
+  if (user) {
+    res.status(200).send('Xóa thành công');
+  } else {
+    res.status(404);
+    throw new Error('Xóa không thành công');
+  }
+});
+
+//5. UPDATE USER
+
+const updateUser = asyncHandler(async (req, res) => {
+  const user = await userModel.findById(req.user._id);
+  if (user) {
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
+    if (req.body.password) {
+      user.password = req.body.password;
+    }
+    const updatedUser = await user.save();
+    res.json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+      token: tokenTime(updatedUser._id),
+    });
+  } else {
+    res.status(404);
+    throw new Error('Không tìm thấy người dùng');
+  }
+});
+
+
 
 module.exports = {
-    getAllUser, registerUser, getUserProfile
+    getAllUser, registerUser, getUserProfile, updateUser, eleteUser
 }
