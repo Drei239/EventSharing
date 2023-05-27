@@ -1,0 +1,67 @@
+.login {
+  width: 60%;
+  opacity: 1;
+}
+
+.login h2 {
+  color: #161f6d;
+}
+
+.login p:nth-child(2) {
+  color: gray;
+  margin-top: -10px;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+
+.login > p:last-child {
+  color: gray;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.login p:last-child span {
+  color: #161f6d;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login p:last-child span:hover {
+  color: #00abe1;
+}
+
+.login__form .nextui-c-iwmZdB-iiIdOsz-css {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.login__form button {
+  width: 100%;
+  background-color: #161f6d;
+  margin-top: 10px;
+  font-weight: 700;
+}
+
+.login__form .nextui-c-cwdhZi {
+  font-size: 0.8rem;
+}
+
+@media screen and (max-width: 992px) {
+  .login {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login > p:last-child {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .login {
+    width: 90%;
+  }
+}
