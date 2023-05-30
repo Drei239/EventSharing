@@ -1,9 +1,15 @@
 const jwt = require('jsonwebtoken');
 
-const tokenTime = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
+const { JWT_SECRET, JWT_EXPRIRE } = process.env;
+
+const genrateAccessToken = (data) => {
+  return jwt.sign({ data }, JWT_SECRET, {
+    expiresIn: JWT_EXPRIRE,
   });
 };
 
-module.exports = tokenTime;
+const decodedAccessToken = (token) => {
+  return jwt.verify(token, JWT_SECRET);
+};
+
+module.exports = { genrateAccessToken, decodedAccessToken };

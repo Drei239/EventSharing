@@ -1,10 +1,8 @@
 const asyncHandler = require('express-async-handler');
-const userModel = require('../models/userModel');
 const bcrypt = require('bcryptjs');
-
-
-const tokenTime = require('../utils/tokenTime');
+const { genrateAccessToken, decodedAccessToken } = require('../utils/tokenTime');
 const userModel = require('../models/userModel');
+
 
 //1.GET ALL USER INFO
 const getAllUser = asyncHandler(async (req, res) => {
@@ -14,83 +12,114 @@ const getAllUser = asyncHandler(async (req, res) => {
 
 //2.REGISTER NEW USER
 
-const registerUser = asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
-    const userExists = await userModel.findOne({ email });
-    if (userExists) {
-      res.status(400);
-      throw new Error('Tài khoản người dùng đã tồn tại');
-    }
-    const newUser = await userModel.create({ name, email, password });
-    if (newUser) {
-      res.status(201).json({
-        _id: newUser._id,
-        name: newUser.name,
-        email: newUser.email,
-        isAdmin: newUser.isAdmin,
-        token: tokenTime(newUser._id),
-      });
-    } else {
-      res.status(400);
-      throw new Error('Dữ liệu nhập không hợp lệ');
-    }
-  });
-
-//3.GET USER INFO BY ID
-
-const getUserProfile = asyncHandler(async (req, res) => {
-    const user = await userModel.findById(req.params.id);
-    if (user) {
-        const sum = user.reviews.reduce((accumulator, object) => {
-            return (accumulator + object.rating);
-        }, 0);
-        userRating = sum / (user.reviews.length);
-        user.userRating = userRating;
-        res.json(user);
-    } else {
-        res.status(401);
-        throw new Error('User info not found!');
-    }
+const register = asyncHandler(async (req, res) => {
+  const { name, email, password, phone, birthDay  } = req.body;
+  const lowerCaseEmail = email.toLowerCase();
+  const userExists = await userModel.findOne({ email: lowerCaseEmail });
+  if (userExists) {
+    return res.status(400).json({ message: 'User account already exists' });
+  }
+  const newUser = await userModel.create({ name, email: lowerCaseEmail, password, phone, birthDay });
+  if (newUser) {
+    return res.status(201).json({
+      success: true,
+      token: genrateAccessToken(newUser),
+    });
+  } else {
+    return res.status(400).json({ success: false, message: 'Invalid input data' });
+  }
 });
 
-//4. DELETE USER
+//3.USER LOGIN
 
-const deleteUser = asyncHandler(async (req, res) => {
-  const user = await userModel.findByIdAndDelete(req.params.id);
-  if (user) {
-    res.status(200).send('Xóa thành công');
+const authLogin = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  const lowerCaseEmail = email.toLowerCase();
+  const user = await userModel.findOne({ email: lowerCaseEmail });
+  if (user && (await bcrypt.compare(password, user.password))) {
+    return res.json({
+      success: true,
+      token: genrateAccessToken(user),
+    });
   } else {
-    res.status(404);
-    throw new Error('Xóa không thành công');
+    return res.status(401).json({ success: false, message: 'Email or password is incorrect' });
   }
+});
+
+//4. GET USER PROFILE
+
+const profileUser = asyncHandler(async (req, res) => {
+  const bearerToken = req.get('Authorization');
+  const token = bearerToken.split(' ')[1];
+  const decoded = decodedAccessToken(token);
+  const { email } = decoded.data;
+  const user = await userModel.findOne({ email });
+  res.status(200).json(user);
 });
 
 //5. UPDATE USER
 
 const updateUser = asyncHandler(async (req, res) => {
   const user = await userModel.findById(req.user._id);
-  if (user) {
-    user.name = req.body.name || user.name;
-    user.email = req.body.email || user.email;
-    if (req.body.password) {
-      user.password = req.body.password;
-    }
-    const updatedUser = await user.save();
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      isAdmin: updatedUser.isAdmin,
-      token: tokenTime(updatedUser._id),
-    });
-  } else {
-    res.status(404);
-    throw new Error('Không tìm thấy người dùng');
+  if (!user) {
+    res.status(404).json({ message: 'User not found' });
   }
+  const { name, email, currentPassword, newPassword } = req.body;
+  user.name = name || user.name;
+  user.email = email || user.email;
+
+  if (newPassword) {
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Current password is incorrect' });
+    }
+
+    user.password = newPassword;
+  }
+  const updatedUser = await user.save();
+  return res.json({
+    name: updatedUser.name,
+    email: updatedUser.email,
+    avatar: updatedUser.avatar,
+    isAdmin: updatedUser.isAdmin,
+    phone: updateUser.phone,
+    token: genrateAccessToken(updatedUser._id),
+  });
+});
+
+
+//6. UPDATE USER BY ID
+
+const updateUserById = asyncHandler(async (req, res) => {
+  const user = await userModel.findById(req.params._id);
+  if (!user) {
+    res.status(404).json({ message: `Can't find users` });
+  }
+  const { name, email, isAdmin } = req.body;
+  user.name = name || user.name;
+  user.email = email || user.email;
+  user.isAdmin = isAdmin || user.isAdmin;
+  const updatedUser = await user.save();
+  res.json({
+    name: updatedUser.name,
+    email: updatedUser.email,
+    password: updatedUser.password,
+    avatar: updatedUser.avatar,
+    isAdmin: updatedUser.isAdmin,
+    phone: updateUser.phone,
+  });
+});
+
+//7. DELETE USER
+
+const deleted = asyncHandler(async (req, res) => {
+  const user = await userModel.findByIdAndDelete(req.params.id);
+  if (!user) {
+    res.status(404).json({ message: 'Deletion failed' });
+  }
+  res.status(200).json({ message: 'Delete successfully' });
 });
 
 
 
-module.exports = {
-    getAllUser, registerUser, getUserProfile, updateUser, eleteUser
-}
+module.exports = {getUsers, register, authLogin, profileUser, updateUser, updateUserById, deleted};
