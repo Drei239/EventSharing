@@ -14,12 +14,9 @@ const protect = asyncHandler(async (req, res, next) => {
       req.user = userInfo;
       next();
     } catch (e) {
-      res.status(401);
-      throw new Error('token invalid');
+      res.status(400);
+      throw new Error('Token invalid');
     }
-  } else {
-    res.status(401);
-    throw new Error('Not authorization or no token');
   }
 });
 
@@ -28,11 +25,8 @@ const isAdmin = (req, res, next) => {
     next();
   } else {
     res.status(401);
-    throw new Error('Member is not Admin');
+    throw new Error('Member is not admin');
   }
 };
 
-module.exports = {
-  protect,
-  isAdmin,
-};
+module.exports = { protect, isAdmin };
