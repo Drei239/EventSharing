@@ -11,6 +11,10 @@ footer {
 	color: #fff;
 }
 
+.active {
+	display: none;
+}
+
 .footer__top {
 	display: flex;
 	justify-content: space-between;
@@ -32,6 +36,11 @@ footer {
 
 .footer__link img {
 	width: 30px;
+}
+
+.link__youtube {
+	height: 50px;
+	padding-top: 10px;
 }
 
 .copyright {
