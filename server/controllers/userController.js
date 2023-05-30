@@ -59,7 +59,7 @@ const profileUser = asyncHandler(async (req, res) => {
 
 //5. UPDATE USER
 
-const updateUser = asyncHandler(async (req, res) => {
+const Userupdate = asyncHandler(async (req, res) => {
   const user = await userModel.findById(req.user._id);
   if (!user) {
     res.status(404).json({ message: 'User not found' });
@@ -122,4 +122,4 @@ const deleted = asyncHandler(async (req, res) => {
 
 
 
-module.exports = {getUsers, register, authLogin, profileUser, updateUser, updateUserById, deleted};
+module.exports = {getAllUser, register, authLogin, profileUser, Userupdate, updateUserById, deleted};
