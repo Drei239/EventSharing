@@ -11,6 +11,10 @@ footer {
 	color: #fff;
 }
 
+.active {
+	display: none;
+}
+
 .footer__top {
 	display: flex;
 	justify-content: space-between;
@@ -35,7 +39,7 @@ footer {
 }
 
 .link__youtube {
-	height: 42px;
+	height: 50px;
 	padding-top: 10px;
 }
 

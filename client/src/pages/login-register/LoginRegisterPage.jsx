@@ -3,10 +3,12 @@ import './login-register-page.css';
 import Login from '../../components/login-register/Login';
 import Register from '../../components/login-register/Register';
 
+
 const LoginRegisterPage = () => {
   const contentRef = useRef(null);
   const mainRef = useRef(null);
   const [displayContent, setDisplayContent] = useState(true);
+  
 
   const changeRegisterContent = () => {
     const contentElement = contentRef.current;
