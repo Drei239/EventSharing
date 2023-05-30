@@ -34,6 +34,11 @@ footer {
 	width: 30px;
 }
 
+.link__youtube {
+	height: 42px;
+	padding-top: 10px;
+}
+
 .copyright {
 	text-align: center;
 	padding-top: 10px;
