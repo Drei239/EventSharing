@@ -1,0 +1,68 @@
+.select {
+  width: 200px;
+  margin-right: 20px;
+  position: relative;
+}
+ul {
+  list-style-type: none;
+}
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  height: 200px;
+}
+.banner-img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  opacity: 0.9;
+}
+.categories {
+  display: flex;
+  align-items: center;
+}
+.date-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2px;
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 3px 5px;
+}
+.icon-dropdown {
+  font-size: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+.icon-dropdown::after {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 0;
+  height: 100%;
+  width: 1px;
+  background-color: black;
+}
+.options-date {
+  position: absolute;
+  top: 40px;
+  left: -20px;
+  width: 200px;
+  box-shadow: 0px 0px 4px 0px #ccc;
+}
+.options-date li {
+  cursor: pointer;
+  padding: 4px 0;
+}
+.options-date li:hover {
+  background-color: var(--color-primary);
+  color: white;
+}

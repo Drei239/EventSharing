@@ -3,7 +3,10 @@
   margin: 0;
   box-sizing: border-box;
 }
-
+:root {
+  --color-primary: #00abe1;
+  --color-primary2: #161f6d;
+}
 body {
   height: 100%;
   padding: 0;
@@ -59,4 +62,3 @@ a {
     transform: rotate(360deg);
   }
 }
-
