@@ -5,7 +5,17 @@ import { Button, Dropdown, Input, Textarea } from '@nextui-org/react';
 import './CreateEventPage.css';
 
 const CreateEventPage = () => {
-  const [inputValue, setInputValue] = useState({ title: '', fee: 0 });
+  const [inputValue, setInputValue] = useState({
+    title: '',
+    fee: 0,
+    description: '',
+    dateStart: '',
+    dateEnd: '',
+    dateRegisterEnd: '',
+    timeStart: '',
+    timeEnd: '',
+    timeRegisterEnd: '',
+  });
   const [typeEvent, setTypeEvent] = useState(new Set(['offline']));
   const [category, setCategory] = useState(new Set(['nhạc_sống']));
   const [banner, setBanner] = useState();
@@ -149,6 +159,7 @@ const CreateEventPage = () => {
             helperText={feeHepler.text}
             helperColor={feeHepler.color}
             contentRight="đ"
+            style={{ textAlign: 'right' }}
             onChange={handleOnchange}
           />
           <div className="create-event__form--display">
@@ -197,9 +208,11 @@ const CreateEventPage = () => {
 
         <Textarea
           label="Mô tả chi tiết"
+          name="description"
           placeholder="Giới thiệu chi tiết về sự kiện"
           minRows={5}
           maxRows={20}
+          onChange={handleOnchange}
         />
 
         <section className="create-event__time--display">
@@ -208,25 +221,45 @@ const CreateEventPage = () => {
             <Input
               aria-label="ngày bắt đầu"
               type="date"
-              name="date"
-              onChange={(e) => console.log(e.target.value)}
+              name="dateStart"
+              onChange={handleOnchange}
             />
             <Input
               aria-label="giờ bắt đầu"
               type="time"
-              name="time"
-              onChange={(e) => console.log(e.target.value)}
+              name="timeStart"
+              onChange={handleOnchange}
             />
           </div>
           <div className="create-event__time">
             <p>Thời gian kết thúc</p>
-            <Input aria-label="ngày kết thúc" type="date" name="date" />
-            <Input aria-label="giờ kết thúc" type="time" name="time" />
+            <Input
+              aria-label="ngày kết thúc"
+              type="date"
+              name="dateEnd"
+              onChange={handleOnchange}
+            />
+            <Input
+              aria-label="giờ kết thúc"
+              type="time"
+              name="timeEnd"
+              onChange={handleOnchange}
+            />
           </div>
           <div className="create-event__time">
             <p>Thời gian ngưng nhận đăng ký</p>
-            <Input aria-label="ngày kết thúc đăng ký" type="date" name="date" />
-            <Input aria-label="giờ kết thúc đăng ký" type="time" name="time" />
+            <Input
+              aria-label="ngày kết thúc đăng ký"
+              type="date"
+              name="dateRegisterEnd"
+              onChange={handleOnchange}
+            />
+            <Input
+              aria-label="giờ kết thúc đăng ký"
+              type="time"
+              name="timeRegisterEnd"
+              onChange={handleOnchange}
+            />
           </div>
         </section>
         <Button type="submit" className="create-event__button">

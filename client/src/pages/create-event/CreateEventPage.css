@@ -37,6 +37,7 @@
 
 .create-event__image-input {
   align-items: center !important;
+  flex-wrap: nowrap;
 }
 
 .create-event__image-input label {
@@ -53,11 +54,11 @@
 }
 
 .file-input::before {
-  content: 'Chọn hình ảnh';
+  content: 'Tải ảnh lên';
   display: inline-block;
   background-color: #f1f3f5;
   font-size: 0.875rem;
-  padding: 8px 12px;
+  padding: 8px 13px;
   color: #000;
   border-radius: 10px;
   cursor: pointer;
@@ -71,15 +72,13 @@
   padding: 10px;
   border: 1px solid #00abe1;
   border-radius: 10px;
-  width: 300px;
-  height: 120px;
+  width: 23%;
   margin-top: -10px;
   margin-bottom: 20px;
 }
 
 .create-envent__image-input-preview img {
-  width: 100%;
-  height: 100%;
+  width: 80%;
   object-fit: cover;
 }
 
@@ -136,8 +135,18 @@
   }
 }
 
-@media screen and (max-width: 1400px) {
+@media screen and (max-width: 768px) {
   .create-event {
     width: 90%;
+  }
+
+  .create-envent__image-input-preview div {
+    width: 32%;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .create-envent__image-input-preview div {
+    width: 48%;
   }
 }

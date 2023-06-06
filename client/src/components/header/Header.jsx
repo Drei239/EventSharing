@@ -1,6 +1,7 @@
 import React from 'react';
 import './Header.css';
 import { Input } from '@nextui-org/react';
+import { Link } from 'react-router-dom';
 
 const Header = () => {
   return (
@@ -28,9 +29,9 @@ const Header = () => {
         </div>
         <div className="header__right-block">
           <div className="create__event">
-            <a className="header_btn header__btn-create" href="" alt="">
+            <Link className="header_btn header__btn-create" to="/create-event">
               Tạo sự kiện
-            </a>
+            </Link>
             <img src="" alt="" />
           </div>
           <div className="header__log">
