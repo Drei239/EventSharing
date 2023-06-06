@@ -33,6 +33,7 @@ header {
 	display: flex;
 	justify-content: space-evenly;
 	text-align: right;
+	margin-right: 10px;
 }
 
 .header__log {
@@ -50,7 +51,7 @@ header {
 
 .header__btn-create {
 	padding: 10px;
-	background-color: #00abe1;
+	background-color: #0072f5;
 	border-radius: 10px;
 }
 

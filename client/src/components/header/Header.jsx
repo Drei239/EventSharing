@@ -1,5 +1,5 @@
 import './Header.css';
-import { Input, Link } from '@nextui-org/react';
+import { Input, Link, Button } from '@nextui-org/react';
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ const Header = () => {
 				</div>
 				<div className="header__right-block">
 					<div className="create__event">
-						<Link href='/' alt=''><div className="header_btn header__btn-create">Tạo sự kiện</div></Link>
+						<Link href='/' alt=''><Button size="sm" className="header_btn header__btn-create" color="primary">Tạo sự kiện</Button></Link>
 						<img src="" alt="" />
 					</div>
 					<div className='header__log'>						
