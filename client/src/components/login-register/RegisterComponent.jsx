@@ -5,13 +5,9 @@ import {
   useValidateAuthPassword,
   useValidateRegex,
 } from '../../hooks/useValidate';
-import {
-  fullNameRegex,
-  emailRegex,
-  passwordRegex,
-} from '../../constants/regex';
-import Login from './Login';
-import './login-register.css';
+import { emailRegex, passwordRegex, nameRegex } from '../../constants/regex';
+import Login from './LoginComponent';
+import './LoginRegisterComponent.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const Register = ({ changeLoginContent }) => {
@@ -36,8 +32,8 @@ const Register = ({ changeLoginContent }) => {
 
   const nameHelper = useValidateRegex(
     inputValue.name,
-    fullNameRegex,
-    'Có ít nhất 5 ký tự không chứa số và ký tự đặc biệt'
+    nameRegex,
+    'Có ít nhất 6 ký tự không chứa số và ký tự đặc biệt'
   );
 
   const emailHelper = useValidateRegex(
