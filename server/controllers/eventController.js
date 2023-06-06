@@ -1,5 +1,46 @@
 const asyncHandler = require("express-async-handler");
 const eventModel = require("../models/eventModel");
+const eventService = require("../services/eventServices");
+
+//Lưu data theo UTC time
+//Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
+function changeTimeZone(date, timeZone) {
+    if (typeof date === 'string') {
+        return new Date(
+            new Date(date).toLocaleString('en-US', {
+                timeZone,
+            }),
+        );
+    }
+
+    return new Date(
+        date.toLocaleString('en-US', {
+            timeZone,
+        }),
+    );
+}
+
+const date = new Date();
+console.log("new Date", date);
+
+const hcmDate = changeTimeZone(date, 'Asia/Saigon');
+console.log("Asia/Saigon Date", hcmDate);
+
+console.log("toLocaleString Date",
+    date.toLocaleString('en-US', {
+        timeZone: 'Asia/Saigon',
+    }),
+);
+
+function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
+    if (Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
+        Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
+        Date.parse(timeBegin) < Date.parse(timeEnd)) {
+        return true;
+    } else {
+        return false;
+    }
+}
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(async (req, res) => {
@@ -10,9 +51,7 @@ const createNewEvent = asyncHandler(async (req, res) => {
     // Sau khi gán userInfo = req.user 
     // const creator = req.user.id;
     // loại bỏ giá trị creator ở req.body
-    if (Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
-        Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
-        Date.parse(timeBegin) < Date.parse(timeEnd)) {
+    if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
         const newEvent = await eventModel.create({
             title, description, banner, imageList,
             category, type, fee, location,
@@ -21,6 +60,13 @@ const createNewEvent = asyncHandler(async (req, res) => {
         });
         if (newEvent) {
             res.status(200).json(newEvent);
+            console.log(
+                newEvent.timeEndSignup.toLocaleString('en-US', {
+                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                }),
+            );
+            console.log(newEvent.timeEndSignup);
+
         } else {
             res.status(401);
             throw new Error("CREATE NEW EVENT FAILED!");
@@ -35,15 +81,27 @@ const createNewEvent = asyncHandler(async (req, res) => {
 //"$and"[{ "status": "Draft" }, { "status": "Public" }]
 //DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
-const getAllEvent = asyncHandler(async (req, res) => {
-    const events = await eventModel.find({ "status": "Public" });
-    if (events) {
-        res.status(200).json(events);
-    } else {
-        res.status(401);
-        throw new Error("KHÔNG TÌM THẤY BẤT CỨ EVENT NÀO!");
-    }
+// const getPublicEvent = asyncHandler(async (req, res) => {
+//     const events = await eventModel.find({ "status": "Public" });
+//     if (events) {
+//         console.log(events[0].timeBegin.toLocaleString('en-US', {
+//             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+//         }),);
+//         res.status(200).json(events);
+//     } else {
+//         res.status(401);
+//         throw new Error("KHÔNG TÌM THẤY BẤT CỨ EVENT NÀO!");
+//     }
+// });
+
+const getPublicEvent = asyncHandler(async (req, res) => {
+    const response = await eventService.getPublicEvent();
+    return res.status(200).json(response);
 });
+
+// function getPublicEvent() {
+//     eventService.getPublicEvent();
+// }
 
 //3.GET INFO EVENT BY ID
 const getEventById = asyncHandler(async (req, res) => {
@@ -67,9 +125,54 @@ const getEventByCreator = asyncHandler(async (req, res) => {
         res.status(401);
         throw new Error("KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!");
     }
+});
+
+//5.UPDATE EVENT
+//CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
+//CHO PHÉP ADMIN PHÊ DUYỆT HIỂN THỊ SỰ KIỆN (STATUS = "PENDING" => "PUBLIC")
+const updateEvent = asyncHandler(async (req, res) => {
+    const findId = req.params.id;
+    const { title, description } = req.body;
+    const updateEvent = await eventService.updateEvent(findId, title, description);
+    if (updateEvent) {
+        res.status(200).json(updateEvent);
+    } else {
+        res.status(401);
+        throw new Error("UPDATE EVENT FAILED!");
+    }
+})
+
+// const updateEvent = asyncHandler(async (req, res) => {
+//     const findId = req.params.id;
+//     const { title, description } = req.body;
+//     const updateEvent = await eventModel.findOne({ _id: findId, "status": "Draft" });
+//     if (updateEvent) {
+//         updateEvent.title = title || updateEvent.title;
+//         updateEvent.description = description || updateEvent.description;
+//         const updatedEvent = await updateEvent.save();
+//         res.status(200).json(updatedEvent);
+//         return (updatedEvent);
+//     } else {
+//         res.status(401);
+//         throw new Error("UPDATE EVENT FAILED!");
+//     }
+// });
+
+//6.FIND EVENT BY TITLE
+const getEventByTitle = asyncHandler(async (req, res) => {
+    const keyword = req.query.keyword;
+    const searchQuery = keyword ? { title: { $regex: keyword } } : {};
+    const searchedEvent = await eventModel.find({ ...searchQuery });
+    if (searchedEvent) {
+        res.status(200).json(searchedEvent);
+    } else {
+        res.status(401);
+        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    }
 })
 
 module.exports = {
-    createNewEvent, getAllEvent,
-    getEventById, getEventByCreator
+    createNewEvent, getPublicEvent,
+    getEventById, getEventByCreator,
+    updateEvent, getEventByTitle
 }
