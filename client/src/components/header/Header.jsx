@@ -18,9 +18,9 @@ const Header = () => {
 						<Input width='290px' placeholder="Search" />
 					</div>
 					<div className="header__category">
-						<div class="dropdown">
-							<Link href='/' alt=''><div class="dropdown__catergory">Sự kiện</div></Link>
-							<div class="dropdown__content">
+						<div className="dropdown">
+							<Link href='/' alt=''><div className="dropdown__catergory">Sự kiện</div></Link>
+							<div className="dropdown__content">
 								<Link href='/'><div className='category__item'>Link 1</div></Link>
 								<Link href='/'><div className='category__item'>Link 2</div></Link>
 								<Link href='/'><div className='category__item'>Link 3</div></Link>

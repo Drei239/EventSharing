@@ -40,7 +40,7 @@ const Product = () => {
 					<p className='description__item'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Dolorum architecto ullam, quisquam a praesentium aut, quas quia minima nam officiis quibusdam aliquam voluptate deserunt magnam nisi fugiat provident officia amet. Lorem ipsum dolor sit amet consectetur adipisicing elit. Provident dolores suscipit harum perferendis ducimus facere cupiditate minima saepe blanditiis quam id, est debitis vel, doloribus cumque iste sit nisi obcaecati? Lorem ipsum dolor sit, amet consectetur adipisicing elit. Nobis similique nisi error doloremque laborum doloribus animi voluptate dolorum quas accusamus, autem dicta provident ullam totam rerum. Non quos laborum voluptate!</p>
 				</div>
 			</div>
-			<div>
+			<div className='comment__container'>
 				<Comments/>
 			</div>
 		</div>

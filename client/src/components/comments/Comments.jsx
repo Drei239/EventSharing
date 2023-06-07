@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import './Comments.css'
+// import DeleteCommentModal from './components/modals/DeleteComment';
 import CommentForm from "../comment-form/CommentForm";
 import Comment from "../comment/Comment";
 import {
@@ -41,7 +42,7 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 			setActiveComment(null);
 		});
 	};
-	const deleteComment = (commentId) => {
+	const deleteComment = (commentId) => { 
 		if (window.confirm("Are you sure you want to remove comment?")) {
 			deleteCommentApi().then(() => {
 				const updatedBackendComments = backendComments.filter(
@@ -60,9 +61,9 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 
 	return (
 		<div className="comments">
-			<h3 className="comments-title">Comments</h3>
-			<div className="comment-form-title">Write comment</div>
-			<CommentForm submitLabel="Write" handleSubmit={addComment} />
+			<h4 className="comments-title">Comments</h4>
+			{/* <div className="comment-form-title">Write comment</div> */}
+			<CommentForm submitLabel="Submit" handleSubmit={addComment} />
 			<div className="comments-container">
 				{rootComments.map((rootComment) => (
 					<Comment
