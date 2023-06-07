@@ -1,24 +1,24 @@
-import logo from './logo.svg';
+import { Route, Routes } from 'react-router-dom';
 import './App.css';
-
+import Footer from './components/footer/Footer';
+import Header from './components/header/Header.jsx';
+import LoginRegisterPage from './pages/login-register/LoginRegisterPage';
+import { NextUIProvider } from '@nextui-org/react';
+import { Home,Events } from './pages';
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+  return (  
+    <div className='App'>
+      <Header />  
+      <NextUIProvider>      
+        <Routes>
+          <Route path="/login-register" element={<LoginRegisterPage />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/events' element={<Events />} />
+        </Routes>     
+      </NextUIProvider>  
+      <Footer />   
     </div>
+       
   );
 }
 

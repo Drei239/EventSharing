@@ -1,0 +1,78 @@
+.login-register {
+  min-width: 100%;
+  min-height: 100vh;
+  display: flex;
+  overflow: hidden;
+}
+
+.login-register__content,
+.login-register__main {
+  width: 50%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  transition: all 0.5s;
+}
+
+.login-register__content {
+  background-color: #00abe1;
+  justify-content: flex-end;
+  z-index: 1;
+  color: #fff;
+}
+
+.login-register__register-content p,
+.login-register__login-content p {
+  text-align: right;
+  padding-right: 60px;
+  font-weight: 600;
+  font-size: 2.1rem;
+  line-height: 1.5;
+}
+
+.login-register__login-content p {
+  text-align: left;
+}
+
+.login-register__login-content {
+  text-align: left;
+  padding-left: 60px;
+}
+
+.login-register__register-content span,
+.login-register__login-content span {
+  cursor: pointer;
+  color: #161f6d;
+  transition: all 0.3s;
+}
+
+.login-register__register-content span:hover,
+.login-register__login-content span:hover {
+  color: #fff;
+}
+
+.login-register__main {
+  justify-content: center;
+}
+
+@media screen and (max-width: 992px) {
+  .login-register__register-content p,
+  .login-register__login-content p {
+    font-size: 1.8rem;
+    padding-right: 30px;
+  }
+
+  .login-register__login-content {
+    padding-left: 30px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login-register__content {
+    display: none;
+  }
+
+  .login-register__main {
+    width: 100%;
+  }
+}
