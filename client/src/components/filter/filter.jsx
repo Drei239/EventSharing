@@ -2,7 +2,7 @@ import React from "react";
 import { useState, useEffect } from "react";
 import dayjs from "dayjs";
 import "./filter.css";
-import Select, { components, ControlProps } from "react-select";
+import { components } from "react-select";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
 import { MdDateRange } from "react-icons/md";
 import { FiMapPin } from "react-icons/fi";
@@ -12,161 +12,33 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdPriceCheck } from "react-icons/md";
 import { CgSortAz } from "react-icons/cg";
 import { RiVidiconLine } from "react-icons/ri";
-const options = [
-  {
-    value: "all",
-    label: "Tất cả địa điểm",
-  },
-  {
-    value: "HCM",
-    label: "Hồ Chí Minh",
-  },
-  {
-    value: "HN",
-    label: "Hà Nội",
-  },
-];
-const option2 = [
-  {
-    value:"",
-    label:"Tất cả sự kiện"
-  },
-  {
-    value: "music",
-    label: "Nhạc sống",
-  },
-  {
-    value: "Văn hoá nghệ thuật",
-    label: "culture",
-  },
-  {
-    value: "sk",
-    label: "Sân khấu",
-  },
-  {
-    value: "Nightlife",
-    label: "Nightlife",
-  },
-  {
-    value: "Ngoài trời",
-    label: "Ngoài trời",
-  },
-  {
-    value: "",
-    label: "...",
-  },
-];
-const option3 = [
-  {
-    label: "Hình thức",
-    value: "",
-  },
-  {
-    label: "Online",
-    value: "on",
-  },
-  {
-    label: "Offline",
-    value: "off",
-  },
-];
-const option4 = [
-  {
-    label: "Tất cả giá vé",
-    value: "",
-  },
-  {
-    label: "Có phí",
-    value: "cp",
-  },
-  {
-    label: "Miễn phí",
-    value: "kp",
-  },
-];
-const option5 = [
-  {
-    value: "",
-    label: "Sắp xếp",
-  },
-  {
-    value: "tg",
-    label: "Mới nhất",
-  },
-  {
-    value: "lx",
-    label: "Lượt xem",
-  },
-  {
-    value: "namea",
-    label: "Tên A > Z",
-  },
-  {
-    value: "namez",
-    label: "Tên Z > A",
-  },
-  {
-    value: "price-low",
-    label: "Giá : Nhỏ đến Lớn",
-  },
-  {
-    value: "price-high",
-    label: "Giá : Lớn đến Nhỏ",
-  },
-];
+import { useDispatch, useSelector } from "react-redux";
+import {
+  CategoryFilter,
+  feeFilter,
+  formFilter,
+  locationFil,
+  sortFilter,
+} from "../../data/filter";
+import { CustomSelect } from "../ui/select";
+const createCustomControl =
+  (iconComponent) =>
+  ({ children, ...props }) => {
+    return (
+      <components.Control {...props}>
+        <span className="icon">{iconComponent}</span>
+        {children}
+      </components.Control>
+    );
+  };
+const CustomControl1 = createCustomControl(<FiMapPin />);
+const CustomControl2 = createCustomControl(<BsFillGrid3X3GapFill />);
+const CustomControl3 = createCustomControl(<RiVidiconLine />);
+const CustomControl4 = createCustomControl(<MdPriceCheck />);
+const CustomControl5 = createCustomControl(<CgSortAz />);
+const Filter = () => {
+  const dispatch = useDispatch();
 
-const Control = ({ children, ...props }) => {
-  return (
-    <components.Control {...props}>
-      <span className="icon">
-        <FiMapPin />
-      </span>
-      {children}
-    </components.Control>
-  );
-};
-const Control3 = ({ children, ...props }) => {
-  return (
-    <components.Control {...props}>
-      <span className="icon">
-        <RiVidiconLine />
-      </span>
-      {children}
-    </components.Control>
-  );
-};
-const Control4 = ({ children, ...props }) => {
-  return (
-    <components.Control {...props}>
-      <span className="icon">
-        <MdPriceCheck />
-      </span>
-      {children}
-    </components.Control>
-  );
-};
-const Control5 = ({ children, ...props }) => {
-  return (
-    <components.Control {...props}>
-      <span className="icon">
-        <CgSortAz />
-      </span>
-      {children}
-    </components.Control>
-  );
-};
-const Control2 = ({ children, ...props }) => {
-  return (
-    <components.Control {...props}>
-      <span className="icon">
-        <BsFillGrid3X3GapFill />
-      </span>
-      {children}
-    </components.Control>
-  );
-};
-
-const Banner = () => {
   const [selectedDate, setSelectedDate] = useState({
     value: {},
     label: "Tất cả các ngày",
@@ -174,7 +46,14 @@ const Banner = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
   const [openDate, setOpenDate] = useState(false);
-
+  const [request, setRequest] = useState(false);
+  const [filter, setFilter] = useState({
+    category: "",
+    sort: "",
+    fee: "",
+    type: "",
+    location: "",
+  });
   const handleSelectChange = (value, label) => {
     setSelectedDate({ value, label });
     setOpenDate(false);
@@ -199,49 +78,33 @@ const Banner = () => {
       setOpenDate(false);
     }
   };
+  useEffect(() => {
+    if (request) {
+    }
+    setRequest(true);
+  }, []);
   return (
     <div className="filter">
       <div className="categories">
         <div className="select">
-          <Select
-            options={options}
-            defaultValue={options[0]}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                borderColor: state.isFocused ? "grey" : "gray",
-                paddingLeft: "10px",
-              }),
-            }}
-            components={{ Control }}
+          <CustomSelect
+            options={locationFil}
+            defaultValue={locationFil[0]}
+            components={{ Control: CustomControl1 }}
           />
         </div>
         <div className="select">
-          <Select
-            options={option2}
-            defaultValue={option2[0]}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                borderColor: state.isFocused ? "grey" : "gray",
-                paddingLeft: "10px",
-              }),
-            }}
-            components={{ Control: Control2 }}
+          <CustomSelect
+            options={CategoryFilter}
+            defaultValue={CategoryFilter[0]}
+            components={{ Control: CustomControl2 }}
           />
         </div>
         <div className="select">
-          <Select
-            options={option3}
-            defaultValue={option3[0]}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                borderColor: state.isFocused ? "grey" : "gray",
-                paddingLeft: "10px",
-              }),
-            }}
-            components={{ Control: Control3 }}
+          <CustomSelect
+            options={formFilter}
+            defaultValue={formFilter[0]}
+            components={{ Control: CustomControl3 }}
           />
         </div>
         <div className="select2">
@@ -328,32 +191,17 @@ const Banner = () => {
           )}
         </div>
         <div className="select">
-          <Select
-            options={option4}
-            defaultValue={option4[0]}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                borderColor: state.isFocused ? "grey" : "gray",
-                paddingLeft: "10px",
-              }),
-            }}
-            components={{ Control: Control4 }}
+          <CustomSelect
+            options={feeFilter}
+            defaultValue={feeFilter[0]}
+            components={{ Control: CustomControl4 }}
           />
         </div>
         <div className="select">
-          <Select
-            isSearchable
-            options={option5}
-            defaultValue={option5[0]}
-            styles={{
-              control: (baseStyles, state) => ({
-                ...baseStyles,
-                borderColor: state.isFocused ? "grey" : "gray",
-                paddingLeft: "10px",
-              }),
-            }}
-            components={{ Control: Control5 }}
+          <CustomSelect
+            options={sortFilter}
+            defaultValue={sortFilter}
+            components={{ Control: CustomControl5 }}
           />
         </div>
       </div>
@@ -361,4 +209,4 @@ const Banner = () => {
   );
 };
 
-export default Banner;
+export default Filter;
