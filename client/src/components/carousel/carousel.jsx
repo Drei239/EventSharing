@@ -1,7 +1,13 @@
 import React from "react";
 import styled from "styled-components";
 import "./carousel.css";
-import SwiperCore, { Navigation, Pagination, EffectCoverflow } from "swiper";
+import SwiperCore, {
+  Navigation,
+  Pagination,
+  EffectCoverflow,
+  EffectFade,
+  Autoplay,
+} from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/swiper.min.css";
 import "swiper/css";
@@ -9,7 +15,10 @@ import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/effect-coverflow";
-SwiperCore.use([Navigation, Pagination, EffectCoverflow]);
+import { AiOutlineCalendar } from "react-icons/ai";
+import { BiMap } from "react-icons/bi";
+import { MdOutlineAttachMoney } from "react-icons/md";
+SwiperCore.use([Navigation, Pagination, EffectFade,Autoplay]);
 
 // Tạo một component Swiper kiểu thành phần và tùy chỉnh kiểu dáng bằng CSS-in-JS
 const StyledSwiper = styled(Swiper)`
@@ -31,8 +40,8 @@ const StyledSwiper = styled(Swiper)`
   /* Tùy chỉnh kiểu dáng của nút next và prev */
   .swiper-button-next,
   .swiper-button-prev {
-    color: #5db2bf;
-    border: 2px solid #5db2bf;
+    color: white;
+    border: 2px solid white;
     overflow: hidden;
     border-radius: 50%;
     width: 40px;
@@ -40,6 +49,7 @@ const StyledSwiper = styled(Swiper)`
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
   }
   .swiper-button-next::after,
   .swiper-button-prev::after {
@@ -54,38 +64,119 @@ const StyledSwiper = styled(Swiper)`
     left: 10px;
   }
   .swiper-pagination-bullet {
-    border-radius: 20px;
-    width: 20px;
-    height: 4px;
-    background: #5db2bf;
+    border-radius: 50%;
+    width: 15px;
+    height: 15px;
+    background: white;
   }
 `;
 const index = () => {
   return (
     <div className="carousel">
       <StyledSwiper
-        navigation
-        pagination
-        loop
-        autoplay
-        effect={"coverflow"}
-        grabCursor={true}
-        centeredSlides={true}
-        coverflowEffect={{
-          rotate: 50,
-          stretch: 0,
-          depth: 100,
-          modifier: 1,
-          slideShadows: true,
-        }}
+        navigation={true}
+        pagination={{ clickable: true }}
+        loop={true}
+        autoplay={{delay:5000}}
+       
       >
         <SwiperSlide>
           <div className="slide-item">
+            <div className="carousel-content">
+              <span className="carousel-category">BUSINESS</span>
+              <h2>Eventchamp Conference</h2>
+              <div className="carousel-content-info">
+                <div className="carousel-content-info-item">
+                  <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">
+                    March 12,2023
+                  </span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <BiMap className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">LONDON</span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <MdOutlineAttachMoney className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">500</span>
+                </div>
+              </div>
+              <div className="carousel-content-btn">
+                <button className="carousel-content-btn-item">Chi tiết</button>
+                <button className="carousel-content-btn-item">Mua vé</button>
+              </div>
+            </div>
             <img
               className="carousel-img"
-              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/08/29C8C3.jpg"
+              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/25/191E74.jpg"
               alt=""
             />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-item">
+            <div className="carousel-content">
+              <span className="carousel-category">BUSINESS</span>
+              <h2>Eventchamp Conference</h2>
+              <div className="carousel-content-info">
+                <div className="carousel-content-info-item">
+                  <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">
+                    March 12,2023
+                  </span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <BiMap className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">LONDON</span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <MdOutlineAttachMoney className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">500</span>
+                </div>
+              </div>
+              <div className="carousel-content-btn">
+                <button className="carousel-content-btn-item">Chi tiết</button>
+                <button className="carousel-content-btn-item">Mua vé</button>
+              </div>
+            </div>
+            <img
+              className="carousel-img"
+              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/16/319687.jpg"
+              alt=""
+            />
+          </div>
+        </SwiperSlide>
+        <SwiperSlide>
+          <div className="slide-item">
+            <img
+              className="carousel-img"
+              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/06/02/4514FE.jpg"
+              alt=""
+            />
+            <div className="carousel-content">
+              <span className="carousel-category">BUSINESS</span>
+              <h2>Eventchamp Conference</h2>
+              <div className="carousel-content-info">
+                <div className="carousel-content-info-item">
+                  <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">
+                    March 12,2023
+                  </span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <BiMap className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">LONDON</span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <MdOutlineAttachMoney className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">500</span>
+                </div>
+              </div>
+              <div className="carousel-content-btn">
+                <button className="carousel-content-btn-item">Chi tiết</button>
+                <button className="carousel-content-btn-item">Mua vé</button>
+              </div>
+            </div>
           </div>
         </SwiperSlide>
         <SwiperSlide>
@@ -95,24 +186,30 @@ const index = () => {
               src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/08/29C8C3.jpg"
               alt=""
             />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide-item">
-            <img
-              className="carousel-img"
-              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/08/29C8C3.jpg"
-              alt=""
-            />
-          </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <div className="slide-item">
-            <img
-              className="carousel-img"
-              src="https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/08/29C8C3.jpg"
-              alt=""
-            />
+            <div className="carousel-content">
+              <span className="carousel-category">BUSINESS</span>
+              <h2>Eventchamp Conference</h2>
+              <div className="carousel-content-info">
+                <div className="carousel-content-info-item">
+                  <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">
+                    March 12,2023
+                  </span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <BiMap className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">LONDON</span>
+                </div>
+                <div className="carousel-content-info-item">
+                  <MdOutlineAttachMoney className="carousel-content-info-icon" />
+                  <span className="carousel-content-info-text">500</span>
+                </div>
+              </div>
+              <div className="carousel-content-btn">
+                <button className="carousel-content-btn-item">Chi tiết</button>
+                <button className="carousel-content-btn-item">Mua vé</button>
+              </div>
+            </div>
           </div>
         </SwiperSlide>
         {/* ... */}
