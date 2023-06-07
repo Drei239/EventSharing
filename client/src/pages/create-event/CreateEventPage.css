@@ -6,7 +6,6 @@
 
 .create-event h2 {
   color: #161f6d;
-  margin-bottom: 20px;
 }
 
 .create-event .nextui-c-iwmZdB-iiIdOsz-css {
@@ -73,12 +72,14 @@
   border: 1px solid #00abe1;
   border-radius: 10px;
   width: 23%;
+  height: 100%;
   margin-top: -10px;
   margin-bottom: 20px;
 }
 
 .create-envent__image-input-preview img {
   width: 80%;
+  height: 120px;
   object-fit: cover;
 }
 
@@ -109,7 +110,7 @@
 
 .create-event__time p {
   margin-left: 4px;
-  font-size: 0.95rem;
+  font-size: 0.9rem;
 }
 
 .create-event__time .nextui-c-iwmZdB-iiIdOsz-css {
@@ -125,8 +126,44 @@
 .create-event__button {
   width: 20%;
   background-color: #161f6d;
-  margin-top: 20px;
+  margin-top: 40px;
   margin-bottom: 100px;
+  font-weight: 600;
+}
+
+.error-message {
+  font-size: 0.8rem !important;
+  margin-top: -30px;
+}
+
+.create-event__description {
+  font-size: 0.9rem;
+  margin-left: 4px;
+  margin-bottom: 10px;
+}
+
+.create-event__buyfee {
+  margin-bottom: 20px;
+}
+
+.create-event__buyfee > span {
+  font-size: 0.9rem;
+  vertical-align: top;
+  margin-left: 4px;
+  margin-right: 6px;
+}
+
+.create-event__address {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 30px;
+}
+
+.create-event__address > .nextui-c-iwmZdB-iiIdOsz-css {
+  margin-bottom: 0px;
+  width: 30%;
 }
 
 @media screen and (max-width: 1400px) {

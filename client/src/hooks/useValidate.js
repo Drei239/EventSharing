@@ -34,13 +34,42 @@ export const useValidateAuthPassword = (password, authPassword, message) => {
   }, [authPassword]);
 };
 
-export const useValidateLength = (value, length, message) => {
+// export const useValidateLength = (value, length, message) => {
+//   return useMemo(() => {
+//     if (!value) return { text: '', color: '', isValid: false };
+//     return {
+//       text: value.length <= length ? '' : message,
+//       color: value.length <= length ? '' : true,
+//       isValid: true,
+//     };
+//   }, [value]);
+// };
+
+export const useValidateDatetime = (date1, time1, date2, time2, message) => {
   return useMemo(() => {
-    if (!value) return { text: '', color: '', isValid: false };
+    if (!(date1 && date2 && time1 && time2))
+      return { text: '', color: '', isValid: false };
+
+    let booleans = false;
+    if (date1 > date2) {
+      booleans = true;
+    } else {
+      if (date1 === date2) {
+        booleans = true;
+      }
+      if (time1 && time2) {
+        if (time1 > time2) {
+          booleans = true;
+        } else {
+          booleans = false;
+        }
+      }
+    }
+
     return {
-      text: value.length <= length ? '' : message,
-      color: value.length <= length ? '' : 'error',
+      text: booleans ? '' : message,
+      color: booleans ? '' : 'error',
       isValid: true,
     };
-  }, [value]);
+  }, [date1, date2, time1, time2]);
 };
