@@ -1,25 +1,21 @@
 const asyncHandler = require("express-async-handler");
 const eventModel = require("../models/eventModel");
 const eventValidators = require("../validators/eventValidators");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
+
 
 //2.GET ALL EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
 //"$and"[{ "status": "Draft" }, { "status": "Public" }]
 //DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
-const getPublicEvent = asyncHandler(async (req, res) => {
+const getPublicEvents = asyncHandler(async (req, res) => {
     const events = await eventModel.find({ "status": "Public" });
-    if (events) {
-        // console.log(events[0].timeBegin.toLocaleString('en-US', {
-        //     timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        // }),);
-        // console.log(events);
-        // res.status(200).json(events);
+    if (events && events.length > 0) {
         return events;
-
     } else {
-        res.status(401);
-        throw new Error("KHÔNG TÌM THẤY BẤT CỨ EVENT NÀO!");
+        throw Error(eventError.ERR_2);
     }
+
 });
 
 //5.UPDATE EVENT
@@ -36,4 +32,4 @@ const updateEvent = asyncHandler(async (findById, title, description) => {
     }
 });
 
-module.exports = {getPublicEvent, updateEvent };
+module.exports = { getPublicEvents, updateEvent };

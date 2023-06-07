@@ -1,6 +1,6 @@
 let express = require("express");
 let router = express.Router();
-const { createNewEvent, getPublicEvent,
+const { createNewEvent, getPublicEvents,
     getEventById, getEventByCreator,
     updateEvent, getEventByTitle } = require("../controllers/eventController");
 
@@ -8,7 +8,7 @@ const { createNewEvent, getPublicEvent,
 router.post("/create", createNewEvent);
 
 //2.GET ALL EVENT STAUS = "PUBLIC"
-router.get("/all", getPublicEvent);
+router.get("/all", getPublicEvents);
 
 //3.GET EVENT BY ID
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM CHI TIẾT CÁC THÔNG TIN VỀ 1 SỰ KIỆN

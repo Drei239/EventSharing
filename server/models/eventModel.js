@@ -23,7 +23,7 @@ const eventSchema = mongoose.Schema({
     timeEndSignup: { type: Date, required: true },
     timeBegin: { type: Date, required: true },
     timeEnd: { type: Date, required: true },
-    status: { type: String, required: true, default: 'Draft' },
+    status: { type: String, required: true, default: 'Public' },
     creator: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
     createdAt: { type: Date, default: Date.now },
     limitUser: { type: Number, required: true },

@@ -1,6 +1,7 @@
 const asyncHandler = require("express-async-handler");
 const eventModel = require("../models/eventModel");
 const eventService = require("../services/eventServices");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
 
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
@@ -60,13 +61,12 @@ const createNewEvent = asyncHandler(async (req, res) => {
         });
         if (newEvent) {
             res.status(200).json(newEvent);
-            console.log(
-                newEvent.timeEndSignup.toLocaleString('en-US', {
-                    timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-                }),
-            );
-            console.log(newEvent.timeEndSignup);
-
+            // console.log(
+            //     newEvent.timeEndSignup.toLocaleString('en-US', {
+            //         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+            //     }),
+            // );
+            // console.log(newEvent.timeEndSignup);
         } else {
             res.status(401);
             throw new Error("CREATE NEW EVENT FAILED!");
@@ -94,9 +94,13 @@ const createNewEvent = asyncHandler(async (req, res) => {
 //     }
 // });
 
-const getPublicEvent = asyncHandler(async (req, res) => {
-    const response = await eventService.getPublicEvent();
-    return res.status(200).json(response);
+const getPublicEvents = asyncHandler(async (req, res) => {
+    try {
+        const events = await eventService.getPublicEvents();
+        return res.status(200).json({ status: 200, data: events, message: eventSucc.SUC_2 })
+    } catch (error) {
+        return res.status(400).json({ status: 400, message: eventError.ERR_2 });
+    }
 });
 
 // function getPublicEvent() {
@@ -172,7 +176,7 @@ const getEventByTitle = asyncHandler(async (req, res) => {
 })
 
 module.exports = {
-    createNewEvent, getPublicEvent,
+    createNewEvent, getPublicEvents,
     getEventById, getEventByCreator,
     updateEvent, getEventByTitle
 }
