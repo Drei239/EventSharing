@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+
 const connectDatabase = require('./config/database');
 
 var indexRouter = require('./routes/index');
@@ -31,6 +32,7 @@ app.use('/events', eventsRouter);
 process.env.TZ = 'Asia/Jakarta';
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
+
   next(createError(404));
 });
 

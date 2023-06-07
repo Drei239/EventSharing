@@ -102,7 +102,49 @@ const getPublicEvents = asyncHandler(async (req, res) => {
         return res.status(400).json({ status: 400, message: eventError.ERR_2 });
     }
 });
+// search by title + filter 
+const getFilterEvents=asyncHandler(async(req,res)=>{
+    const {keyword}=req.query;
+    const queryObj={...req.query}
+    try {
+        const excludeField=["page","sort","limit","keyword"];
+        // loc tu khoa
+        excludeField.forEach((el)=> delete queryObj[el]);
 
+        let queryStr=JSON.stringify(queryObj);
+        // thay cac gia tri cua tu khoa     
+        queryStr=queryStr.replace(/\b(gt|gte|lte|lt)\b/g,(match)=> `$${match}`)
+        let query;
+        if(keyword !== "" && keyword){
+            const queryObj={$or:[ { 'title': { $regex: keyword, $options: 'i' } },
+           ,{ 'title': { $regex: keyword, $options: 'i' } },
+            { 'location': { $regex: keyword, $options: 'i' } }, { 'category': { $regex: keyword, $options: 'i' } }],... JSON.parse(queryStr)};
+            query=eventModel.find(queryObj).populate('creator');
+        }
+        else{
+            query=eventModel.find(JSON.parse(queryStr)).populate('creator');
+        }
+        if(req.query.sort){
+            const sortBy=req.query.sort.split(",").join(" ");
+            query=query.sort(sortBy);
+        }
+        else{
+            query=query.sort("-createdAt");
+        }
+    const limit=req.query.limit || 10;
+    const page=req.query.page || 1;
+    const skip=(Number(page)-1)* limit;
+    query = query.skip(skip).limit(limit).exec();
+    // const eventCount=await eventModel.countDocuments();
+    const events=await query;
+   return res.status(200).json({status:200,data:events,message: eventError.ERR_2})
+        
+}
+catch(err){
+    console.log(err)
+    throw Error(err);
+}
+})
 // function getPublicEvent() {
 //     eventService.getPublicEvent();
 // }
@@ -178,5 +220,5 @@ const getEventByTitle = asyncHandler(async (req, res) => {
 module.exports = {
     createNewEvent, getPublicEvents,
     getEventById, getEventByCreator,
-    updateEvent, getEventByTitle
+    updateEvent, getEventByTitle,getFilterEvents
 }
