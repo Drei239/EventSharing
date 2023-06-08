@@ -1,16 +1,22 @@
 let express = require("express");
 let router = express.Router();
-const { createNewEvent, getPublicEvents,
-    getEventById, getEventByCreator,
-
-    updateEvent, getEventByTitle, getQueryEvents,getFilterEvents } = require("../controllers/eventController");
+const {
+  createNewEvent,
+  getPublicEvents,
+  getEventById,
+  getEventByCreator,
+  updateEvent,
+  getEventByTitle,
+  getQueryEvents,
+  getFilterEvents,
+} = require("../controllers/eventController");
 //1.CREATE NEW EVENT
 router.post("/create", createNewEvent);
 
 //2.GET ALL EVENT STAUS = "PUBLIC"
 router.get("/all", getPublicEvents);
-//search + filter +getAll 
-router.get('/getFilter',getFilterEvents)
+//search + filter +getAll
+router.get("/getFilter", getFilterEvents);
 //3.GET EVENT BY ID
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM CHI TIẾT CÁC THÔNG TIN VỀ 1 SỰ KIỆN
 router.get("/:id", getEventById);
@@ -33,6 +39,5 @@ router.get("/search/:keyword", getEventByTitle);
 
 //7.GET EVENTS BY QUERY
 router.get("/", getQueryEvents);
-
 
 module.exports = router;

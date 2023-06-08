@@ -290,4 +290,5 @@ module.exports = {
   updateEvent,
   getEventByTitle,
   getQueryEvents,
+  getFilterEvents,
 };
