@@ -33,10 +33,6 @@ export const CategoryFilter = [
     value: "Ngoài trời",
     label: "Ngoài trời",
   },
-  {
-    value: "",
-    label: "...",
-  },
 ];
 export const formFilter = [
   {
@@ -45,11 +41,11 @@ export const formFilter = [
   },
   {
     label: "Online",
-    value: "on",
+    value: "isOnline=true",
   },
   {
     label: "Offline",
-    value: "off",
+    value: "isOnline=false",
   },
 ];
 export const feeFilter = [
@@ -59,11 +55,11 @@ export const feeFilter = [
   },
   {
     label: "Có phí",
-    value: "cp",
+    value: "fee[gt]=0",
   },
   {
     label: "Miễn phí",
-    value: "kp",
+    value: "fee=0",
   },
 ];
 export const sortFilter = [
@@ -72,27 +68,24 @@ export const sortFilter = [
     label: "Sắp xếp",
   },
   {
-    value: "tg",
+    value: "createdAt",
     label: "Mới nhất",
   },
+
   {
-    value: "lx",
-    label: "Lượt xem",
-  },
-  {
-    value: "namea",
+    value: "title",
     label: "Tên A > Z",
   },
   {
-    value: "namez",
+    value: "-title",
     label: "Tên Z > A",
   },
   {
-    value: "price-low",
+    value: "fee",
     label: "Giá : Nhỏ đến Lớn",
   },
   {
-    value: "price-high",
+    value: "-fee",
     label: "Giá : Lớn đến Nhỏ",
   },
 ];

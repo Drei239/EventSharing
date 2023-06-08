@@ -137,10 +137,15 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     const excludeField = ["page", "sort", "limit", "keyword"];
     // loc tu khoa
     excludeField.forEach((el) => delete queryObj[el]);
-
     let queryStr = JSON.stringify(queryObj);
     // thay cac gia tri cua tu khoa
+
     queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
+    queryStr = JSON.parse(queryStr);
+    if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
+      queryStr.isOnline = queryStr.isOnline === "true";
+    }
+
     let query;
     if (keyword !== "" && keyword) {
       const queryObj = Object.assign(
@@ -150,11 +155,14 @@ const getFilterEvents = asyncHandler(async (req, res) => {
             { location: { $regex: keyword, $options: "i" } },
           ],
         },
-        JSON.parse(queryStr)
+        queryStr
       );
       query = eventModel.find(queryObj).populate("creator");
     } else {
-      query = eventModel.find(JSON.parse(queryStr)).populate("creator");
+      console.log(queryStr);
+      query = eventModel.find(queryStr).populate("creator");
+    }
+    if (req.query.isOnline) {
     }
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
@@ -162,15 +170,24 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     } else {
       query = query.sort("-createdAt");
     }
+    const countryQuery = query.model.countDocuments(query.getFilter());
+    const totalCount = await countryQuery.exec();
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
     const skip = (Number(page) - 1) * limit;
     query = query.skip(skip).limit(limit).exec();
+
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
+    console.log(totalCount);
     return res
       .status(200)
-      .json({ status: 200, data: events, message: eventError.ERR_2 });
+      .json({
+        status: 200,
+        data: events,
+        totalCount: totalCount,
+        message: eventError.ERR_2,
+      });
   } catch (err) {
     throw Error(err);
   }
