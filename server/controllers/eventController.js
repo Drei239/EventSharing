@@ -48,32 +48,52 @@ function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(async (req, res) => {
-
-    const { title, description, banner, imageList,
-        category, isOnline, fee, location,
-        timeEndSignup, timeBegin, timeEnd, creator,
-        limitUser, reviews } = req.body;
-    // Sau khi gán userInfo = req.user 
-    // const creator = req.user.id;
-    // loại bỏ giá trị creator ở req.body
-    if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
-        try {
-            const newEvent = await eventService.createNewEvent(
-                title, description, banner, imageList,
-                category, isOnline, fee, location,
-                timeEndSignup, timeBegin, timeEnd, creator,
-                limitUser, reviews);
-            return res.status(200).json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
-        } catch (error) {
-            return res.status(400).json({ status: 400, message: eventError.ERR_1 });
-        }
-    } else {
-      res.status(401);
-      throw new Error("CREATE NEW EVENT FAILED!");
+  const {
+    title,
+    description,
+    banner,
+    imageList,
+    category,
+    isOnline,
+    fee,
+    location,
+    timeEndSignup,
+    timeBegin,
+    timeEnd,
+    creator,
+    limitUser,
+    reviews,
+  } = req.body;
+  // Sau khi gán userInfo = req.user
+  // const creator = req.user.id;
+  // loại bỏ giá trị creator ở req.body
+  if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+    try {
+      const newEvent = await eventService.createNewEvent(
+        title,
+        description,
+        banner,
+        imageList,
+        category,
+        isOnline,
+        fee,
+        location,
+        timeEndSignup,
+        timeBegin,
+        timeEnd,
+        creator,
+        limitUser,
+        reviews
+      );
+      return res
+        .status(200)
+        .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
+    } catch (error) {
+      return res.status(400).json({ status: 400, message: eventError.ERR_1 });
     }
   } else {
-    console.log("KIỂM TRA LẠI THỜI GIAN NHẬP VÀO!");
-    throw new Error("KIỂM TRA LẠI THỜI GIAN NHẬP VÀO!");
+    res.status(401);
+    throw new Error("CREATE NEW EVENT FAILED!");
   }
 });
 
@@ -152,18 +172,15 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     const skip = (Number(page) - 1) * limit;
     query = query.skip(skip).limit(limit).exec();
 
-
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
     console.log(totalCount);
-    return res
-      .status(200)
-      .json({
-        status: 200,
-        data: events,
-        totalCount: totalCount,
-        message: eventError.ERR_2,
-      });
+    return res.status(200).json({
+      status: 200,
+      data: events,
+      totalCount: totalCount,
+      message: eventError.ERR_2,
+    });
   } catch (err) {
     throw Error(err);
   }
@@ -241,35 +258,36 @@ const updateEvent = asyncHandler(async (req, res) => {
 
 //6.FIND EVENT BY TITLE - USE PARAMS
 const getEventByTitle = asyncHandler(async (req, res) => {
-
-    const keyword = req.params.keyword;
-    const searchQuery = { title: { $regex: keyword } };
-    const searchedEvent = await eventModel.find({ ...searchQuery });
-    if (searchedEvent) {
-        res.status(200).json(searchedEvent);
-    } else {
-        res.status(401);
-        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
-    }
+  const keyword = req.params.keyword;
+  const searchQuery = { title: { $regex: keyword } };
+  const searchedEvent = await eventModel.find({ ...searchQuery });
+  if (searchedEvent) {
+    res.status(200).json(searchedEvent);
+  } else {
+    res.status(401);
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+  }
 });
 
 //7.GET EVENTS BY QUERY - USE QUERY
 const getQueryEvents = asyncHandler(async (req, res) => {
-    const reqIsOnline = req.query.isOnline;
-    const searchQuery = reqIsOnline ? { isOnline: reqIsOnline } : {};
-    const searchedEvent = await eventModel.find({ ...searchQuery });
-    if (searchedEvent) {
-        res.status(200).json(searchedEvent);
-    } else {
-        res.status(401);
-        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
-    }
+  const reqIsOnline = req.query.isOnline;
+  const searchQuery = reqIsOnline ? { isOnline: reqIsOnline } : {};
+  const searchedEvent = await eventModel.find({ ...searchQuery });
+  if (searchedEvent) {
+    res.status(200).json(searchedEvent);
+  } else {
+    res.status(401);
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+  }
 });
 
 module.exports = {
-    createNewEvent, getPublicEvents,
-    getEventById, getEventByCreator,
-    updateEvent, getEventByTitle,
-    getQueryEvents
-}
-
+  createNewEvent,
+  getPublicEvents,
+  getEventById,
+  getEventByCreator,
+  updateEvent,
+  getEventByTitle,
+  getQueryEvents,
+};
