@@ -25,7 +25,7 @@ const CreateEventPage = () => {
   const [category, setCategory] = useState(new Set(['nhạc sống']));
   const [banner, setBanner] = useState();
   const [imageEvent, setImageEvent] = useState([]);
-  const [isFree, setIsFree] = useState(true);
+  const [isFree, setIsFree] = useState(false);
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
   const [ward, setWard] = useState('');
@@ -76,31 +76,58 @@ const CreateEventPage = () => {
     'Chỉ được phép nhập số'
   );
 
-  // Kiểm tra thời gian bắt đầu sự kiện luôn luôn trước thời gian kết thúc
+  // Kiểm tra ngày bắt đầu sự kiện luôn luôn trước ngày kết thúc
   const checkDateStartEnd = useValidateDatetime(
     inputValue.dateEnd,
-    inputValue.timeEnd,
     inputValue.dateStart,
-    inputValue.timeStart,
+    true,
     'Thời gian bắt đầu phải trước thời gian kết thúc'
   );
 
-  // Kiểm tra thời gian kết thúc sự kiện luôn luôn sau thời gian bắt đầu
+  // Kiểm tra ngày kết thúc sự kiện luôn luôn sau ngày bắt đầu
   const checkDateEndStart = useValidateDatetime(
     inputValue.dateEnd,
-    inputValue.timeEnd,
     inputValue.dateStart,
-    inputValue.timeStart,
+    true,
     'Thời gian kết thúc phải sau thời gian bắt đầu'
   );
 
-  // Kiểm tra thời gian ngưng đăng ký phải trước ngày bắt đầu
+  // Kiểm tra giờ bắt đầu sự kiện luôn luôn trước giờ kết thúc
+  const checkTimeStartEnd = useValidateDatetime(
+    inputValue.timeEnd,
+    inputValue.timeStart,
+    false,
+    'Thời gian bắt đầu phải trước thời gian kết thúc',
+    inputValue.dateEnd,
+    inputValue.dateStart
+  );
+
+  // Kiểm tra giờ kết thúc sự kiện luôn luôn sau giờ bắt đầu
+  const checkTimeEndStart = useValidateDatetime(
+    inputValue.timeEnd,
+    inputValue.timeStart,
+    false,
+    'Thời gian kết thúc phải sau thời gian bắt đầu',
+    inputValue.dateEnd,
+    inputValue.dateStart
+  );
+
+  // Kiểm tra ngày ngưng đăng ký phải trước ngày bắt đầu
   const checkDateRegisterStart = useValidateDatetime(
     inputValue.dateStart,
-    inputValue.timeStart,
     inputValue.dateRegisterEnd,
-    inputValue.timeRegisterEnd,
+    true,
     'Thời gian dừng đăng ký phải trước thời gian bắt đầu'
+  );
+
+  // Kiểm tra giờ ngưng đăng ký phải trước giờ bắt đầu
+  const checkTimeRegisterStart = useValidateDatetime(
+    inputValue.timeStart,
+    inputValue.timeRegisterEnd,
+    false,
+    'Thời gian dừng đăng ký phải trước thời gian bắt đầu',
+    inputValue.dateStart,
+    inputValue.dateRegisterEnd
   );
 
   // Corvert thời gian thành định dạng iso string
@@ -177,7 +204,9 @@ const CreateEventPage = () => {
         inputValue.dateRegisterEnd,
         inputValue.timeRegisterEnd
       );
+
       notifySuccess();
+
       console.log({
         title: inputValue.title,
         description: inputValue.description,
@@ -190,6 +219,32 @@ const CreateEventPage = () => {
         timeBegin,
         timeEnd: timeEndEvent,
         timeEndSignup,
+      });
+
+      // Reset value
+      if (editorRef.current) {
+        editorRef.current.setContent('');
+      }
+      setBanner('');
+      setImageEvent([]);
+      setTypeEvent(new Set(['offline']));
+      setCategory(new Set(['nhạc sống']));
+      setCity('');
+      setDistrict('');
+      setWard('');
+      setIsFree(false);
+      setInputValue({
+        title: '',
+        fee: '',
+        quantityTicket: '',
+        description: '',
+        address: '',
+        dateStart: '',
+        dateEnd: '',
+        dateRegisterEnd: '',
+        timeStart: '',
+        timeEnd: '',
+        timeRegisterEnd: '',
       });
     } else {
       notifyError();
@@ -324,7 +379,7 @@ const CreateEventPage = () => {
         )}
 
         <div className="create-event__buyfee">
-          <span>Sự kiện bán vé</span>
+          <span>Sự kiện miễn phí</span>
           <Switch size="xs" onChange={() => setIsFree(!isFree)} />
         </div>
 
@@ -521,6 +576,7 @@ const CreateEventPage = () => {
               aria-label="ngày bắt đầu"
               type="date"
               name="dateStart"
+              value={inputValue.dateStart}
               status={checkDateStartEnd.color}
               onChange={handleOnchange}
             />
@@ -528,18 +584,19 @@ const CreateEventPage = () => {
               aria-label="giờ bắt đầu"
               type="time"
               name="timeStart"
-              status={checkDateStartEnd.color}
+              value={inputValue.timeStart}
+              status={checkTimeStartEnd.color}
               onChange={handleOnchange}
             />
             <p
               style={
-                checkDateStartEnd.color
+                checkDateStartEnd.color || checkTimeStartEnd.color
                   ? { color: '#F31260' }
                   : { color: 'transparent' }
               }
               className="error-message"
             >
-              {checkDateStartEnd.text}
+              {checkDateStartEnd.text || checkTimeStartEnd.text}
             </p>
           </div>
           <div className="create-event__time">
@@ -548,6 +605,7 @@ const CreateEventPage = () => {
               aria-label="ngày kết thúc"
               type="date"
               name="dateEnd"
+              value={inputValue.dateEnd}
               status={checkDateEndStart.color}
               onChange={handleOnchange}
             />
@@ -555,18 +613,19 @@ const CreateEventPage = () => {
               aria-label="giờ kết thúc"
               type="time"
               name="timeEnd"
-              status={checkDateEndStart.color}
+              value={inputValue.timeEnd}
+              status={checkTimeEndStart.color}
               onChange={handleOnchange}
             />
             <p
               style={
-                checkDateEndStart.color
+                checkDateEndStart.color || checkTimeEndStart.color
                   ? { color: '#F31260' }
                   : { color: 'transparent' }
               }
               className="error-message"
             >
-              {checkDateEndStart.text}
+              {checkDateEndStart.text || checkTimeEndStart.text}
             </p>
           </div>
           <div className="create-event__time">
@@ -575,6 +634,7 @@ const CreateEventPage = () => {
               aria-label="ngày kết thúc đăng ký"
               type="date"
               name="dateRegisterEnd"
+              value={inputValue.dateRegisterEnd}
               status={checkDateRegisterStart.color}
               onChange={handleOnchange}
             />
@@ -582,18 +642,19 @@ const CreateEventPage = () => {
               aria-label="giờ kết thúc đăng ký"
               type="time"
               name="timeRegisterEnd"
-              status={checkDateRegisterStart.color}
+              value={inputValue.timeRegisterEnd}
+              status={checkTimeRegisterStart.color}
               onChange={handleOnchange}
             />
             <p
               style={
-                checkDateRegisterStart.color
+                checkDateRegisterStart.color || checkTimeRegisterStart.color
                   ? { color: '#F31260' }
                   : { color: 'transparent' }
               }
               className="error-message"
             >
-              {checkDateRegisterStart.text}
+              {checkDateRegisterStart.text || checkTimeRegisterStart.text}
             </p>
           </div>
         </section>

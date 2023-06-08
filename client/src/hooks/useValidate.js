@@ -45,31 +45,34 @@ export const useValidateAuthPassword = (password, authPassword, message) => {
 //   }, [value]);
 // };
 
-export const useValidateDatetime = (date1, time1, date2, time2, message) => {
+// Valite thời gian trước sau (dateOrTime: true - date, false - time)
+export const useValidateDatetime = (
+  datetime_1,
+  datetime_2,
+  dateOrTime,
+  message,
+  date_1,
+  date_2
+) => {
   return useMemo(() => {
-    if (!(date1 && date2 && time1 && time2))
+    if (!(datetime_1 && datetime_2))
       return { text: '', color: '', isValid: false };
 
-    let booleans = false;
-    if (date1 > date2) {
-      booleans = true;
+    let isValid = false;
+    if (dateOrTime) {
+      if (datetime_1 >= datetime_2) isValid = true;
     } else {
-      if (date1 === date2) {
-        booleans = true;
-      }
-      if (time1 && time2) {
-        if (time1 > time2) {
-          booleans = true;
-        } else {
-          booleans = false;
-        }
+      if (date_1 === date_2) {
+        if (datetime_1 > datetime_2) isValid = true;
+      } else {
+        isValid = true;
       }
     }
 
     return {
-      text: booleans ? '' : message,
-      color: booleans ? '' : 'error',
-      isValid: true,
+      text: isValid ? '' : message,
+      color: isValid ? '' : 'error',
+      isValid,
     };
-  }, [date1, date2, time1, time2]);
+  }, [datetime_1, datetime_2, date_1, date_2]);
 };
