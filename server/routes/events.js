@@ -9,6 +9,7 @@ const {
   getEventByTitle,
   getQueryEvents,
   getFilterEvents,
+  highlightEvents,
 } = require("../controllers/eventController");
 //1.CREATE NEW EVENT
 router.post("/create", createNewEvent);
@@ -19,7 +20,7 @@ router.get("/all", getPublicEvents);
 router.get("/getFilter", getFilterEvents);
 //3.GET EVENT BY ID
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM CHI TIẾT CÁC THÔNG TIN VỀ 1 SỰ KIỆN
-router.get("/:id", getEventById);
+router.get("/get/:id", getEventById);
 
 //4.GET EVENT BY CREATOR
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM THÔNG TIN VỀ CÁC SỰ KIỆN CỦA 1 NGƯỜI TCSK
@@ -38,6 +39,8 @@ router.put("/update/:id", updateEvent);
 router.get("/search/:keyword", getEventByTitle);
 
 //7.GET EVENTS BY QUERY
-router.get("/", getQueryEvents);
+router.get("/dasdas", getQueryEvents);
+
+router.get("/highlight", highlightEvents);
 
 module.exports = router;

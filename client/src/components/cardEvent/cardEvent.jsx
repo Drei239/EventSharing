@@ -10,7 +10,7 @@ dayjs.locale(locale);
 const card = ({
   title,
   banner,
-  categories,
+  category,
   location,
   timeBegin,
   timeEnd,
@@ -52,14 +52,9 @@ const card = ({
         <div className="cardEvent-info1">
           <div className="cardEvent-info1-categories">
             {" "}
-            {categories &&
-              categories.map((item) => {
-                return (
-                  <div key={item._id}>
-                    <div className="cardEvent-info1-category">{item}</div>
-                  </div>
-                );
-              })}
+            <div className="cardEvent-info1-category">
+              {category.categoryName}
+            </div>
           </div>
 
           <div className="card-calendar">

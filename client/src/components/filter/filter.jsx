@@ -15,6 +15,7 @@ import { RiVidiconLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { handleChangeEvents } from "../../features/events/eventSlice";
+import { getAllCategory } from "../../features/category/categorySlice";
 import {
   CategoryFilter,
   feeFilter,
@@ -41,6 +42,7 @@ const CustomControl4 = createCustomControl(<MdPriceCheck />);
 const CustomControl5 = createCustomControl(<CgSortAz />);
 const Filter = () => {
   const dispatch = useDispatch();
+  const { categories } = useSelector((state) => state.category);
   const [selectedDate, setSelectedDate] = useState({
     value: null,
     label: "Tất cả các ngày",
@@ -53,6 +55,9 @@ const Filter = () => {
     setOpenDate(false);
     dispatch(handleChangeEvents({ date: value }));
   };
+  const newCategories = categories.reduce((total, item) => {
+    return [...total, { value: item._id, label: item.categoryName }];
+  }, []);
   const handleChangeDate = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -93,6 +98,9 @@ const Filter = () => {
     dispatch(handleChangeEvents({ sort: selectedOption.value }));
   };
 
+  useEffect(() => {
+    dispatch(getAllCategory());
+  }, []);
   return (
     <div className="filter">
       <div className="categories">
@@ -106,9 +114,10 @@ const Filter = () => {
         </div>
         <div className="select">
           <CustomSelect
-            options={CategoryFilter}
-            defaultValue={CategoryFilter[0]}
+            options={newCategories}
+            defaultValue={newCategories[0]}
             components={{ Control: CustomControl2 }}
+            onChange={handleChangeSelectCategory}
           />
         </div>
         <div className="select">
