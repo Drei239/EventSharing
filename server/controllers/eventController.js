@@ -102,7 +102,7 @@ const createNewEvent = asyncHandler(async (req, res) => {
   }
 });
 
-//2.GET ALL EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
+//2.GET ALL PUBLIC EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
 //"$and"[{ "status": "Draft" }, { "status": "Public" }]
 //DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
@@ -176,7 +176,6 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     const page = req.query.page || 1;
     const skip = (Number(page) - 1) * limit;
     query = query.skip(skip).limit(limit).exec();
-
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
     console.log(totalCount);
@@ -262,7 +261,7 @@ const updateEvent = asyncHandler(async (req, res) => {
 //     }
 // });
 
-//6.FIND EVENT BY TITLE
+//6.FIND EVENT BY TITLE - USE PARAMS
 const getEventByTitle = asyncHandler(async (req, res) => {
   const keyword = req.query.keyword;
   const searchQuery = keyword ? { title: { $regex: keyword } } : {};
@@ -284,3 +283,33 @@ module.exports = {
   getEventByTitle,
   getFilterEvents,
 };
+    const keyword = req.params.keyword;
+    const searchQuery = { title: { $regex: keyword } };
+    const searchedEvent = await eventModel.find({ ...searchQuery });
+    if (searchedEvent) {
+        res.status(200).json(searchedEvent);
+    } else {
+        res.status(401);
+        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    }
+});
+
+//7.GET EVENTS BY QUERY - USE QUERY
+const getQueryEvents = asyncHandler(async (req, res) => {
+    const reqIsOnline = req.query.isOnline;
+    const searchQuery = reqIsOnline ? { isOnline: reqIsOnline } : {};
+    const searchedEvent = await eventModel.find({ ...searchQuery });
+    if (searchedEvent) {
+        res.status(200).json(searchedEvent);
+    } else {
+        res.status(401);
+        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    }
+});
+
+module.exports = {
+    createNewEvent, getPublicEvents,
+    getEventById, getEventByCreator,
+    updateEvent, getEventByTitle,
+    getQueryEvents
+}

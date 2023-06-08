@@ -2,7 +2,7 @@ let express = require("express");
 let router = express.Router();
 const { createNewEvent, getPublicEvents,
     getEventById, getEventByCreator,
-    updateEvent, getEventByTitle,getFilterEvents } = require("../controllers/eventController");
+    updateEvent, getEventByTitle,getFilterEvents,getQueryEvents } = require("../controllers/eventController");
 
 //1.CREATE NEW EVENT
 router.post("/create", createNewEvent);
@@ -28,6 +28,10 @@ router.get("/user/:id", getEventByCreator);
 router.put("/update/:id", updateEvent);
 
 //6.FIND EVENT BY TITLE
-// router.get("/", getEventByTitle);
+router.get("/search/:keyword", getEventByTitle);
+
+//7.GET EVENTS BY QUERY
+router.get("/", getQueryEvents);
+
 
 module.exports = router;
