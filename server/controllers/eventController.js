@@ -48,50 +48,25 @@ function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(async (req, res) => {
-  const {
-    title,
-    description,
-    banner,
-    imageList,
-    category,
-    type,
-    fee,
-    location,
-    timeEndSignup,
-    timeBegin,
-    timeEnd,
-    creator,
-    limitUser,
-    reviews,
-  } = req.body;
-  // Sau khi gán userInfo = req.user
-  // const creator = req.user.id;
-  // loại bỏ giá trị creator ở req.body
-  if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
-    const newEvent = await eventModel.create({
-      title,
-      description,
-      banner,
-      imageList,
-      category,
-      type,
-      fee,
-      location,
-      timeEndSignup,
-      timeBegin,
-      timeEnd,
-      creator,
-      limitUser,
-      reviews,
-    });
-    if (newEvent) {
-      res.status(200).json(newEvent);
-      // console.log(
-      //     newEvent.timeEndSignup.toLocaleString('en-US', {
-      //         timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-      //     }),
-      // );
-      // console.log(newEvent.timeEndSignup);
+
+    const { title, description, banner, imageList,
+        category, isOnline, fee, location,
+        timeEndSignup, timeBegin, timeEnd, creator,
+        limitUser, reviews } = req.body;
+    // Sau khi gán userInfo = req.user 
+    // const creator = req.user.id;
+    // loại bỏ giá trị creator ở req.body
+    if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+        try {
+            const newEvent = await eventService.createNewEvent(
+                title, description, banner, imageList,
+                category, isOnline, fee, location,
+                timeEndSignup, timeBegin, timeEnd, creator,
+                limitUser, reviews);
+            return res.status(200).json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
+        } catch (error) {
+            return res.status(400).json({ status: 400, message: eventError.ERR_1 });
+        }
     } else {
       res.status(401);
       throw new Error("CREATE NEW EVENT FAILED!");
@@ -102,7 +77,7 @@ const createNewEvent = asyncHandler(async (req, res) => {
   }
 });
 
-//2.GET ALL EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
+//2.GET ALL PUBLIC EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
 //"$and"[{ "status": "Draft" }, { "status": "Public" }]
 //DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
@@ -177,6 +152,7 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     const skip = (Number(page) - 1) * limit;
     query = query.skip(skip).limit(limit).exec();
 
+
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
     console.log(totalCount);
@@ -203,6 +179,7 @@ const highlightEvents = asyncHandler(async (req, res) => {
     throw Error(err);
   }
 });
+
 //3.GET INFO EVENT BY ID
 const getEventById = asyncHandler(async (req, res) => {
   const event = await eventModel.find({ _id: req.params.id });
@@ -262,25 +239,37 @@ const updateEvent = asyncHandler(async (req, res) => {
 //     }
 // });
 
-//6.FIND EVENT BY TITLE
+//6.FIND EVENT BY TITLE - USE PARAMS
 const getEventByTitle = asyncHandler(async (req, res) => {
-  const keyword = req.query.keyword;
-  const searchQuery = keyword ? { title: { $regex: keyword } } : {};
-  const searchedEvent = await eventModel.find({ ...searchQuery });
-  if (searchedEvent) {
-    res.status(200).json(searchedEvent);
-  } else {
-    res.status(401);
-    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
-  }
+
+    const keyword = req.params.keyword;
+    const searchQuery = { title: { $regex: keyword } };
+    const searchedEvent = await eventModel.find({ ...searchQuery });
+    if (searchedEvent) {
+        res.status(200).json(searchedEvent);
+    } else {
+        res.status(401);
+        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    }
+});
+
+//7.GET EVENTS BY QUERY - USE QUERY
+const getQueryEvents = asyncHandler(async (req, res) => {
+    const reqIsOnline = req.query.isOnline;
+    const searchQuery = reqIsOnline ? { isOnline: reqIsOnline } : {};
+    const searchedEvent = await eventModel.find({ ...searchQuery });
+    if (searchedEvent) {
+        res.status(200).json(searchedEvent);
+    } else {
+        res.status(401);
+        throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    }
 });
 
 module.exports = {
-  createNewEvent,
-  getPublicEvents,
-  getEventById,
-  getEventByCreator,
-  updateEvent,
-  getEventByTitle,
-  getFilterEvents,
-};
+    createNewEvent, getPublicEvents,
+    getEventById, getEventByCreator,
+    updateEvent, getEventByTitle,
+    getQueryEvents
+}
+
