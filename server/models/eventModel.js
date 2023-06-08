@@ -15,9 +15,9 @@ const eventSchema = mongoose.Schema({
     //Mảng image có thể null nhưng giá trị khởi tạo trên client không thể truyền null vào
     //Mỗi giá trị trong mảng tương đương với 1 đường dẫn hình ảnh
     imageList: [{ type: String, required: true }],
-    category: [{ type: mongoose.Schema.Types.ObjectId, required: true, ref: "Category" }],
-    //Type: True = Offline, False = Online?
-    type: { type: Boolean, required: true },
+    category: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "Category" },
+    //Type: True = Online, False = Offline
+    isOnline: { type: Boolean, required: true },
     fee: { type: Number, required: true, default: 0 },
     location: { type: String, required: true },
     timeEndSignup: { type: Date, required: true },

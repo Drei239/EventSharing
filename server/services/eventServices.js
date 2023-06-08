@@ -3,13 +3,31 @@ const eventModel = require("../models/eventModel");
 const eventValidators = require("../validators/eventValidators");
 const { eventError, eventSucc } = require("../validators/responsiveMessages");
 
+//1.CREATE NEW EVENT
+const createNewEvent = asyncHandler(async (
+    title, description, banner, imageList,
+    category, isOnline, fee, location,
+    timeEndSignup, timeBegin, timeEnd, creator,
+    limitUser, reviews) => {
+    const newEvent = await eventModel.create({
+        title, description, banner, imageList,
+        category, isOnline, fee, location,
+        timeEndSignup, timeBegin, timeEnd, creator,
+        limitUser, reviews
+    });
+    if (newEvent) {
+        return newEvent;
+    } else {
+        throw Error(eventError.ERR_1);
+    }
+});
 
 //2.GET ALL EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
 //"$and"[{ "status": "Draft" }, { "status": "Public" }]
 //DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
 const getPublicEvents = asyncHandler(async (req, res) => {
-    const events = await eventModel.find({ "status": "Public" });
+    const events = await eventModel.find({ "status": "Public" }).populate("category").populate("creator");
     if (events && events.length > 0) {
         return events;
     } else {
@@ -32,4 +50,4 @@ const updateEvent = asyncHandler(async (findById, title, description) => {
     }
 });
 
-module.exports = { getPublicEvents, updateEvent };
+module.exports = { createNewEvent, getPublicEvents, updateEvent };
