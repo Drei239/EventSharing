@@ -41,7 +41,7 @@ const card = ({
   return (
     <div className="card">
       <div className="hot-event"></div>
-      <img src={banner} alt="" className="card-img" />
+      <img src={banner} alt="" className="card-img" loading="lazy" />
       <div className="content-card">
         <span className="card-title" title={title}>
           {title}
@@ -53,7 +53,7 @@ const card = ({
           <div className="cardEvent-info1-categories">
             {' '}
             <div className="cardEvent-info1-category">
-              {category.categoryName}
+              {category?.categoryName}
             </div>
           </div>
 
