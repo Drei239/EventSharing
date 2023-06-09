@@ -4,7 +4,7 @@ import { Button, Input } from '@nextui-org/react';
 import {
   useValidateAuthPassword,
   useValidateRegex,
-} from '../../hooks/useValidate';
+} from '../../hooks/validateHooks';
 import { emailRegex, passwordRegex, nameRegex } from '../../constants/regex';
 import Login from './LoginComponent';
 import './LoginRegisterComponent.css';

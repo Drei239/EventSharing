@@ -34,17 +34,6 @@ export const useValidateAuthPassword = (password, authPassword, message) => {
   }, [authPassword]);
 };
 
-// export const useValidateLength = (value, length, message) => {
-//   return useMemo(() => {
-//     if (!value) return { text: '', color: '', isValid: false };
-//     return {
-//       text: value.length <= length ? '' : message,
-//       color: value.length <= length ? '' : true,
-//       isValid: true,
-//     };
-//   }, [value]);
-// };
-
 // Valite thời gian trước sau (dateOrTime: true - date, false - time)
 export const useValidateDatetime = (
   datetime_1,

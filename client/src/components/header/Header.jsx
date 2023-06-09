@@ -1,46 +1,63 @@
-import React from 'react';
 import './Header.css';
 import { Input } from '@nextui-org/react';
-import { Link } from 'react-router-dom';
+import React from 'react';
+import { useLocation, useNavigate, Link } from 'react-router-dom';
 
 const Header = () => {
+  const navigate = useNavigate();
+
+  const location = useLocation();
+  const handleSubmit = (e) => {
+    if (e.keyCode === 13) {
+      navigate(`/events?search=${e.target.value}`, { search: e.target.value });
+    }
+  };
   return (
     <div className="wrapper">
-      <header>
+      <header
+        className={location.pathname === '/login-register' ? 'active' : ''}
+      >
         <div className="header__left-block">
-          <a className="logo" href="" alt="">
+          <Link className="logo" to="/" alt="">
             <img src={'./images/logo.png'} />
-          </a>
+          </Link>
           <div className="header__search">
-            <Input width="275px" placeholder="Search" />
+            <Input
+              width="290px"
+              placeholder="Search"
+              onKeyDown={handleSubmit}
+            />
           </div>
           <div className="header__category">
             <div className="dropdown">
-              <a className="dropdown__catergory" href="" alt="">
-                Sự kiện
-              </a>
+              <Link href="/" alt="">
+                <div className="dropdown__catergory">Sự kiện</div>
+              </Link>
               <div className="dropdown__content">
-                <a href="#">Link 1</a>
-                <a href="#">Link 2</a>
-                <a href="#">Link 3</a>
+                <Link href="/">
+                  <div className="category__item">Link 1</div>
+                </Link>
+                <Link href="/">
+                  <div className="category__item">Link 2</div>
+                </Link>
+                <Link href="/">
+                  <div className="category__item">Link 3</div>
+                </Link>
               </div>
             </div>
           </div>
         </div>
         <div className="header__right-block">
           <div className="create__event">
-            <Link className="header_btn header__btn-create" to="/create-event">
-              Tạo sự kiện
+            <Link to="/create-event" alt="">
+              <div className="header_btn header__btn-create">Tạo sự kiện</div>
             </Link>
             <img src="" alt="" />
           </div>
           <div className="header__log">
-            <a
-              className="header_btn"
-              href="http://localhost:3001/login-register"
-            >
-              Đăng nhập | Đăng ký
-            </a>
+            <Link to="/login-register" alt="">
+              <div className="header_btn">Đăng nhập | Đăng ký</div>
+            </Link>
           </div>
         </div>
       </header>

@@ -1,9 +1,14 @@
-import React, { useRef, useState } from 'react';
-import { useValidateDatetime, useValidateRegex } from '../../hooks/useValidate';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  useValidateDatetime,
+  useValidateRegex,
+} from '../../hooks/validateHooks';
 import { titleRegex } from '../../constants/regex';
-import { Button, Dropdown, Input, Switch, Textarea } from '@nextui-org/react';
+import customFetch from '../../utils/axios.config';
+import { Button, Dropdown, Input, Loading, Switch } from '@nextui-org/react';
 import { ToastContainer, toast } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
+import imageCompression from 'browser-image-compression';
 import provinces from '../../data/provinces.json';
 import './CreateEventPage.css';
 
@@ -21,14 +26,42 @@ const CreateEventPage = () => {
     timeEnd: '',
     timeRegisterEnd: '',
   });
+  const [isLoadingImg, setIsLoadingImg] = useState(false);
+  const [categoryList, setCategoryList] = useState([]);
   const [typeEvent, setTypeEvent] = useState(new Set(['offline']));
-  const [category, setCategory] = useState(new Set(['nhạc sống']));
+  const [category, setCategory] = useState('');
   const [banner, setBanner] = useState();
   const [imageEvent, setImageEvent] = useState([]);
   const [isFree, setIsFree] = useState(false);
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
   const [ward, setWard] = useState('');
+
+  useEffect(() => {
+    customFetch
+      .get('/category/all')
+      .then((response) => {
+        setCategoryList(response.data.data);
+      })
+      .catch((error) => {
+        console.log(error.response);
+      });
+  }, []);
+
+  // Compress lại hình ảnh trước khi upload
+  const handleImageCompress = async (img) => {
+    const option = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1920,
+    };
+
+    try {
+      const compressedFile = await imageCompression(img, option);
+      return compressedFile;
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   // RichTextEditor
   const editorRef = useRef(null);
@@ -156,7 +189,7 @@ const CreateEventPage = () => {
   };
 
   // Xử lý việc nhấn nút tạo
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let isLocation = false;
     let feeTicket;
@@ -181,6 +214,7 @@ const CreateEventPage = () => {
       checkDateEndStart.isValid &&
       checkDateRegisterStart.isValid &&
       inputValue.description &&
+      category &&
       banner.length > 0 &&
       imageEvent.length > 0 &&
       isLocation;
@@ -204,47 +238,85 @@ const CreateEventPage = () => {
         inputValue.dateRegisterEnd,
         inputValue.timeRegisterEnd
       );
+      const { _id } = categoryList?.find(
+        (item) =>
+          item.categoryName.toLowerCase() === [...category][0].toLowerCase()
+      );
 
-      notifySuccess();
+      const data = {
+        title: inputValue.title,
+        description: inputValue.description,
+        banner: banner,
+        imageList: imageEvent,
+        category: _id,
+        isOnline: [...typeEvent][0].toLowerCase() === 'online',
+        fee: Number(inputValue.fee),
+        location,
+        timeBegin,
+        timeEnd: timeEndEvent,
+        timeEndSignup,
+        limitUser: Number(inputValue.quantityTicket),
+        creator: '6464f337c4fcda89dc23cf31',
+        reviews: [],
+      };
+
+      try {
+        const response = await customFetch({
+          method: 'POST',
+          url: '/events/create',
+          data: JSON.stringify(data),
+        });
+
+        console.log(response);
+
+        if (response.status === 200) {
+          notifySuccess();
+
+          // Reset value
+          if (editorRef.current) {
+            editorRef.current.setContent('');
+          }
+          setBanner('');
+          setImageEvent([]);
+          setTypeEvent(new Set(['offline']));
+          setCategory('');
+          setCity('');
+          setDistrict('');
+          setWard('');
+          setIsFree(false);
+          setInputValue({
+            title: '',
+            fee: '',
+            quantityTicket: '',
+            description: '',
+            address: '',
+            dateStart: '',
+            dateEnd: '',
+            dateRegisterEnd: '',
+            timeStart: '',
+            timeEnd: '',
+            timeRegisterEnd: '',
+          });
+        }
+      } catch (error) {
+        console.log(error.response);
+        notifyError();
+      }
 
       console.log({
         title: inputValue.title,
         description: inputValue.description,
         banner: banner,
         imageList: imageEvent,
-        category: [...category][0],
-        type: [...typeEvent][0].toLowerCase() === 'offline',
-        fee: inputValue.fee,
+        category: _id,
+        isOnline: [...typeEvent][0].toLowerCase() === 'online',
+        fee: Number(inputValue.fee),
         location,
         timeBegin,
         timeEnd: timeEndEvent,
         timeEndSignup,
-      });
-
-      // Reset value
-      if (editorRef.current) {
-        editorRef.current.setContent('');
-      }
-      setBanner('');
-      setImageEvent([]);
-      setTypeEvent(new Set(['offline']));
-      setCategory(new Set(['nhạc sống']));
-      setCity('');
-      setDistrict('');
-      setWard('');
-      setIsFree(false);
-      setInputValue({
-        title: '',
-        fee: '',
-        quantityTicket: '',
-        description: '',
-        address: '',
-        dateStart: '',
-        dateEnd: '',
-        dateRegisterEnd: '',
-        timeStart: '',
-        timeEnd: '',
-        timeRegisterEnd: '',
+        limitUser: Number(inputValue.quantityTicket),
+        creator: '6464f32bc4fcda89dc23cf30',
       });
     } else {
       notifyError();
@@ -284,11 +356,15 @@ const CreateEventPage = () => {
             name="banner"
             className="file-input"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               const reader = new FileReader();
-              reader.onload = () => setBanner(reader.result);
+
+              reader.onload = () => {
+                setBanner(reader.result);
+              };
               if (e.target.files[0]) {
-                reader.readAsDataURL(e.target.files[0]);
+                const img = await handleImageCompress(e.target.files[0]);
+                reader.readAsDataURL(img);
               }
             }}
           />
@@ -332,12 +408,18 @@ const CreateEventPage = () => {
             name="banner"
             className="file-input"
             accept="image/*"
-            onChange={(e) => {
+            onChange={async (e) => {
               const reader = new FileReader();
-              reader.onload = () =>
+              setIsLoadingImg(true);
+
+              reader.onload = () => {
                 setImageEvent([...imageEvent, reader.result]);
+                setIsLoadingImg(false);
+              };
+
               if (e.target.files[0]) {
-                reader.readAsDataURL(e.target.files[0]);
+                const img = await handleImageCompress(e.target.files[0]);
+                reader.readAsDataURL(img);
               }
             }}
           />
@@ -380,7 +462,11 @@ const CreateEventPage = () => {
 
         <div className="create-event__buyfee">
           <span>Sự kiện miễn phí</span>
-          <Switch size="xs" onChange={() => setIsFree(!isFree)} />
+          <Switch
+            size="xs"
+            checked={isFree}
+            onChange={() => setIsFree(!isFree)}
+          />
         </div>
 
         <div className="create-event__type-fee">
@@ -431,7 +517,7 @@ const CreateEventPage = () => {
             <span>Thể loại</span>
             <Dropdown>
               <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-                {category}
+                {category || 'Hãy chọn'}
               </Dropdown.Button>
               <Dropdown.Menu
                 aria-label="Thể loại"
@@ -439,14 +525,11 @@ const CreateEventPage = () => {
                 selectionMode="single"
                 onSelectionChange={setCategory}
               >
-                <Dropdown.Item key="nhạc sống">Nhạc sống</Dropdown.Item>
-                <Dropdown.Item key="sân khấu">Sân khấu</Dropdown.Item>
-                <Dropdown.Item key="nghệ thuật">Nghệ thuật</Dropdown.Item>
-                <Dropdown.Item key="thể thao">Thể thao</Dropdown.Item>
-                <Dropdown.Item key="tham quan du lịch">
-                  Tham quan du lịch
-                </Dropdown.Item>
-                <Dropdown.Item key="hội thảo">Hội thảo</Dropdown.Item>
+                {categoryList?.map((item) => (
+                  <Dropdown.Item key={item.categoryName}>
+                    {item.categoryName}
+                  </Dropdown.Item>
+                ))}
               </Dropdown.Menu>
             </Dropdown>
           </div>
