@@ -18,6 +18,7 @@ const Login = () => {
   const notifyError = () => {
     toast.error('Email và mật khẩu không trùng khớp', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 
@@ -25,6 +26,7 @@ const Login = () => {
   const notifySuccess = () => {
     toast.success('Đăng nhặp thành công', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 

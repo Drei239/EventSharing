@@ -17,12 +17,14 @@ const Register = ({ changeLoginContent }) => {
   const notifyError = () => {
     toast.error('Đăng ký thất bại', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 
   const notifySuccess = () => {
     toast.success('Đăng ký thành công', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 
