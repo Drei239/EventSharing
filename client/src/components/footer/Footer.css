@@ -15,6 +15,10 @@ footer {
   display: none;
 }
 
+.active {
+	display: none;
+}
+
 .footer__top {
   display: flex;
   justify-content: space-between;
@@ -41,6 +45,11 @@ footer {
 .link__youtube {
   height: 50px;
   padding-top: 10px;
+}
+
+.link__youtube {
+	height: 50px;
+	padding-top: 10px;
 }
 
 .copyright {

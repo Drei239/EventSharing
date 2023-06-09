@@ -37,7 +37,6 @@ const createNewEvent = asyncHandler(
       limitUser,
       reviews,
     });
-    console.log(newEvent);
     if (newEvent) {
       return newEvent;
     } else {

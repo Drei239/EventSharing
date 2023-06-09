@@ -10,10 +10,6 @@ header {
   border-radius: 10px;
 }
 
-.active {
-  display: none;
-}
-
 .header__left-block {
   width: 450px;
   display: flex;
@@ -44,8 +40,6 @@ header {
 .header__log,
 .header_btn {
   color: #fff;
-  display: flex;
-  align-items: center;
 }
 
 .header__btn-create {
@@ -78,11 +72,6 @@ header {
   z-index: 1;
 }
 
-.category__item {
-  display: block;
-  width: 270px;
-}
-
 /* Links inside the dropdown */
 .dropdown__content a {
   color: black;
@@ -93,12 +82,10 @@ header {
 
 /* Change color of dropdown links on hover */
 .dropdown__content a:hover {
-  background-color: #00abe1;
-  width: 100%;
+  background-color: #ddd;
 }
 
 /* Show the dropdown menu on hover */
 .dropdown:hover .dropdown__content {
   display: block;
-  padding-top: 5px;
 }

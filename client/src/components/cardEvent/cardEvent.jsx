@@ -1,16 +1,16 @@
-import React from "react";
-import "./cardEvent.css";
-import dayjs from "dayjs";
-import locale from "dayjs/locale/vi";
-import { BsFillGrid3X3GapFill, BsCalendar3WeekFill } from "react-icons/bs";
-import { BiMap, BiMoney } from "react-icons/bi";
-import { GiSandsOfTime } from "react-icons/gi";
-import { GrCurrency } from "react-icons/gr";
+import React from 'react';
+import './cardEvent.css';
+import dayjs from 'dayjs';
+import locale from 'dayjs/locale/vi';
+import { BsFillGrid3X3GapFill, BsCalendar3WeekFill } from 'react-icons/bs';
+import { BiMap, BiMoney } from 'react-icons/bi';
+import { GiSandsOfTime } from 'react-icons/gi';
+import { GrCurrency } from 'react-icons/gr';
 dayjs.locale(locale);
 const card = ({
   title,
   banner,
-  categories,
+  category,
   location,
   timeBegin,
   timeEnd,
@@ -21,21 +21,21 @@ const card = ({
 }) => {
   const checkDate = (startDate, endDate) => {
     if (new Date(startDate).getTime() < new Date().getTime()) {
-      return "Sắp tới";
+      return 'Sắp tới';
     } else if (
       new Date(startDate).getTime() >
       new Date().getTime() <
       new Date().getTime() <
       new Date(endDate).getTime()
     ) {
-      return "Đang diễn ra";
+      return 'Đang diễn ra';
     } else if (
       new Date(timeEndSignup).getTime() > new Date().getTime() &&
       new Date().getTime() < new Date(endDate).getTime().getTime()
     ) {
-      return "Hết hạn đăng kí";
+      return 'Hết hạn đăng kí';
     } else {
-      return "Đã kết thúc";
+      return 'Đã kết thúc';
     }
   };
   return (
@@ -51,21 +51,16 @@ const card = ({
         </div>
         <div className="cardEvent-info1">
           <div className="cardEvent-info1-categories">
-            {" "}
-            {categories &&
-              categories.map((item) => {
-                return (
-                  <div key={item._id}>
-                    <div className="cardEvent-info1-category">{item}</div>
-                  </div>
-                );
-              })}
+            {' '}
+            <div className="cardEvent-info1-category">
+              {category.categoryName}
+            </div>
           </div>
 
           <div className="card-calendar">
             <BsCalendar3WeekFill className="card-calendar-icon" />
             <span className="card-calendar-text">
-              {dayjs(timeBegin).format("Ngày DD [tháng] MM [năm] YYYY")}
+              {dayjs(timeBegin).format('Ngày DD [tháng] MM [năm] YYYY')}
             </span>
           </div>
         </div>
@@ -83,7 +78,7 @@ const card = ({
           <div className="cardEvent-info2-item">
             <BiMoney className="cardEvent-info2-item-icon" />
             <span className="cardEvent-info2-item-text">
-              {fee === 0 ? "free" : `${fee} đ`}
+              {fee === 0 ? 'free' : `${fee} đ`}
             </span>
           </div>
         </div>

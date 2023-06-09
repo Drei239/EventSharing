@@ -64,8 +64,6 @@ const createNewEvent = asyncHandler(async (req, res) => {
     limitUser,
     reviews,
   } = req.body;
-
-  console.log(req.body);
   // Sau khi gán userInfo = req.user
   // const creator = req.user.id;
   // loại bỏ giá trị creator ở req.body
@@ -87,7 +85,6 @@ const createNewEvent = asyncHandler(async (req, res) => {
         limitUser,
         reviews
       );
-
       return res
         .status(200)
         .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
@@ -146,6 +143,7 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 
     let query;
     if (keyword !== '' && keyword) {
+      console.log(queryStr);
       const queryObj = Object.assign(
         {
           $or: [
@@ -155,12 +153,10 @@ const getFilterEvents = asyncHandler(async (req, res) => {
         },
         queryStr
       );
-      query = eventModel.find(queryObj).populate('creator');
+      query = eventModel.find(queryObj);
     } else {
       console.log(queryStr);
-      query = eventModel.find(queryStr).populate('creator');
-    }
-    if (req.query.isOnline) {
+      query = eventModel.find(queryStr);
     }
     if (req.query.sort) {
       const sortBy = req.query.sort.split(',').join(' ');
@@ -173,7 +169,7 @@ const getFilterEvents = asyncHandler(async (req, res) => {
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
     const skip = (Number(page) - 1) * limit;
-    query = query.skip(skip).limit(limit).exec();
+    query = query.skip(skip).limit(limit).populate('creator category').exec();
 
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
@@ -192,9 +188,19 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 //     eventService.getPublicEvent();
 // }
 
-//
+//HOT EVENTS
 const highlightEvents = asyncHandler(async (req, res) => {
   try {
+    console.log('a');
+    const events = await eventModel
+      .find({
+        timeEndSignup: { $gte: Date.now() },
+      })
+      .populate({ path: 'creator', options: { sort: { userRating: -1 } } });
+
+    return res
+      .status(200)
+      .json({ status: 200, data: events, message: eventError.ERR_2 });
   } catch (err) {
     throw Error(err);
   }
@@ -294,4 +300,5 @@ module.exports = {
   getEventByTitle,
   getQueryEvents,
   getFilterEvents,
+  highlightEvents,
 };
