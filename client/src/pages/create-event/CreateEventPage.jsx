@@ -26,7 +26,8 @@ const CreateEventPage = () => {
     timeEnd: '',
     timeRegisterEnd: '',
   });
-  const [isLoadingImg, setIsLoadingImg] = useState(false);
+  const [isBannerLoading, setIsBannerLoading] = useState(false);
+  const [isImageEventLoaing, setIsImageEventLoaing] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
   const [typeEvent, setTypeEvent] = useState(new Set(['offline']));
   const [category, setCategory] = useState('');
@@ -78,6 +79,7 @@ const CreateEventPage = () => {
   const notifyError = () => {
     toast.error('Tạo sự kiện thất bại', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 
@@ -85,6 +87,7 @@ const CreateEventPage = () => {
   const notifySuccess = () => {
     toast.success('Tạo sự kiện thành công', {
       position: toast.POSITION.TOP_RIGHT,
+      autoClose: 3000,
     });
   };
 
@@ -356,18 +359,24 @@ const CreateEventPage = () => {
             name="banner"
             className="file-input"
             accept="image/*"
+            disabled={isBannerLoading}
             onChange={async (e) => {
+              setIsBannerLoading(true);
               const reader = new FileReader();
 
               reader.onload = () => {
+                setIsBannerLoading(false);
                 setBanner(reader.result);
               };
               if (e.target.files[0]) {
                 const img = await handleImageCompress(e.target.files[0]);
                 reader.readAsDataURL(img);
+              } else {
+                setIsBannerLoading(false);
               }
             }}
           />
+          {isBannerLoading && <Loading size="xs" />}
         </div>
         {banner && (
           <div className="create-envent__image-input-preview">
@@ -408,21 +417,25 @@ const CreateEventPage = () => {
             name="banner"
             className="file-input"
             accept="image/*"
+            disabled={isImageEventLoaing}
             onChange={async (e) => {
+              setIsImageEventLoaing(true);
               const reader = new FileReader();
-              setIsLoadingImg(true);
 
-              reader.onload = () => {
+              reader.onloadend = () => {
+                setIsImageEventLoaing(false);
                 setImageEvent([...imageEvent, reader.result]);
-                setIsLoadingImg(false);
               };
 
               if (e.target.files[0]) {
                 const img = await handleImageCompress(e.target.files[0]);
                 reader.readAsDataURL(img);
+              } else {
+                setIsImageEventLoaing(false);
               }
             }}
           />
+          {isImageEventLoaing && <Loading size="xs" />}
         </div>
         {imageEvent && (
           <div className="create-envent__image-input-preview create-envent__image-input-preview--display">

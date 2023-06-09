@@ -39,13 +39,18 @@
   flex-wrap: nowrap;
 }
 
+.create-event__image-input .nextui-c-bOoPrE-iWdsRK-color-default {
+  margin-left: -35px;
+}
+
 .create-event__image-input label {
   font-size: 0.875rem;
   margin-left: 4px;
 }
 
-.file-input {
+.create-event__image-input .file-input {
   color: transparent;
+  width: 110px;
 }
 
 .file-input::-webkit-file-upload-button {
