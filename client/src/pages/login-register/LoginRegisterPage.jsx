@@ -1,15 +1,14 @@
 import React, { useRef, useState } from 'react';
-import './login-register-page.css';
-import Login from '../../components/login-register/Login';
-import Register from '../../components/login-register/Register';
-
+import './LoginRegisterPage.css';
+import Login from '../../components/login-register/LoginComponent';
+import Register from '../../components/login-register/RegisterComponent';
 
 const LoginRegisterPage = () => {
   const contentRef = useRef(null);
   const mainRef = useRef(null);
-  const [displayContent, setDisplayContent] = useState(true);
-  
+  const [displayContent, setDisplayContent] = useState(true); // True = giao diện đăng nhập, False = giao diện đăng ký
 
+  // Thay đổi sang giao diện đăng ký
   const changeRegisterContent = () => {
     const contentElement = contentRef.current;
     const mainElement = mainRef.current;
@@ -19,6 +18,7 @@ const LoginRegisterPage = () => {
     mainElement.style.transform = 'translateX(-100%)';
   };
 
+  // Thay đổi sang giao diện dăng nhập
   const changeLoginContent = () => {
     const contentElement = contentRef.current;
     const mainElement = mainRef.current;
@@ -96,11 +96,7 @@ const LoginRegisterPage = () => {
         )}
       </div>
       <div className="login-register__main" ref={mainRef}>
-        {displayContent ? (
-          <Login />
-        ) : (
-          <Register changeLoginContent={changeLoginContent} />
-        )}
+        {displayContent ? <Login /> : <Register />}
       </div>
     </div>
   );
