@@ -47,10 +47,10 @@ const Home = () => {
             newEvent2.map((item) => {
               return <CardEvent {...item} key={item._id} />;
             })}
-          {/* {isLoading && <Loading />}
           {isLoading && <Loading />}
           {isLoading && <Loading />}
-          {isLoading && <Loading />} */}
+          {isLoading && <Loading />}
+          {isLoading && <Loading />}
         </div>
         {page <= Math.floor(countDocument / 4) && (
           <div className="btn-show">

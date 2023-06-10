@@ -1,9 +1,12 @@
 import "./Header.css";
 import { Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const Header = () => {
+  const navigate = useNavigate();
+  const category = useSelector((state) => state.category.categories);
   const location = useLocation();
   const [scrollTop, setScrollTop] = useState(0);
   const [isHideHeader, setIsHideHeader] = useState(false);
@@ -24,7 +27,14 @@ const Header = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollTop]);
-
+  const handleSubmit = (e) => {
+    if (e.keyCode === 13) {
+      navigate(`/events?search=${e.target.value}`, {
+        search: e.target.value,
+      });
+    }
+    //   }
+  };
   return (
     <header
       className={`${location.pathname === "/login-register" ? "active" : ""} ${
@@ -41,7 +51,11 @@ const Header = () => {
               location.pathname === "/create-event" ? "active" : ""
             }`}
           >
-            <Input width="290px" placeholder="Search" />
+            <Input
+              width="290px"
+              placeholder="Search"
+              onKeyDown={handleSubmit}
+            />
           </div>
           <div className="header__category">
             <div class="dropdown">

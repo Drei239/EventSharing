@@ -51,6 +51,9 @@ const Events = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
+  useEffect(() => {
+    console.log(events);
+  }, [events]);
   return (
     <div className="events">
       <div className="banner-event">
@@ -88,7 +91,7 @@ const Events = () => {
         {!isLoading && totalCount === 0 && (
           <div className="empty-events">
             <img src={EmptyIcon} alt="" />
-            <p>Rất tiết, không có kết quả nào phù hợp với bộ lọc này.</p>
+            <p>Rất tiết, không có kết quả nào phù hợp với yêu cầu của bạn.</p>
           </div>
         )}
       </div>

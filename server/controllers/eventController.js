@@ -237,11 +237,12 @@ const getEventByCreator = asyncHandler(async (req, res) => {
 //CHO PHÉP ADMIN PHÊ DUYỆT HIỂN THỊ SỰ KIỆN (STATUS = "PENDING" => "PUBLIC")
 const updateEvent = asyncHandler(async (req, res) => {
   const findId = req.params.id;
-  const { title, description } = req.body;
+  const { title, description, location } = req.body;
   const updateEvent = await eventService.updateEvent(
     findId,
     title,
-    description
+    description,
+    location
   );
   if (updateEvent) {
     res.status(200).json(updateEvent);
