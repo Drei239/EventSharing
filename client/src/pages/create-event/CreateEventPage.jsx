@@ -326,6 +326,8 @@ const CreateEventPage = () => {
     }
   };
 
+  console.log('imgaEvent', imageEvent);
+
   return (
     <div className="create-event">
       <h2>Tạo sự kiện mới</h2>
@@ -414,6 +416,7 @@ const CreateEventPage = () => {
           <label>Hình ảnh sự kiện</label>
           <input
             type="file"
+            multiple
             name="banner"
             className="file-input"
             accept="image/*"
@@ -421,15 +424,24 @@ const CreateEventPage = () => {
             onChange={async (e) => {
               setIsImageEventLoaing(true);
               const reader = new FileReader();
+              const imageList = [...e.target.files];
 
-              reader.onloadend = () => {
-                setIsImageEventLoaing(false);
-                setImageEvent([...imageEvent, reader.result]);
-              };
+              if (imageList) {
+                console.log('first');
+                const images = [];
+                imageList?.map((item) => {
+                  reader.onload = () => {
+                    images.push(reader.result);
+                    setIsImageEventLoaing(false);
+                    setImageEvent([...imageEvent, ...images]);
+                  };
 
-              if (e.target.files[0]) {
-                const img = await handleImageCompress(e.target.files[0]);
-                reader.readAsDataURL(img);
+                  handleImageCompress(item)
+                    .then((result) => reader.readAsDataURL(result))
+                    .catch((error) => {
+                      console.log(error);
+                    });
+                });
               } else {
                 setIsImageEventLoaing(false);
               }
@@ -442,7 +454,7 @@ const CreateEventPage = () => {
             {imageEvent?.map((img, index) => {
               return (
                 <div key={index}>
-                  <img src={img} alt="image event" />
+                  <img src={img} alt="events" />
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     className="icon icon-tabler icon-tabler-trash"
