@@ -20,31 +20,51 @@ const register = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'User account already exists' });
   }
   const newUser = await userModel.create({ name, email: lowerCaseEmail, password, phone, birthDay });
-  if (newUser) {
-    return res.status(201).json({
-      success: true,
-      token: genrateAccessToken(newUser),
-    });
-  } else {
-    return res.status(400).json({ success: false, message: 'Invalid input data' });
-  }
+  if (newUser) {const { accessToken, refreshToken } = await genrateToken(newUser);
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    sameSite: true,
+  });
+  return res.status(201).json({
+    success: true,
+    accessToken,
+    refreshToken,
+    message: 'Registered successfully',
+  });
+} else {
+  return res.status(400).json({ success: false, message: 'Invalid input data' });
+}
 });
-
 //3.USER LOGIN
 
 const authLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const lowerCaseEmail = email.toLowerCase();
-  const user = await userModel.findOne({ email: lowerCaseEmail });
-  if (user && (await bcrypt.compare(password, user.password))) {
-    return res.json({
-      success: true,
-      token: genrateAccessToken(user),
-    });
-  } else {
-    return res.status(401).json({ success: false, message: 'Email or password is incorrect' });
+  try {
+    const { email, password } = req.body;
+    const lowerCaseEmail = email.toLowerCase();
+    const user = await userModel.findOne({ email: lowerCaseEmail });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      const { accessToken, refreshToken } = await genrateToken(user);
+
+      res.cookie('refreshToken', refreshToken, {
+        httpOnly: true,
+        maxAge: 30 * 24 * 60 * 60 * 1000,
+        sameSite: true,
+      });
+      return res.json({
+        success: true,
+        accessToken,
+        refreshToken,
+        message: 'Logged in sucessfully',
+      });
+    } else {
+      return res.status(401).json({ success: false, message: 'Email or password is incorrect' });
+    }
+  } catch (error) {
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
 });
+
 
 //4. GET USER PROFILE
 
@@ -67,6 +87,9 @@ const Userupdate = asyncHandler(async (req, res) => {
   const { name, email, currentPassword, newPassword } = req.body;
   user.name = name || user.name;
   user.email = email || user.email;
+  user.isAdmin = isAdmin || user.isAdmin;
+  user.password = password || user.password;
+  user.phone = phone || user.phone;
 
   if (newPassword) {
     const isMatch = await bcrypt.compare(currentPassword, user.password);
@@ -82,7 +105,7 @@ const Userupdate = asyncHandler(async (req, res) => {
     email: updatedUser.email,
     avatar: updatedUser.avatar,
     isAdmin: updatedUser.isAdmin,
-    phone: updateUser.phone,
+    phone: updatedUser.phone,
     token: genrateAccessToken(updatedUser._id),
   });
 });
@@ -95,10 +118,12 @@ const updateUserById = asyncHandler(async (req, res) => {
   if (!user) {
     res.status(404).json({ message: `Can't find users` });
   }
-  const { name, email, isAdmin } = req.body;
+  const { name, email, isAdmin, password, phone } = req.body;
   user.name = name || user.name;
   user.email = email || user.email;
   user.isAdmin = isAdmin || user.isAdmin;
+  user.password = password || user.password;
+  user.phone = phone || user.phone;
   const updatedUser = await user.save();
   res.json({
     name: updatedUser.name,
@@ -106,7 +131,7 @@ const updateUserById = asyncHandler(async (req, res) => {
     password: updatedUser.password,
     avatar: updatedUser.avatar,
     isAdmin: updatedUser.isAdmin,
-    phone: updateUser.phone,
+    phone: updatedUser.phone,
   });
 });
 
