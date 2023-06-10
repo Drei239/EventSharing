@@ -1,7 +1,7 @@
-const asyncHandler = require('express-async-handler');
-const eventModel = require('../models/eventModel');
-const eventValidators = require('../validators/eventValidators');
-const { eventError, eventSucc } = require('../validators/responsiveMessages');
+const asyncHandler = require("express-async-handler");
+const eventModel = require("../models/eventModel");
+const eventValidators = require("../validators/eventValidators");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(
@@ -51,9 +51,9 @@ const createNewEvent = asyncHandler(
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
 const getPublicEvents = asyncHandler(async (req, res) => {
   const events = await eventModel
-    .find({ status: 'Public' })
-    .populate('category')
-    .populate('creator');
+    .find({ status: "Public" })
+    .populate("category")
+    .populate("creator");
   if (events && events.length > 0) {
     return events;
   } else {
@@ -66,24 +66,24 @@ const getEventsFilter = asyncHandler(async (req, res) => {
   const { keyWord } = req.query;
   const queryObj = { ...req.query };
   try {
-    const excludeField = ['page', 'sort', 'limit', 'search'];
+    const excludeField = ["page", "sort", "limit", "search"];
     excludeField.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gt,gte,lte,lt)\b/g, (match) => `$${match}`);
     let query;
-    if (keyWord !== '' && search) {
+    if (keyWord !== "" && search) {
       const queryObj = Object.assign(
         {
           $or: [
-            { title: { $regex: keyWord, $options: 'i' } },
-            { 'creator.name': { $regex: keyWord, $options: 'i' } },
+            { title: { $regex: keyWord, $options: "i" } },
+            { "creator.name": { $regex: keyWord, $options: "i" } },
           ],
         },
         JSON.parse(queryStr)
       );
       query = eventModel
         .find(queryObj)
-        .populate('creator')
+        .populate("creator")
         .exec((err, result) => {
           console.log(result);
           if (err) {
@@ -95,10 +95,10 @@ const getEventsFilter = asyncHandler(async (req, res) => {
       query = eventModel.find(JSON.parse(queryStr));
     }
     if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
+      const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort("-createdAt");
     }
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
@@ -113,15 +113,18 @@ const getEventsFilter = asyncHandler(async (req, res) => {
 });
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
-const updateEvent = asyncHandler(async (findById, title, description) => {
-  const updateEvent = await eventModel.findOne({ _id: findById });
-  if (updateEvent) {
-    updateEvent.title = title || updateEvent.title;
-    updateEvent.description = description || updateEvent.description;
-    const updatedEvent = await updateEvent.save();
-    return updatedEvent;
-  } else {
-    return false;
+const updateEvent = asyncHandler(
+  async (findById, title, description, location) => {
+    const updateEvent = await eventModel.findOne({ _id: findById });
+    if (updateEvent) {
+      updateEvent.title = title || updateEvent.title;
+      updateEvent.description = description || updateEvent.description;
+      updateEvent.location = location || updateEvent.location;
+      const updatedEvent = await updateEvent.save();
+      return updatedEvent;
+    } else {
+      return false;
+    }
   }
-});
+);
 module.exports = { createNewEvent, getPublicEvents, updateEvent };

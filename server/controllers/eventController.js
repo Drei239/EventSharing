@@ -1,36 +1,36 @@
-const asyncHandler = require('express-async-handler');
-const eventModel = require('../models/eventModel');
-const eventService = require('../services/eventServices');
-const { eventError, eventSucc } = require('../validators/responsiveMessages');
+const asyncHandler = require("express-async-handler");
+const eventModel = require("../models/eventModel");
+const eventService = require("../services/eventServices");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
 
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
 function changeTimeZone(date, timeZone) {
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     return new Date(
-      new Date(date).toLocaleString('en-US', {
+      new Date(date).toLocaleString("en-US", {
         timeZone,
       })
     );
   }
 
   return new Date(
-    date.toLocaleString('en-US', {
+    date.toLocaleString("en-US", {
       timeZone,
     })
   );
 }
 
 const date = new Date();
-console.log('new Date', date);
+console.log("new Date", date);
 
-const hcmDate = changeTimeZone(date, 'Asia/Saigon');
-console.log('Asia/Saigon Date', hcmDate);
+const hcmDate = changeTimeZone(date, "Asia/Saigon");
+console.log("Asia/Saigon Date", hcmDate);
 
 console.log(
-  'toLocaleString Date',
-  date.toLocaleString('en-US', {
-    timeZone: 'Asia/Saigon',
+  "toLocaleString Date",
+  date.toLocaleString("en-US", {
+    timeZone: "Asia/Saigon",
   })
 );
 
@@ -93,7 +93,7 @@ const createNewEvent = asyncHandler(async (req, res) => {
     }
   } else {
     res.status(401);
-    throw new Error('CREATE NEW EVENT FAILED!');
+    throw new Error("CREATE NEW EVENT FAILED!");
   }
 });
 
@@ -129,7 +129,7 @@ const getFilterEvents = asyncHandler(async (req, res) => {
   const { keyword } = req.query;
   const queryObj = { ...req.query };
   try {
-    const excludeField = ['page', 'sort', 'limit', 'keyword'];
+    const excludeField = ["page", "sort", "limit", "keyword"];
     // loc tu khoa
     excludeField.forEach((el) => delete queryObj[el]);
     let queryStr = JSON.stringify(queryObj);
@@ -137,18 +137,18 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 
     queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
     queryStr = JSON.parse(queryStr);
-    if (queryStr.isOnline == 'true' || queryStr.isOnline == 'false') {
-      queryStr.isOnline = queryStr.isOnline === 'true';
+    if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
+      queryStr.isOnline = queryStr.isOnline === "true";
     }
 
     let query;
-    if (keyword !== '' && keyword) {
+    if (keyword !== "" && keyword) {
       console.log(queryStr);
       const queryObj = Object.assign(
         {
           $or: [
-            { title: { $regex: keyword, $options: 'i' } },
-            { location: { $regex: keyword, $options: 'i' } },
+            { title: { $regex: keyword, $options: "i" } },
+            { location: { $regex: keyword, $options: "i" } },
           ],
         },
         queryStr
@@ -159,17 +159,17 @@ const getFilterEvents = asyncHandler(async (req, res) => {
       query = eventModel.find(queryStr);
     }
     if (req.query.sort) {
-      const sortBy = req.query.sort.split(',').join(' ');
+      const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     } else {
-      query = query.sort('-createdAt');
+      query = query.sort("-createdAt");
     }
     const countryQuery = query.model.countDocuments(query.getFilter());
     const totalCount = await countryQuery.exec();
     const limit = req.query.limit || 10;
     const page = req.query.page || 1;
     const skip = (Number(page) - 1) * limit;
-    query = query.skip(skip).limit(limit).populate('creator category').exec();
+    query = query.skip(skip).limit(limit).populate("creator category").exec();
 
     // const eventCount=await eventModel.countDocuments();
     const events = await query;
@@ -191,12 +191,14 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 //HOT EVENTS
 const highlightEvents = asyncHandler(async (req, res) => {
   try {
-    console.log('a');
+    console.log("a");
     const events = await eventModel
       .find({
         timeEndSignup: { $gte: Date.now() },
       })
-      .populate({ path: 'creator', options: { sort: { userRating: -1 } } });
+      .populate({ path: "creator", options: { sort: { userRating: -1 } } })
+      .populate("category")
+      .limit(5);
 
     return res
       .status(200)
@@ -213,7 +215,7 @@ const getEventById = asyncHandler(async (req, res) => {
     res.status(200).json({ event });
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY EVENT!');
+    throw new Error("KHÔNG TÌM THẤY EVENT!");
   }
 });
 
@@ -226,7 +228,7 @@ const getEventByCreator = asyncHandler(async (req, res) => {
     res.status(200).json(event);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!');
+    throw new Error("KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!");
   }
 });
 
@@ -235,17 +237,18 @@ const getEventByCreator = asyncHandler(async (req, res) => {
 //CHO PHÉP ADMIN PHÊ DUYỆT HIỂN THỊ SỰ KIỆN (STATUS = "PENDING" => "PUBLIC")
 const updateEvent = asyncHandler(async (req, res) => {
   const findId = req.params.id;
-  const { title, description } = req.body;
+  const { title, description, location } = req.body;
   const updateEvent = await eventService.updateEvent(
     findId,
     title,
-    description
+    description,
+    location
   );
   if (updateEvent) {
     res.status(200).json(updateEvent);
   } else {
     res.status(401);
-    throw new Error('UPDATE EVENT FAILED!');
+    throw new Error("UPDATE EVENT FAILED!");
   }
 });
 
@@ -274,7 +277,7 @@ const getEventByTitle = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
 
@@ -287,7 +290,7 @@ const getQueryEvents = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
 
