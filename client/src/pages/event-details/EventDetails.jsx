@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
 // import Comments from './comments/Comments';
 import { Button } from "@nextui-org/react";
 
 const Product = () => {
+	const [commentsTabs, setCommentsTabs] = useState("comments");
+	
 	return (
 		<div className='wrapper'>
 			<div>
@@ -41,7 +43,14 @@ const Product = () => {
 				</div>
 			</div>
 			<div className='comment__container'>
-				<Comments/>
+				<Button.Group>
+					<Button className='comments__btn' onPress={() => setCommentsTabs("comments")}>Comments</Button>
+					<Button className='comments__btn' onPress={() => setCommentsTabs("discussion")}>Discussions</Button>
+				</Button.Group>
+				{ 
+					commentsTabs === "comments" ? <Comments /> : <div>ok</div>
+				}
+				
 			</div>
 		</div>
 	);

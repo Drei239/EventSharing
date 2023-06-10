@@ -5,7 +5,7 @@ import Header from './components/header/Header.jsx';
 import EventDetails from './pages/event-details/EventDetails';
 import LoginRegisterPage from './pages/login-register/LoginRegisterPage';
 import { NextUIProvider } from '@nextui-org/react';
-
+import { Home,Events } from './pages';
 function App() {
   return (  
     <div className='App'>
@@ -14,6 +14,8 @@ function App() {
       <NextUIProvider>      
         <Routes>
           <Route path="/login-register" element={<LoginRegisterPage />} />
+          <Route path='/' element={<Home />} />
+          <Route path='/events' element={<Events />} />
         </Routes>     
       </NextUIProvider>  
       <Footer />  

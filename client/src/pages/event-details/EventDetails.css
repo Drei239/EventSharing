@@ -80,5 +80,15 @@
 	flex-direction: column;
 }
 
+.comment__container {
+	width: 900px;
+	margin: 100px auto;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+}
 
+.comments__btn {
+	width: 100%;
+}
 
