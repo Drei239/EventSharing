@@ -1,29 +1,28 @@
 import React from "react";
 import { useState, useEffect } from "react";
-import dayjs from "dayjs";
-import "./filter.css";
 import { components } from "react-select";
-import { BsFillGrid3X3GapFill } from "react-icons/bs";
-import { MdDateRange } from "react-icons/md";
-import { FiMapPin } from "react-icons/fi";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdPriceCheck } from "react-icons/md";
 import { CgSortAz } from "react-icons/cg";
 import { RiVidiconLine } from "react-icons/ri";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useSearchParams } from "react-router-dom";
+import dayjs from "dayjs";
+import { BsFillGrid3X3GapFill } from "react-icons/bs";
+import { MdDateRange } from "react-icons/md";
+import { FiMapPin } from "react-icons/fi";
+import DatePicker from "react-datepicker";
+
+import "./filter.css";
+import "react-datepicker/dist/react-datepicker.css";
 import { handleChangeEvents } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
 import {
-  CategoryFilter,
   feeFilter,
   formFilter,
   locationFil,
   sortFilter,
 } from "../../data/filter";
-import { getEvent } from "../../features/events/eventSlice";
 import { CustomSelect } from "../ui/select";
 const createCustomControl =
   (iconComponent) =>
@@ -41,6 +40,7 @@ const CustomControl3 = createCustomControl(<RiVidiconLine />);
 const CustomControl4 = createCustomControl(<MdPriceCheck />);
 const CustomControl5 = createCustomControl(<CgSortAz />);
 const Filter = () => {
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
   const [selectedDate, setSelectedDate] = useState({
@@ -50,14 +50,21 @@ const Filter = () => {
   const [openDate, setOpenDate] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [selectValue, setSelectValue] = useState({
+    label: "Category",
+    value: "",
+  });
   const handleSelectChange = (value, label) => {
     setSelectedDate({ value, label });
     setOpenDate(false);
     dispatch(handleChangeEvents({ date: value }));
   };
-  const newCategories = categories.reduce((total, item) => {
-    return [...total, { value: item._id, label: item.categoryName }];
-  }, []);
+  const newCategories = categories
+    ? categories?.reduce((total, item) => {
+        return [...total, { value: item._id, label: item?.categoryName }];
+      }, [])
+    : [];
+
   const handleChangeDate = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -86,7 +93,7 @@ const Filter = () => {
   };
   const handleChangeSelectLocation = (selectedOption) => {};
   const handleChangeSelectCategory = (selectedOption) => {
-    dispatch(handleChangeEvents({ category: selectedOption.value }));
+    setSelectValue(selectedOption);
   };
   const handleChangeSelectType = (selectedOption) => {
     dispatch(handleChangeEvents({ type: selectedOption.value }));
@@ -101,6 +108,20 @@ const Filter = () => {
   useEffect(() => {
     dispatch(getAllCategory());
   }, []);
+  useEffect(() => {
+    if (searchParams.get("category")) {
+      setSelectValue(
+        newCategories?.find(
+          (item) => item.label === searchParams.get("category")
+        )
+      );
+    }
+  }, [searchParams.get("category")]);
+  useEffect(() => {
+    if (selectValue && selectValue.value !== undefined) {
+      dispatch(handleChangeEvents({ category: selectValue?.value }));
+    }
+  }, [selectValue]);
   return (
     <div className="filter">
       <div className="categories">
@@ -109,13 +130,14 @@ const Filter = () => {
             options={locationFil}
             defaultValue={locationFil[0]}
             components={{ Control: CustomControl1 }}
+
             // onChange={handleChangeSelectLocation}
           />
         </div>
         <div className="select">
           <CustomSelect
-            options={newCategories}
-            defaultValue={newCategories[0]}
+            value={selectValue}
+            options={[{ label: "Category", value: "" }, ...newCategories]}
             components={{ Control: CustomControl2 }}
             onChange={handleChangeSelectCategory}
           />

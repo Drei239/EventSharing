@@ -196,7 +196,9 @@ const highlightEvents = asyncHandler(async (req, res) => {
       .find({
         timeEndSignup: { $gte: Date.now() },
       })
-      .populate({ path: "creator", options: { sort: { userRating: -1 } } });
+      .populate({ path: "creator", options: { sort: { userRating: -1 } } })
+      .populate("category")
+      .limit(5);
 
     return res
       .status(200)

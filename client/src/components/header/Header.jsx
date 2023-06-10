@@ -1,17 +1,21 @@
 import "./Header.css";
 import { Input, Link } from "@nextui-org/react";
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-
+import { useSelector } from "react-redux";
 const Header = () => {
   const navigate = useNavigate();
+  const category = useSelector((state) => state.category.categories);
 
   const location = useLocation();
   const handleSubmit = (e) => {
     if (e.keyCode === 13) {
-      navigate(`/events?search=${e.target.value}`, { search: e.target.value });
+      navigate(`/events?search=${e.target.value}`, {
+        search: e.target.value,
+      });
     }
   };
+
   return (
     <div className="wrapper">
       <header
@@ -34,15 +38,19 @@ const Header = () => {
                 <div class="dropdown__catergory">Sự kiện</div>
               </Link>
               <div class="dropdown__content">
-                <Link href="/">
-                  <div className="category__item">Link 1</div>
-                </Link>
-                <Link href="/">
-                  <div className="category__item">Link 2</div>
-                </Link>
-                <Link href="/">
-                  <div className="category__item">Link 3</div>
-                </Link>
+                {category?.map((item) => {
+                  return (
+                    <div
+                      key={item._id}
+                      onClick={() =>
+                        navigate(`/events?category=${item.categoryName}`)
+                      }
+                      className="category__item"
+                    >
+                      {item.categoryName}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
