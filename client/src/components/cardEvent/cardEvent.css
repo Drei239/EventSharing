@@ -31,7 +31,6 @@
   width: 100%;
   height: 180px;
   object-fit: cover;
-
 }
 .card-title {
   color: rgb(42, 45, 52);
@@ -51,6 +50,12 @@
   /* display: flex;
   align-items: center;
   gap: 20px; */
+}
+.cardEvent-info1-categories {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
 }
 .cardEvent-info1-category {
   background-color: var(--color-primary);
