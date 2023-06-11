@@ -7,11 +7,12 @@ import LoginRegisterPage from './pages/login-register/LoginRegisterPage';
 import CreateEventPage from './pages/create-event/CreateEventPage';
 import { NextUIProvider } from '@nextui-org/react';
 import { Home, Events } from './pages';
+import { RULES } from './constants/rules';
 function App() {
   return (
     <NextUIProvider>
       <Header />
-      <EventDetails />
+      <EventDetails rules={RULES} />
       <Routes>
         <Route path="/login-register" element={<LoginRegisterPage />} />
         <Route path="/create-event" element={<CreateEventPage />} />

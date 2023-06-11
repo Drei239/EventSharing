@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
-// import Comments from './comments/Comments';
 import { Button } from "@nextui-org/react";
 
-const Product = () => {
+const EventDetails = () => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
 	
 	return (
@@ -56,4 +55,4 @@ const Product = () => {
 	);
 };
 
-export default Product;
+export default EventDetails;
