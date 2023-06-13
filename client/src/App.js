@@ -8,12 +8,13 @@ import CreateEventPage from './pages/create-event/CreateEventPage';
 import { NextUIProvider } from '@nextui-org/react';
 import { Home, Events } from './pages';
 import { RULES } from './constants/rules';
+import eventService from './features/events/eventService';
 function App() {
   return (
     <NextUIProvider>
       <Header />
-      <EventDetails rules={RULES} />
       <Routes>
+        <Route path='/event/:id' element={<EventDetails eventService={eventService} rules={RULES} /> }/>
         <Route path="/login-register" element={<LoginRegisterPage />} />
         <Route path="/create-event" element={<CreateEventPage />} />
         <Route path="/" element={<Home />} />
@@ -25,3 +26,5 @@ function App() {
 }
 
 export default App;
+
+

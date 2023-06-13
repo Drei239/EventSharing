@@ -1,11 +1,32 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { GoOrganization } from "react-icons/go";
-import { CardEvent, CardOrg, Carousel } from "../../components";
+import { CardEvent, CardOrg, Carousel, Loading } from "../../components";
 import { BsCalendar4Event } from "react-icons/bs";
 import "./home.css";
 import { VscOrganization } from "react-icons/vsc";
 import { MdOutlineEventAvailable } from "react-icons/md";
-const home = () => {
+import { getHighlightEvent } from "../../features/events/eventSlice";
+import { getNewEvent } from "../../features/events/eventSlice";
+import { getAllCategory } from "../../features/category/categorySlice";
+const Home = () => {
+  const dispatch = useDispatch();
+  const [newEvent2, setNewEvent2] = useState([]);
+  const { newEvents, isLoading, countDocument } = useSelector(
+    (state) => state.event
+  );
+  const [page, setPage] = useState(1);
+  useEffect(() => {
+    dispatch(getHighlightEvent());
+    dispatch(getAllCategory());
+  }, []);
+  useEffect(() => {
+    dispatch(getNewEvent(page));
+  }, [page]);
+
+  useEffect(() => {
+    setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
+  }, [newEvents]);
   return (
     <div className="home">
       <Carousel />
@@ -21,78 +42,25 @@ const home = () => {
           lãm nghệ thuật, v.v.! Đánh dấu lịch của bạn và đừng bỏ lỡ
         </p>
         <div className="card-events">
-          <CardEvent
-            title={
-              "Trọng Hqqqqiếu weqhweqwh hqwkjeqw wehqwkjeq - DANCE YOUR ENEGRY UP MINISHOW"
-            }
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
+          {newEvent2 &&
+            newEvent2.length > 0 &&
+            newEvent2.map((item) => {
+              console.log(item);
+              return <CardEvent {...item} key={item._id} />;
+            })}
+          {isLoading && <Loading />}
+          {isLoading && <Loading />}
+          {isLoading && <Loading />}
+          {isLoading && <Loading />}
         </div>
-        <div className="btn-show">
-          <span className="strike-left"></span>
-          <button>Xem thêm</button>
-          <span className="strike-right"></span>
-        </div>
+        {page <= Math.floor(countDocument / 4) && (
+          <div className="btn-show">
+            <span className="strike-left"></span>
+            <button onClick={() => setPage(page + 1)}>Xem thêm</button>
+            <span className="strike-right"></span>
+          </div>
+        )}
+
         <div className="title-home">
           <h2>Nhà tổ chức sự kiện nổi bật</h2>
           <div className="underline-title">
@@ -216,8 +184,9 @@ const home = () => {
           <span className="strike-right"></span>
         </div>
       </div>
+      {isLoading && <Loading />}
     </div>
   );
 };
 
-export default home;
+export default Home;

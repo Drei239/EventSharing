@@ -1,30 +1,29 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import dayjs from 'dayjs';
-import './filter.css';
-import { components } from 'react-select';
-import { BsFillGrid3X3GapFill } from 'react-icons/bs';
-import { MdDateRange } from 'react-icons/md';
-import { FiMapPin } from 'react-icons/fi';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
-import { RiArrowDropDownLine } from 'react-icons/ri';
-import { MdPriceCheck } from 'react-icons/md';
-import { CgSortAz } from 'react-icons/cg';
-import { RiVidiconLine } from 'react-icons/ri';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, useSearchParams } from 'react-router-dom';
-import { handleChangeEvents } from '../../features/events/eventSlice';
-import { getAllCategory } from '../../features/category/categorySlice';
+import React from "react";
+import { useState, useEffect } from "react";
+import { components } from "react-select";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import { MdPriceCheck } from "react-icons/md";
+import { CgSortAz } from "react-icons/cg";
+import { RiVidiconLine } from "react-icons/ri";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import dayjs from "dayjs";
+import { BsFillGrid3X3GapFill } from "react-icons/bs";
+import { MdDateRange } from "react-icons/md";
+import { FiMapPin } from "react-icons/fi";
+import DatePicker from "react-datepicker";
+
+import "./filter.css";
+import "react-datepicker/dist/react-datepicker.css";
+import { handleChangeEvents } from "../../features/events/eventSlice";
+import { getAllCategory } from "../../features/category/categorySlice";
 import {
-  CategoryFilter,
   feeFilter,
   formFilter,
   locationFil,
   sortFilter,
-} from '../../data/filter';
-import { getEvent } from '../../features/events/eventSlice';
-import { CustomSelect } from '../ui/select';
+} from "../../data/filter";
+import { CustomSelect } from "../ui/select";
 const createCustomControl =
   (iconComponent) =>
   ({ children, ...props }) => {
@@ -41,23 +40,31 @@ const CustomControl3 = createCustomControl(<RiVidiconLine />);
 const CustomControl4 = createCustomControl(<MdPriceCheck />);
 const CustomControl5 = createCustomControl(<CgSortAz />);
 const Filter = () => {
+  const [searchParams] = useSearchParams();
   const dispatch = useDispatch();
   const { categories } = useSelector((state) => state.category);
   const [selectedDate, setSelectedDate] = useState({
     value: null,
-    label: 'Tất cả các ngày',
+    label: "Tất cả các ngày",
   });
   const [openDate, setOpenDate] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [selectValue, setSelectValue] = useState({
+    label: "Category",
+    value: "",
+  });
   const handleSelectChange = (value, label) => {
     setSelectedDate({ value, label });
     setOpenDate(false);
     dispatch(handleChangeEvents({ date: value }));
   };
-  const newCategories = categories.reduce((total, item) => {
-    return [...total, { value: item._id, label: item.categoryName }];
-  }, []);
+  const newCategories = categories
+    ? categories?.reduce((total, item) => {
+        return [...total, { value: item._id, label: item?.categoryName }];
+      }, [])
+    : [];
+
   const handleChangeDate = (dates) => {
     const [start, end] = dates;
     setStartDate(start);
@@ -65,19 +72,19 @@ const Filter = () => {
     console.log(dates);
     if (end !== null) {
       setSelectedDate({
-        label: `${dayjs(start).format('DD/MM/YYYY')}-${dayjs(end).format(
-          'DD/MM/YYYY'
+        label: `${dayjs(start).format("DD/MM/YYYY")}-${dayjs(end).format(
+          "DD/MM/YYYY"
         )}`,
         value: {
-          from: dayjs(start).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-          to: dayjs(end).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+          from: dayjs(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+          to: dayjs(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
         },
       });
       dispatch(
         handleChangeEvents({
           date: {
-            from: dayjs(start).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
-            to: dayjs(end).format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+            from: dayjs(start).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
+            to: dayjs(end).format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
           },
         })
       );
@@ -86,7 +93,7 @@ const Filter = () => {
   };
   const handleChangeSelectLocation = (selectedOption) => {};
   const handleChangeSelectCategory = (selectedOption) => {
-    dispatch(handleChangeEvents({ category: selectedOption.value }));
+    setSelectValue(selectedOption);
   };
   const handleChangeSelectType = (selectedOption) => {
     dispatch(handleChangeEvents({ type: selectedOption.value }));
@@ -101,6 +108,20 @@ const Filter = () => {
   useEffect(() => {
     dispatch(getAllCategory());
   }, []);
+  useEffect(() => {
+    if (searchParams.get("category")) {
+      setSelectValue(
+        newCategories?.find(
+          (item) => item.label === searchParams.get("category")
+        )
+      );
+    }
+  }, [searchParams.get("category")]);
+  useEffect(() => {
+    if (selectValue && selectValue.value !== undefined) {
+      dispatch(handleChangeEvents({ category: selectValue?.value }));
+    }
+  }, [selectValue]);
   return (
     <div className="filter">
       <div className="categories">
@@ -109,13 +130,14 @@ const Filter = () => {
             options={locationFil}
             defaultValue={locationFil[0]}
             components={{ Control: CustomControl1 }}
+
             // onChange={handleChangeSelectLocation}
           />
         </div>
         <div className="select">
           <CustomSelect
-            options={newCategories}
-            defaultValue={newCategories[0]}
+            value={selectValue}
+            options={[{ label: "Category", value: "" }, ...newCategories]}
             components={{ Control: CustomControl2 }}
             onChange={handleChangeSelectCategory}
           />
@@ -133,25 +155,25 @@ const Filter = () => {
             <MdDateRange />
             {selectedDate.label}
             <span className="icon-dropdown">
-              {' '}
+              {" "}
               <RiArrowDropDownLine />
             </span>
           </div>
           {openDate && (
             <ul className="options-date">
-              <li onClick={() => handleSelectChange(null, 'Tất cả các ngày')}>
+              <li onClick={() => handleSelectChange(null, "Tất cả các ngày")}>
                 Tất cả các ngày
               </li>
               <li
                 onClick={() =>
                   handleSelectChange(
                     {
-                      from: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                      from: dayjs().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                       to: dayjs()
-                        .add(30, 'day')
-                        .format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        .add(30, "day")
+                        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                     },
-                    'Tất cả các ngày sắp tới'
+                    "Tất cả các ngày sắp tới"
                   )
                 }
               >
@@ -161,12 +183,12 @@ const Filter = () => {
                 onClick={() =>
                   handleSelectChange(
                     {
-                      from: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                      from: dayjs().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                       to: dayjs()
-                        .add(0, 'day')
-                        .format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        .add(0, "day")
+                        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                     },
-                    'Hôm nay'
+                    "Hôm nay"
                   )
                 }
               >
@@ -176,12 +198,12 @@ const Filter = () => {
                 onClick={() =>
                   handleSelectChange(
                     {
-                      from: dayjs().format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                      from: dayjs().format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                       to: dayjs()
-                        .add(1, 'day')
-                        .format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        .add(1, "day")
+                        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                     },
-                    'Ngày mai'
+                    "Ngày mai"
                   )
                 }
               >
@@ -192,13 +214,13 @@ const Filter = () => {
                   handleSelectChange(
                     {
                       from: dayjs()
-                        .startOf('week')
-                        .format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        .startOf("week")
+                        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                       to: dayjs()
-                        .endOf('week')
-                        .format('YYYY-MM-DDTHH:mm:ss.SSS[Z]'),
+                        .endOf("week")
+                        .format("YYYY-MM-DDTHH:mm:ss.SSS[Z]"),
                     },
-                    'Tuần này'
+                    "Tuần này"
                   )
                 }
               >

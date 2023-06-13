@@ -1,10 +1,51 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
-import { Button } from "@nextui-org/react";
+import eventService from '../../features/events/eventService';
+import eventSlice from '../../features/events/eventSlice';
 
-const EventDetails = () => {
+import { Button, Dropdown } from "@nextui-org/react";
+import { BsCalendar3WeekFill } from "react-icons/bs";
+import { BiMap, BiMoney } from "react-icons/bi";
+import { GiSandsOfTime } from "react-icons/gi";
+import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+
+const EventDetails = ({ rules }) => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
+	const {id} = useParams()
+	console.log(id);
+
+const lol = eventService.getEventById(id);
+console.log(lol); 
+
+	const dispatch = useDispatch();
+	const [event, setEvent] = useState([]);
+
+	useEffect(() => {
+		dispatch(eventSlice.getEventById(id))
+	},event);
+	console.log(event);
+
+	function getUserRule() {
+		let isAdmin = true;
+		if (isAdmin) {
+			return rules.ADMIN;
+		};
+		return rules.USER;
+	};
+
+	const userRule = getUserRule();
+
+	const [selectedColor, setSelectedColor] = React.useState("default");
+	const colors = [
+		"default",
+		"primary",
+		"secondary",
+		"success",
+		"warning",
+		"error",
+	];
 	
 	return (
 		<div className='wrapper'>
@@ -19,7 +60,7 @@ const EventDetails = () => {
 					</a>
 					<div className='event__info'>
 						<h3 className='info__title'>Thông tin sự kiện</h3>
-						<div className='event__name'>TEN SU KIEN</div>
+						<div className='event__name'>dada</div>
 						<div className='event__category'>Category</div>
 						<div className='event__adress'>Dia chi event</div>
 						<div className='event__type'>the loai event(onl/off)</div>
@@ -34,7 +75,27 @@ const EventDetails = () => {
 					</div>
 					<div className='event__price'>Gia tien</div>
 					<div className='event__members'>So nguoi tham gia<button className='members__list'></button></div>
-					<div className='event__status'>event status</div>
+					{userRule === rules.ADMIN && <div className='event__status'>
+						<Dropdown>
+							<Dropdown.Button color={selectedColor} shadow>
+								Status
+							</Dropdown.Button>
+							<Dropdown.Menu
+								color={selectedColor}
+								variant="shadow"
+								aria-label="Actions"
+							>
+								<Dropdown.Item >Sắp diễn ra</Dropdown.Item>
+								<Dropdown.Item >Đang diễn ra</Dropdown.Item>
+								<Dropdown.Item >Đã hoàn tất</Dropdown.Item>
+								<Dropdown.Item color="error" withDivider>
+									Sự kiện đã hủy
+								</Dropdown.Item>
+							</Dropdown.Menu>
+						</Dropdown>
+					</div>}
+					{userRule === rules.USER && <div className='event__status'>event user</div>}
+					
 				</div>
 				<div className="event__title">
 					<h3 className='event__description'>Giới thiệu</h3>

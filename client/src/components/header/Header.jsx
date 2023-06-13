@@ -1,9 +1,12 @@
-import './Header.css';
-import { Input } from '@nextui-org/react';
-import React, { useEffect, useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-
+import "./Header.css";
+import { Input } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useLocation, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 const Header = () => {
+  const navigate = useNavigate();
+  const category = useSelector((state) => state.category.categories);
   const location = useLocation();
   const [scrollTop, setScrollTop] = useState(0);
   const [isHideHeader, setIsHideHeader] = useState(false);
@@ -18,46 +21,61 @@ const Header = () => {
       setScrollTop(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollTop]);
-
+  const handleSubmit = (e) => {
+    if (e.keyCode === 13) {
+      navigate(`/events?search=${e.target.value}`, {
+        search: e.target.value,
+      });
+    }
+    //   }
+  };
   return (
     <header
-      className={`${location.pathname === '/login-register' ? 'active' : ''} ${
-        isHideHeader ? 'hide-header' : ''
+      className={`${location.pathname === "/login-register" ? "active" : ""} ${
+        isHideHeader ? "hide-header" : ""
       }`}
     >
       <div className="wrapper">
         <div className="header__left-block">
           <Link className="logo" to="/" alt="">
-            <img src={'./images/logo.png'} />
+            <img src={"./images/logo.png"} />
           </Link>
           <div
             className={`header__search ${
-              location.pathname === '/create-event' ? 'active' : ''
+              location.pathname === "/create-event" ? "active" : ""
             }`}
           >
-            <Input width="290px" placeholder="Search" />
+            <Input
+              width="290px"
+              placeholder="Search"
+              onKeyDown={handleSubmit}
+            />
           </div>
           <div className="header__category">
-            <div class="dropdown">
+            <div className="dropdown">
               <Link href="/" alt="">
-                <div class="dropdown__catergory">Sự kiện</div>
+                <div className="dropdown__catergory">Sự kiện</div>
               </Link>
-              <div class="dropdown__content">
-                <Link href="/">
-                  <div className="category__item">Link 1</div>
-                </Link>
-                <Link href="/">
-                  <div className="category__item">Link 2</div>
-                </Link>
-                <Link href="/">
-                  <div className="category__item">Link 3</div>
-                </Link>
+              <div className="dropdown__content">
+                {category?.map((item) => {
+                  return (
+                    <div
+                      key={item._id}
+                      onClick={() =>
+                        navigate(`/events?category=${item.categoryName}`)
+                      }
+                      className="category__item"
+                    >
+                      {item.categoryName}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -65,7 +83,7 @@ const Header = () => {
         <div className="header__right-block">
           <div
             className={`create__event ${
-              location.pathname === '/create-event' ? 'active' : ''
+              location.pathname === "/create-event" ? "active" : ""
             }`}
           >
             <Link to="/create-event" alt="">
