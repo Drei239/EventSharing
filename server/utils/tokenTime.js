@@ -5,7 +5,7 @@ const verifyRefreshToken = require('./verifyRefreshToken');
 const { JWT_SECRET_ACCESS_TOKEN, JWT_SECRET_REFRESH_TOKEN, JWT_EXPRIRE_REFRESH_TOKEN, JWT_EXPRIRE_ACCESS_TOKEN } =
   process.env;
 
-const genrateToken = async (user) => {
+const generateToken = async (user) => {
   try {
     const payload = { user };
     const accessToken = jwt.sign(payload, JWT_SECRET_ACCESS_TOKEN, { expiresIn: JWT_EXPRIRE_ACCESS_TOKEN });
@@ -54,4 +54,4 @@ const decodedAccessToken = (token) => {
   return jwt.decode(token, JWT_SECRET_ACCESS_TOKEN);
 };
 
-module.exports = { genrateToken, decodedAccessToken, generateAccessToken };
+module.exports = { generateToken, decodedAccessToken, generateAccessToken };

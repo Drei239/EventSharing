@@ -1,7 +1,9 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
-const { genrateAccessToken, decodedAccessToken } = require('../utils/tokenTime');
+const { generateAccessToken, decodedAccessToken } = require('../utils/tokenTime');
+const { refreshToken } = require('../controllers/refreshTokenController');
 const userModel = require('../models/userModel');
+const e = require('express');
 
 
 //1.GET ALL USER INFO
@@ -20,7 +22,7 @@ const register = asyncHandler(async (req, res) => {
     return res.status(400).json({ message: 'User account already exists' });
   }
   const newUser = await userModel.create({ name, email: lowerCaseEmail, password, phone, birthDay });
-  if (newUser) {const { accessToken, refreshToken } = await genrateToken(newUser);
+  if (newUser) {const { accessToken, refreshToken } = await generateToken(newUser);
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     maxAge: 30 * 24 * 60 * 60 * 1000,
@@ -44,7 +46,7 @@ const authLogin = asyncHandler(async (req, res) => {
     const lowerCaseEmail = email.toLowerCase();
     const user = await userModel.findOne({ email: lowerCaseEmail });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { accessToken, refreshToken } = await genrateToken(user);
+      const { accessToken, refreshToken } = await generateToken(user);
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
@@ -106,7 +108,7 @@ const Userupdate = asyncHandler(async (req, res) => {
     avatar: updatedUser.avatar,
     isAdmin: updatedUser.isAdmin,
     phone: updatedUser.phone,
-    token: genrateAccessToken(updatedUser._id),
+    token: generateAccessToken(updatedUser._id),
   });
 });
 
