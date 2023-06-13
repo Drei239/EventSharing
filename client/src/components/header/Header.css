@@ -16,7 +16,6 @@ header .wrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #161f6d;
   border-radius: 10px;
 }
 
@@ -60,7 +59,7 @@ header .wrapper {
 
 .header__btn-create {
   padding: 10px;
-  background-color: #00abe1;
+  background-color: #161f6d;
   border-radius: 10px;
 }
 
