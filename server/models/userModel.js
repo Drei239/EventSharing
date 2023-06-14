@@ -5,9 +5,9 @@ const schema = mongoose.Schema;
 const userSchema = new schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String, default: '' },
-  birthDay: { type: Date },
-  phone: { type: Number },
+  password: { type: String, required: true },
+  birthDay: { type: Date, required: true },
+  phone: { type: Number, required: true },
   description: { type: String, default: '' },
   avatar: { type: String, default: '' },
   isAdmin: {
