@@ -8,6 +8,7 @@ const {
   profileUser,
   Userupdate,
   updateUserById,
+  refresh,
   deleted,
 } = require('../controllers/userController');
 const { protect, isAdmin } = require('../middleware/authMiddleware');
@@ -16,11 +17,12 @@ const {
   loginValidate,
   updateUserValidate,
 } = require('../middleware/validate');
+const { ref } = require('joi');
 
 router.get('/profile', profileUser);
-
+router.get('/refresh-token', protect, refresh);
 router.get('/admin', protect, isAdmin, getAllUser);
-router.post('/login', loginValidate, authLogin);
+router.post('/login', authLogin);
 router.post('/register', registerValidate, register);
 router.post('/update', updateUserValidate, Userupdate);
 router.put('/profile', protect, Userupdate);

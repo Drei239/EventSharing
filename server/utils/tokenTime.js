@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const UserToken = require('../models/userTokenModel');
 const verifyRefreshToken = require('./verifyRefreshToken');
+require('dotenv').config({ path: '.env' });
+
+const secretKey = process.env.SECRETKEY;
 
 const {
   JWT_SECRET_ACCESS_TOKEN,
@@ -11,9 +14,9 @@ const {
 
 const generateToken = async (user) => {
   try {
-    const payload = { user };
-    const accessToken = jwt.sign(payload, JWT_SECRET_ACCESS_TOKEN, {
-      expiresIn: JWT_EXPRIRE_ACCESS_TOKEN,
+    const { _id, email } = { user };
+    const accessToken = jwt.sign({ _id, email }, secretKey, {
+      expiresIn: '30d',
     });
     let refreshToken = '';
 

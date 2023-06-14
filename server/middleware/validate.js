@@ -2,17 +2,25 @@ const Joi = require('joi');
 
 const registerValidate = (req, res, next) => {
   const data = req.body;
+  console.log(data);
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(24).required(),
-    confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-    phone: Joi.number().required(),
-    birthDay: Joi.date().required(),
+    password: Joi.string().min(6).required(),
   });
-  const { error } = schema.validate(data);
-  if (error) return res.status(400).send(error.details[0].message);
-  next();
+  const schemaGoogle = Joi.object({
+    name: Joi.string().required(),
+    email: Joi.string().email().required(),
+  });
+  if (data.password) {
+    const { error } = schema.validate(data);
+    if (error) return res.status(400).send(error.details[0].message);
+    next();
+  } else {
+    const { error } = schemaGoogle.validate(data);
+    if (error) return res.status(400).send(error.details[0].message);
+    next();
+  }
 };
 
 const updateUserValidate = (req, res, next) => {
@@ -20,7 +28,7 @@ const updateUserValidate = (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string(),
     email: Joi.string().email(),
-    password: Joi.string().min(6).max(24).required(),
+    password: Joi.string().min(6).required(),
     phone: Joi.number(),
     birthDay: Joi.date(),
     isAdmin: Joi.string().valid('user', 'admin').default('user'),

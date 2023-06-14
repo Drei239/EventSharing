@@ -1,6 +1,8 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 const {
+  generateToken,
   generateAccessToken,
   decodedAccessToken,
 } = require('../utils/tokenTime');
@@ -15,60 +17,85 @@ const getAllUser = asyncHandler(async (req, res) => {
 });
 
 //2.REGISTER NEW USER
-
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password, phone, birthDay } = req.body;
+  const { name, email, password } = req.body;
   const lowerCaseEmail = email.toLowerCase();
   const userExists = await userModel.findOne({ email: lowerCaseEmail });
   if (userExists) {
-    return res.status(400).json({ message: 'User account already exists' });
+    return res.status(400).json({ message: 'Email đã có tài khoản' });
   }
-  const newUser = await userModel.create({
-    name,
-    email: lowerCaseEmail,
-    password,
-    phone,
-    birthDay,
-  });
-  if (newUser) {
-    const { accessToken, refreshToken } = await generateToken(newUser);
-    res.cookie('refreshToken', refreshToken, {
-      httpOnly: true,
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      sameSite: true,
+
+  let newUser;
+  if (password) {
+    newUser = await userModel.create({
+      name,
+      email: lowerCaseEmail,
+      password,
     });
-    return res.status(201).json({
+  } else {
+    newUser = await userModel.create({
+      name,
+      email: lowerCaseEmail,
+    });
+  }
+
+  if (newUser) {
+    // const { accessToken, refreshToken } = await generateToken(newUser);
+    // res.cookie('refreshToken', refreshToken, {
+    //   httpOnly: true,
+    //   maxAge: 30 * 24 * 60 * 60 * 1000,
+    //   sameSite: true,
+    // });
+    // return res.status(201).json({
+    //   success: true,
+    //   accessToken,
+    //   refreshToken,
+    //   message: 'Tạo tài khoản thành công',
+    // });
+    res.status(201).json({
       success: true,
-      accessToken,
-      refreshToken,
-      message: 'Registered successfully',
+      data: 'Tạo tài khoản thành công',
     });
   } else {
     return res
       .status(400)
-      .json({ success: false, message: 'Invalid input data' });
+      .json({ success: false, message: 'Tạo tài khoản thất bại' });
   }
 });
-//3.USER LOGIN
 
+//3.USER LOGIN
 const authLogin = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
     const lowerCaseEmail = email.toLowerCase();
     const user = await userModel.findOne({ email: lowerCaseEmail });
     if (user && (await bcrypt.compare(password, user.password))) {
-      const { accessToken, refreshToken } = await generateToken(user);
+      // const { accessToken, refreshToken } = await generateToken(user);
 
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        maxAge: 30 * 24 * 60 * 60 * 1000,
-        sameSite: true,
+      // res.cookie('refreshToken', refreshToken, {
+      //   httpOnly: true,
+      //   maxAge: 30 * 24 * 60 * 60 * 1000,
+      //   sameSite: true,
+      // });
+      // return res.status(201).json({
+      //   success: true,
+      //   accessToken,
+      //   refreshToken,
+      //   message: 'Logged in sucessfully',
+      // });
+      const token = jwt.sign({ _id: user._id }, process.env.SECRETKEY, {
+        expiresIn: '10d',
       });
-      return res.json({
+
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 264 * 3600000),
+      });
+
+      res.status(201).json({
         success: true,
-        accessToken,
-        refreshToken,
-        message: 'Logged in sucessfully',
+        data: 'Đăng nhập thành công',
       });
     } else {
       return res
@@ -77,6 +104,24 @@ const authLogin = asyncHandler(async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+const refresh = asyncHandler(async (req, res) => {
+  try {
+    const { _id, email } = req.user;
+    const token = jwt.sign({ _id, email }, process.env.SECRETKEY, {
+      expiresIn: '10d',
+    });
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 264 * 3600000),
+    });
+    res.status(200).json({ success: true, message: 'Token refreshed' });
+  } catch (error) {
+    res.status(400).json({ success: false, message: 'Token invalid' });
   }
 });
 
@@ -166,4 +211,5 @@ module.exports = {
   Userupdate,
   updateUserById,
   deleted,
+  refresh,
 };

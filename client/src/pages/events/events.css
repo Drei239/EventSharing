@@ -1,0 +1,38 @@
+.events {
+  width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  padding: 60px 0;
+}
+.events-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-top: 30px;
+}
+.pagination {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.banner-event {
+  margin: 20px 0;
+}
+.empty-events {
+  margin-top: 40px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+.empty-events img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+}
+.empty-events p {
+  font-size: 30px;
+  font-weight: 600;
+}

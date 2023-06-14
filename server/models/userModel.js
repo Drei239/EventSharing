@@ -5,9 +5,9 @@ const schema = mongoose.Schema;
 const userSchema = new schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String, required: true },
-  birthDay: { type: Date, required: true },
-  phone: { type: Number, required: true },
+  password: { type: String },
+  birthDay: { type: Date },
+  phone: { type: Number },
   description: { type: String, default: '' },
   avatar: { type: String, default: '' },
   isAdmin: {
@@ -27,9 +27,9 @@ const userSchema = new schema({
   },
 });
 
-userSchema.methods.matchPassword = async function (enteredPassword) {
-  return await bcrypt.compare(enteredPassword, this.password);
-};
+// userSchema.methods.matchPassword = async function (enteredPassword) {
+//   return await bcrypt.compare(enteredPassword, this.password);
+// };
 
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password')) {
