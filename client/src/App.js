@@ -6,19 +6,7 @@ import LoginRegisterPage from './pages/login-register/LoginRegisterPage';
 import CreateEventPage from './pages/create-event/CreateEventPage';
 import { NextUIProvider } from '@nextui-org/react';
 import { Home, Events, Setting } from './pages';
-import { useEffect } from 'react';
-import customFetch from './utils/axios.config';
 function App() {
-  useEffect(() => {
-    console.log('app');
-    customFetch({
-      method: 'get',
-      url: '/users/refresh-token',
-    })
-      .then((res) => {})
-      .catch((err) => {});
-  }, []);
-
   return (
     <NextUIProvider>
       <Header />

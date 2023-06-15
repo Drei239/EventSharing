@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from '@nextui-org/react';
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
@@ -39,7 +39,7 @@ const Login = () => {
           if (res.data.success) {
             notify('Đăng nhập thành công', 'success');
             setTimeout(() => {
-              navigate('/');
+              navigate(-1);
             }, 2000);
           }
         })

@@ -84,13 +84,23 @@ const authLogin = asyncHandler(async (req, res) => {
       //   message: 'Logged in sucessfully',
       // });
       const token = jwt.sign({ _id: user._id }, process.env.SECRETKEY, {
-        expiresIn: '10d',
+        expiresIn: process.env.EXPIRETIME_ACCESS,
+      });
+
+      const refreshToken = jwt.sign({ _id: user._id }, process.env.REFRESHKEY, {
+        expiresIn: process.env.EXPIRETIME_REFRESH,
       });
 
       res.cookie('token', token, {
         httpOnly: true,
         secure: true,
-        expires: new Date(Date.now() + 264 * 3600000),
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
+
+      res.cookie('refresh', refreshToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 721 * 3600000),
       });
 
       res.status(201).json({
@@ -107,32 +117,15 @@ const authLogin = asyncHandler(async (req, res) => {
   }
 });
 
-const refresh = asyncHandler(async (req, res) => {
-  try {
-    const { _id, email } = req.user;
-    const token = jwt.sign({ _id, email }, process.env.SECRETKEY, {
-      expiresIn: '10d',
-    });
-
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 264 * 3600000),
-    });
-    res.status(200).json({ success: true, message: 'Token refreshed' });
-  } catch (error) {
-    res.status(400).json({ success: false, message: 'Token invalid' });
-  }
-});
-
 //4. GET USER PROFILE
 
 const profileUser = asyncHandler(async (req, res) => {
-  const bearerToken = req.get('Authorization');
-  const token = bearerToken.split(' ')[1];
-  const decoded = decodedAccessToken(token);
-  const { email } = decoded.data;
-  const user = await userModel.findOne({ email });
+  // const bearerToken = req.get('Authorization');
+  // const token = bearerToken.split(' ')[1];
+  // const decoded = decodedAccessToken(token);
+  // const { email } = decoded.data;
+  // const user = await userModel.findOne({ email });
+  const user = req.user;
   res.status(200).json(user);
 });
 
@@ -211,5 +204,4 @@ module.exports = {
   Userupdate,
   updateUserById,
   deleted,
-  refresh,
 };
