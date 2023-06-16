@@ -36,7 +36,7 @@ const EventDetails = ({ rules }) => {
 	
 
 	function getUserRule() {
-		let isAdmin = false;
+		let isAdmin = true;
 		return isAdmin ? rules.ADMIN : rules.USER 
 	}
 
@@ -102,7 +102,7 @@ const EventDetails = ({ rules }) => {
 						<button className='members__list'><FaListAlt className="cardEvent-info2-item-icon" /></button>
 					</div>
 					{userRule === rules.ADMIN && <div className='event__status'>
-						<Dropdown>
+						{/* <Dropdown>
 							<Dropdown.Button color={selectedColor} shadow>
 								Status
 							</Dropdown.Button>
@@ -118,7 +118,13 @@ const EventDetails = ({ rules }) => {
 									Sự kiện đã hủy
 								</Dropdown.Item>
 							</Dropdown.Menu>
-						</Dropdown>
+						</Dropdown> */}
+						<select className="change__status" id="event__status">
+							<option value="status__item">Sắp diễn ra</option>
+							<option value="status__item">Đang diễn ra</option>
+							<option value="status__item">Đã hoàn tât</option>
+							<option value="status__item event__fall">Sư kiện đã hủy</option>
+						</select>
 					</div>}
 					{userRule === rules.USER && <div className='event__status'>event user</div>}
 				</div>

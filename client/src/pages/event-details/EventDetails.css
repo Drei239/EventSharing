@@ -49,8 +49,13 @@
 	transition: all, ease-in-out, 0.3s;
 }
 
+.event__category {
+	margin-bottom: 10px;
+}
+
 .event__type {
 	color: red;
+	margin-top: 10px;
 }
 
 .event__info {
@@ -86,6 +91,12 @@
 	text-align: center;
 	margin-top: 10px;
 }
+
+.change__status {
+	padding: 5px 10px;
+	text-align: center;
+	border-radius: 10px;
+}	
 
 .members__list {
 	background: none;
