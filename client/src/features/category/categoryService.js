@@ -5,7 +5,9 @@ const getAllCategory = async () => {
   const response = await axios.get(`${base_url}/category/all`);
   return response.data;
 };
+
 const categoryService = {
   getAllCategory,
 };
+
 export default categoryService;

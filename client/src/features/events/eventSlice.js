@@ -95,8 +95,7 @@ const eventSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getEventById.fulfilled, (state, action) => {
-      state.events = action.payload?.data;
-      state.countDocument = action.payload?.totalCount;
+      state.events = action.payload.event;
       state.isLoading = false;
       state.isSuccess = true;
     });

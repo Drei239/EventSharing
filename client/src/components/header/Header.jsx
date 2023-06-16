@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@nextui-org/react";
 const Header = () => {
   const navigate = useNavigate();
   const category = useSelector((state) => state.category.categories);
@@ -44,7 +45,7 @@ const Header = () => {
       <div className="wrapper">
         <div className="header__left-block">
           <Link className="logo" to="/" alt="">
-            <img src={"./images/logo.png"} />
+            <img src={"../images/logo.png"} />
           </Link>
           <div
             className={`header__search ${
@@ -87,7 +88,9 @@ const Header = () => {
             }`}
           >
             <Link to="/create-event" alt="">
-              <div className="header_btn header__btn-create">Tạo sự kiện</div>
+              <Button color="primary" size="sm">
+                Tạo sự kiện
+              </Button>
             </Link>
           </div>
           <div className="header__log">

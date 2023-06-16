@@ -1,7 +1,7 @@
-import './Comment.css'
-import CommentForm from "../comment-form/CommentForm";
+import './Discussion.css'
+import DiscussionForm from "../discussion-form/DiscussionForm";
 
-const Comment = ({
+const Discussion = ({
 	comment,
 	replies,
 	setActiveComment,
@@ -41,7 +41,7 @@ const Comment = ({
 				</div>
 				{!isEditing && <div className="comment-text">{comment.body}</div>}
 				{isEditing && (
-					<CommentForm
+					<DiscussionForm
 						submitLabel="Update"
 						hasCancelButton
 						initialText={comment.body}
@@ -82,7 +82,7 @@ const Comment = ({
 					)}
 				</div>
 				{isReplying && (
-					<CommentForm
+					<DiscussionForm
 						submitLabel="Reply"
 						handleSubmit={(text) => addComment(text, replyId)}
 					/>
@@ -90,7 +90,7 @@ const Comment = ({
 				{replies.length > 0 && (
 					<div className="replies">
 						{replies.map((reply) => (
-							<Comment
+							<Discussion
 								comment={reply}
 								key={reply.id}
 								setActiveComment={setActiveComment}
@@ -110,4 +110,4 @@ const Comment = ({
 	);
 };
 
-export default Comment;
+export default Discussion;
