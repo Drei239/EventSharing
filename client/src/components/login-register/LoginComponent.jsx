@@ -4,16 +4,24 @@ import { ToastContainer } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
+import { useDispatch } from 'react-redux';
 import Register from './RegisterComponent';
+import { getUserInfo } from '../../features/user/userSlice';
 import './LoginRegisterComponent.css';
 import 'react-toastify/dist/ReactToastify.css';
 import notify from '../../utils/notify';
 import customFetch from '../../utils/axios.config';
 
 const Login = () => {
+  const dispatch = useDispatch();
   const [displayForm, setDisplayForm] = useState(true);
   const [inputValue, setInputValue] = useState({ email: '', password: '' });
   const [token, setToken] = useState('');
+  const [googleInfo, setGoogleInfo] = useState({
+    name: '',
+    email: '',
+    avatar: '',
+  });
   const navigate = useNavigate();
 
   const changeForm = () => {
@@ -37,6 +45,7 @@ const Login = () => {
       })
         .then((res) => {
           if (res.data.success) {
+            dispatch(getUserInfo());
             notify('Đăng nhập thành công', 'success');
             setTimeout(() => {
               navigate(-1);
@@ -54,6 +63,50 @@ const Login = () => {
     onError: (error) => console.log('Login failed: ' + error),
   });
 
+  const handleLoginByGoogle = async () => {
+    const check = await customFetch.post(
+      '/users/check',
+      JSON.stringify({ email: googleInfo.email })
+    );
+    if (check.data.accountExists) {
+      const resp = await customFetch.post(
+        '/users/login',
+        JSON.stringify({ email: googleInfo.email })
+      );
+      if (resp.data.success) {
+        dispatch(getUserInfo());
+        notify('Đăng nhập thành công', 'success');
+        setTimeout(() => {
+          navigate(-1);
+        }, 2000);
+      }
+    } else {
+      const resp = await customFetch({
+        method: 'post',
+        url: '/users/register',
+        data: JSON.stringify({
+          name: googleInfo.name,
+          email: googleInfo.email,
+          avatar: googleInfo.picture,
+        }),
+      });
+
+      if (resp.data.success) {
+        const resp = await customFetch.post(
+          '/users/login',
+          JSON.stringify({ email: googleInfo.email })
+        );
+        if (resp.data.success) {
+          dispatch(getUserInfo());
+          notify('Đăng nhập thành công', 'success');
+          setTimeout(() => {
+            navigate(-1);
+          }, 2000);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     if (token) {
       axios
@@ -63,10 +116,22 @@ const Login = () => {
             Accept: 'application/json',
           },
         })
-        .then((response) => console.log(response))
+        .then((response) => {
+          setGoogleInfo({
+            name: response.data.name,
+            email: response.data.email,
+            avatar: response.data.picture,
+          });
+        })
         .catch((error) => console.log(error));
     }
   }, [token]);
+
+  useEffect(() => {
+    if (googleInfo.name && googleInfo.email && googleInfo.avatar) {
+      handleLoginByGoogle();
+    }
+  }, [googleInfo]);
 
   return (
     <>

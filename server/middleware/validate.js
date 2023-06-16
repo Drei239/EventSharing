@@ -11,15 +11,16 @@ const registerValidate = (req, res, next) => {
   const schemaGoogle = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
+    avatar: Joi.string().required(),
   });
   if (data.password) {
     const { error } = schema.validate(data);
     if (error) return res.status(400).send(error.details[0].message);
-    next();
+    return next();
   } else {
     const { error } = schemaGoogle.validate(data);
     if (error) return res.status(400).send(error.details[0].message);
-    next();
+    return next();
   }
 };
 
@@ -28,10 +29,11 @@ const updateUserValidate = (req, res, next) => {
   const schema = Joi.object({
     name: Joi.string(),
     email: Joi.string().email(),
-    password: Joi.string().min(6).required(),
+    oldPassword: Joi.string().min(6),
+    newPassword: Joi.string().min(6),
     phone: Joi.number(),
     birthDay: Joi.date(),
-    isAdmin: Joi.string().valid('user', 'admin').default('user'),
+    description: Joi.string(),
   });
   const { error } = schema.validate(data);
   if (error) return res.status(400).send(error.details[0].message);

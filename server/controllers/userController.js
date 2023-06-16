@@ -1,14 +1,23 @@
 const asyncHandler = require('express-async-handler');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {
-  generateToken,
-  generateAccessToken,
-  decodedAccessToken,
-} = require('../utils/tokenTime');
-const { refreshToken } = require('../controllers/refreshTokenController');
 const userModel = require('../models/userModel');
-const e = require('express');
+
+const createJwt = (value) => {
+  try {
+    const token = jwt.sign({ _id: value }, process.env.SECRETKEY, {
+      expiresIn: process.env.EXPIRETIME_ACCESS,
+    });
+
+    const refreshToken = jwt.sign({ _id: value }, process.env.REFRESHKEY, {
+      expiresIn: process.env.EXPIRETIME_REFRESH,
+    });
+
+    return { token, refreshToken };
+  } catch (error) {
+    throw new Error('Create jwt error');
+  }
+};
 
 //1.GET ALL USER INFO
 const getAllUser = asyncHandler(async (req, res) => {
@@ -16,9 +25,19 @@ const getAllUser = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
+const checkAccount = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  const emailExists = await userModel.findOne({ email: email.toLowerCase() });
+  if (emailExists) {
+    res.json({ accountExists: true });
+  } else {
+    res.json({ accountExists: false });
+  }
+});
+
 //2.REGISTER NEW USER
 const register = asyncHandler(async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, avatar } = req.body;
   const lowerCaseEmail = email.toLowerCase();
   const userExists = await userModel.findOne({ email: lowerCaseEmail });
   if (userExists) {
@@ -36,22 +55,11 @@ const register = asyncHandler(async (req, res) => {
     newUser = await userModel.create({
       name,
       email: lowerCaseEmail,
+      avatar,
     });
   }
 
   if (newUser) {
-    // const { accessToken, refreshToken } = await generateToken(newUser);
-    // res.cookie('refreshToken', refreshToken, {
-    //   httpOnly: true,
-    //   maxAge: 30 * 24 * 60 * 60 * 1000,
-    //   sameSite: true,
-    // });
-    // return res.status(201).json({
-    //   success: true,
-    //   accessToken,
-    //   refreshToken,
-    //   message: 'Tạo tài khoản thành công',
-    // });
     res.status(201).json({
       success: true,
       data: 'Tạo tài khoản thành công',
@@ -65,42 +73,23 @@ const register = asyncHandler(async (req, res) => {
 
 //3.USER LOGIN
 const authLogin = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const lowerCaseEmail = email.toLowerCase();
-    const user = await userModel.findOne({ email: lowerCaseEmail });
+  const { email, password } = req.body;
+  const lowerCaseEmail = email.toLowerCase();
+  const user = await userModel.findOne({ email: lowerCaseEmail });
+  if (user.password) {
     if (user && (await bcrypt.compare(password, user.password))) {
-      // const { accessToken, refreshToken } = await generateToken(user);
+      const jwt = createJwt(user._id);
 
-      // res.cookie('refreshToken', refreshToken, {
-      //   httpOnly: true,
-      //   maxAge: 30 * 24 * 60 * 60 * 1000,
-      //   sameSite: true,
-      // });
-      // return res.status(201).json({
-      //   success: true,
-      //   accessToken,
-      //   refreshToken,
-      //   message: 'Logged in sucessfully',
-      // });
-      const token = jwt.sign({ _id: user._id }, process.env.SECRETKEY, {
-        expiresIn: process.env.EXPIRETIME_ACCESS,
-      });
-
-      const refreshToken = jwt.sign({ _id: user._id }, process.env.REFRESHKEY, {
-        expiresIn: process.env.EXPIRETIME_REFRESH,
-      });
-
-      res.cookie('token', token, {
+      res.cookie('token', jwt.token, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
       });
 
-      res.cookie('refresh', refreshToken, {
+      res.cookie('refresh', jwt.refreshToken, {
         httpOnly: true,
         secure: true,
-        expires: new Date(Date.now() + 721 * 3600000),
+        expires: new Date(Date.now() + 720 * 3600000),
       });
 
       res.status(201).json({
@@ -112,82 +101,100 @@ const authLogin = asyncHandler(async (req, res) => {
         .status(401)
         .json({ success: false, message: 'Email or password is incorrect' });
     }
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  } else {
+    const jwt = createJwt(user._id);
+
+    res.cookie('token', jwt.token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
+
+    res.cookie('refresh', jwt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 720 * 3600000),
+    });
+
+    res.status(201).json({
+      success: true,
+      data: 'Đăng nhập thành công',
+    });
   }
 });
 
 //4. GET USER PROFILE
-
-const profileUser = asyncHandler(async (req, res) => {
-  // const bearerToken = req.get('Authorization');
-  // const token = bearerToken.split(' ')[1];
-  // const decoded = decodedAccessToken(token);
-  // const { email } = decoded.data;
-  // const user = await userModel.findOne({ email });
+const profileUser = asyncHandler((req, res) => {
   const user = req.user;
+  const token = req.token;
+
+  if (token) {
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
+  }
+
   res.status(200).json(user);
-});
-
-//5. UPDATE USER
-
-const Userupdate = asyncHandler(async (req, res) => {
-  const user = await userModel.findById(req.user._id);
-  if (!user) {
-    res.status(404).json({ message: 'User not found' });
-  }
-  const { name, email, currentPassword, newPassword } = req.body;
-  user.name = name || user.name;
-  user.email = email || user.email;
-  user.isAdmin = isAdmin || user.isAdmin;
-  user.password = password || user.password;
-  user.phone = phone || user.phone;
-
-  if (newPassword) {
-    const isMatch = await bcrypt.compare(currentPassword, user.password);
-    if (!isMatch) {
-      return res.status(401).json({ message: 'Current password is incorrect' });
-    }
-
-    user.password = newPassword;
-  }
-  const updatedUser = await user.save();
-  return res.json({
-    name: updatedUser.name,
-    email: updatedUser.email,
-    avatar: updatedUser.avatar,
-    isAdmin: updatedUser.isAdmin,
-    phone: updatedUser.phone,
-    token: generateAccessToken(updatedUser._id),
-  });
+  res.end();
 });
 
 //6. UPDATE USER BY ID
-
 const updateUserById = asyncHandler(async (req, res) => {
-  const user = await userModel.findById(req.params._id);
+  const user = await userModel.findById(req.params.id);
   if (!user) {
     res.status(404).json({ message: `Can't find users` });
   }
-  const { name, email, isAdmin, password, phone } = req.body;
+
+  const {
+    name,
+    email,
+    oldPassword,
+    newPassword,
+    phone,
+    birthDay,
+    description,
+  } = req.body;
+  if (oldPassword) {
+    const passwordVerify = await bcrypt.compare(oldPassword, user.password);
+    if (passwordVerify && newPassword) {
+      user.password = passwordVerify;
+    }
+  } else {
+    if (newPassword) {
+      user.password = newPassword;
+    }
+  }
   user.name = name || user.name;
   user.email = email || user.email;
   user.isAdmin = isAdmin || user.isAdmin;
-  user.password = password || user.password;
   user.phone = phone || user.phone;
+  user.birthDay = birthDay || user.birthDay;
+  user.description = description || user.description;
   const updatedUser = await user.save();
-  res.json({
-    name: updatedUser.name,
-    email: updatedUser.email,
-    password: updatedUser.password,
-    avatar: updatedUser.avatar,
-    isAdmin: updatedUser.isAdmin,
-    phone: updatedUser.phone,
-  });
+
+  const token = req.token;
+  if (token) {
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
+  }
+
+  if (updatedUser) {
+    res.status(200).json({
+      success: true,
+      data: updatedUser,
+    });
+  } else {
+    res.status(400);
+    throw new Error('Update fail');
+  }
 });
 
 //7. DELETE USER
-
 const deleted = asyncHandler(async (req, res) => {
   const user = await userModel.findByIdAndDelete(req.params.id);
   if (!user) {
@@ -196,12 +203,19 @@ const deleted = asyncHandler(async (req, res) => {
   res.status(200).json({ message: 'Delete successfully' });
 });
 
+const logout = (req, res) => {
+  res.clearCookie('token');
+  res.clearCookie('refresh');
+  res.end();
+};
+
 module.exports = {
   getAllUser,
   register,
   authLogin,
   profileUser,
-  Userupdate,
   updateUserById,
   deleted,
+  logout,
+  checkAccount,
 };
