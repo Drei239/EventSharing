@@ -45,9 +45,7 @@ header .wrapper {
 }
 
 .header__log {
-  width: 170px;
-  display: flex;
-  justify-content: space-evenly;
+  position: relative;
 }
 
 .header__log,
