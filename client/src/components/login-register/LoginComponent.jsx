@@ -55,6 +55,8 @@ const Login = () => {
         .catch((err) => {
           notify('Email và mật khẩu không trùng khớp', 'error');
         });
+    } else {
+      notify('Email và mật khẩu không trùng khớp', 'error');
     }
   };
 
