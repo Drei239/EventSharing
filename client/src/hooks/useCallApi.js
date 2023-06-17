@@ -6,8 +6,7 @@ const UseCallApi = async ({ method, url, data }) => {
       method: method || "GET",
       url: url,
       data: data,
-
-      //   withCredentials: true,
+      withCredentials: true,
     });
     if (response.status !== 200) {
       throw new Error("Có lỗi xảy ra trong quá trình gọi API");

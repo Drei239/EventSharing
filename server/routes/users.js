@@ -11,8 +11,13 @@ const {
   checkAccount,
   logout,
   deleted,
+  getPersonalUser,
 } = require("../controllers/userController");
-const { protect, isAdmin } = require("../middleware/authMiddleware");
+const {
+  protect,
+  isAdmin,
+  verifyUser,
+} = require("../middleware/authMiddleware");
 const {
   registerValidate,
   loginValidate,
@@ -26,10 +31,8 @@ router.post("/login", authLogin);
 router.post("/register", registerValidate, register);
 router.post("/check", checkAccount);
 router.get("/logout", logout);
-router.post("/update/:id", protect, updateUserValidate, updateUserById);
+router.put("/update/:id", verifyUser, updateUserValidate, updateUserById);
 router.delete("/admin/:id", protect, isAdmin, deleted);
-
-// router.get("/account", getUserPersonal);
 
 // router.get("update", updateUser);
 module.exports = router;

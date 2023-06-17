@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require("joi");
 
 const registerValidate = (req, res, next) => {
   const data = req.body;
@@ -28,6 +28,7 @@ const updateUserValidate = (req, res, next) => {
   const data = req.body;
   const schema = Joi.object({
     name: Joi.string(),
+    avatar: Joi.string(),
     email: Joi.string().email(),
     oldPassword: Joi.string().min(6),
     newPassword: Joi.string().min(6),
@@ -54,7 +55,7 @@ const loginValidate = (req, res, next) => {
 const refreshTokenBodyValidation = (req, res, next) => {
   const data = req.body;
   const schema = Joi.object({
-    refreshToken: Joi.string().required().label('Refresh Token'),
+    refreshToken: Joi.string().required().label("Refresh Token"),
   });
   const { error } = schema.validate(data);
   if (error) return res.status(400).send(error.details[0].message);

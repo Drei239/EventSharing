@@ -12,6 +12,7 @@ import { useDropzone } from "react-dropzone";
 import { MdRotate90DegreesCw } from "react-icons/md";
 import { motion } from "framer-motion";
 import Cropper from "react-easy-crop";
+import { Modal } from "@nextui-org/react";
 
 import "react-image-crop/dist/ReactCrop.css";
 import { CropImage } from ".";
@@ -48,14 +49,13 @@ const UploadImage = () => {
     setImgSrc("");
     dispatch(closeModal());
   };
-
   useEffect(() => {
-    console.log(croppedImage);
-  }, [croppedImage]);
+    console.log(open);
+  }, [open]);
   return (
     <>
       {open && (
-        <motion.div className="upload-photo">
+        <motion.div open={open} className="upload-photo">
           <motion.div
             key={open}
             initial={{ y: 200, opacity: 0 }}
