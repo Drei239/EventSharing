@@ -5,8 +5,7 @@ require('dotenv').config({ path: '.env' });
 const userModel = require('../models/userModel');
 
 const protect = asyncHandler(async (req, res, next) => {
-  const accessToken = req.cookies.token;
-  const refreshToken = req.cookies.refresh;
+  const accessToken = req.cookies.access;
 
   if (accessToken) {
     try {
@@ -16,18 +15,11 @@ const protect = asyncHandler(async (req, res, next) => {
       req.user = userInfo;
       return next();
     } catch (error) {
-      res.status(400).end();
+      res.status(401).json({ tokenExpires: true });
       throw new Error('Token invalid');
     }
   } else {
-    const newToken = refreshAccessToken(refreshToken);
-    if (newToken) {
-      req.token = newToken;
-      return next();
-    } else {
-      res.statusCode(400);
-      throw new Error('Token invalid');
-    }
+    res.status(401).json({ tokenExpires: true });
   }
 });
 
