@@ -10,6 +10,7 @@ const {
   checkAccount,
   logout,
   deleted,
+  refreshToken,
 } = require("../controllers/userController");
 const {
   protect,

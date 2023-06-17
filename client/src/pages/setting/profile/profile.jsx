@@ -79,9 +79,6 @@ const Profile = () => {
   const removeImgFuc = () => {
     dispatch(removeImg());
   };
-  useEffect(() => {
-    alert(message);
-  }, [message]);
   const remainingCharsBio = 200 - formik.values?.description.length;
   const remainingChars = 30 - formik.values?.name.length;
   useEffect(() => {

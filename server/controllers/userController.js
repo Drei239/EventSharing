@@ -2,11 +2,10 @@ const asyncHandler = require("express-async-handler");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
-const { getPersonalUser } = require("../services/userService");
 
 const createJwt = (value) => {
   try {
-    const accessToken = jwt.sign({ _id: value }, process.env.SECRETKEY, {
+    const token = jwt.sign({ _id: value }, process.env.SECRETKEY, {
       expiresIn: process.env.EXPIRETIME_ACCESS,
     });
 
@@ -14,9 +13,8 @@ const createJwt = (value) => {
       expiresIn: process.env.EXPIRETIME_REFRESH,
     });
 
-    return { accessToken, refreshToken };
+    return { token, refreshToken };
   } catch (error) {
-    return false;
     throw new Error("Create jwt error");
   }
 };
@@ -81,39 +79,19 @@ const authLogin = asyncHandler(async (req, res) => {
   if (user.password) {
     if (user && (await bcrypt.compare(password, user.password))) {
       const jwt = createJwt(user._id);
-      if (jwt) {
-        res.cookie("access", jwt.accessToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 2 * 3600000),
-        });
 
-        res.cookie("token", jwt.token, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 2 * 3600000),
-        });
+      res.cookie("token", jwt.token, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
 
-        res.cookie("refresh", jwt.refreshToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 720 * 3600000),
-        });
-        res.cookie("refresh", jwt.refreshToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 720 * 3600000),
-        });
+      res.cookie("refresh", jwt.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 720 * 3600000),
+      });
 
-        res.status(201).json({
-          success: true,
-          data: "Đăng nhập thành công",
-        });
-        res.end();
-      } else {
-        res.status(400);
-        throw new Error("Create token fail");
-      }
       res.status(201).json({
         success: true,
         data: "Đăng nhập thành công",
@@ -126,37 +104,18 @@ const authLogin = asyncHandler(async (req, res) => {
   } else {
     const jwt = createJwt(user._id);
 
-    if (jwt) {
-      res.cookie("access", jwt.accessToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
-      res.cookie("token", jwt.token, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
+    res.cookie("token", jwt.token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
 
-      res.cookie("refresh", jwt.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 720 * 3600000),
-      });
-      res.cookie("refresh", jwt.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 720 * 3600000),
-      });
+    res.cookie("refresh", jwt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 720 * 3600000),
+    });
 
-      res.status(201).json({
-        success: true,
-        data: "Đăng nhập thành công",
-      });
-    } else {
-      res.status(400);
-      throw new Error("Create token fail");
-    }
     res.status(201).json({
       success: true,
       data: "Đăng nhập thành công",
@@ -180,25 +139,24 @@ const profileUser = asyncHandler((req, res) => {
   res.status(200).json(user);
   res.end();
 });
+
 //6. UPDATE USER BY ID
-const updateUserById = asyncHandler(async (req, res, next) => {
+const updateUserById = asyncHandler(async (req, res) => {
   const user = await userModel.findById(req.params.id);
   if (!user) {
     res.status(404).json({ message: `Can't find users` });
   }
 
   const {
-    avatar,
     name,
     email,
+    avatar,
     oldPassword,
     newPassword,
     phone,
     birthDay,
     description,
-    gender,
   } = req.body;
-
   if (oldPassword) {
     const passwordVerify = await bcrypt.compare(oldPassword, user.password);
     if (passwordVerify && newPassword) {
@@ -215,7 +173,6 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   user.phone = phone || user.phone;
   user.birthDay = birthDay || user.birthDay;
   user.description = description || user.description;
-  user.gender = gender || user.gender;
   user.avatar = avatar || user.avatar;
   const updatedUser = await user.save();
 
@@ -234,8 +191,8 @@ const updateUserById = asyncHandler(async (req, res, next) => {
       data: updatedUser,
     });
   } else {
-    console.log(err);
-    next(err);
+    res.status(400);
+    throw new Error("Update fail");
   }
 });
 
@@ -248,42 +205,11 @@ const deleted = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Delete successfully" });
 });
 
-// Log Out
 const logout = (req, res) => {
-  res.clearCookie("access");
-  res.clearCookie("refresh");
   res.clearCookie("token");
   res.clearCookie("refresh");
   res.end();
 };
-
-// check refresh token or not
-const refreshToken = asyncHandler(async (req, res) => {
-  const refreshToken = req.cookies.refresh;
-  const refreshVerify = jwt.verify(refreshToken, process.env.REFRESHKEY);
-
-  if (refreshVerify._id) {
-    const newToken = jwt.sign(
-      { _id: refreshVerify._id },
-      process.env.SECRETKEY,
-      {
-        expiresIn: process.env.EXPIRETIME_ACCESS,
-      }
-    );
-    if (newToken) {
-      res.cookie("access", newToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
-      res.status(200).end();
-    }
-  } else {
-    res.clearCookie("access");
-    res.clearCookie("refresh");
-    res.status(401);
-  }
-});
 
 module.exports = {
   getAllUser,
@@ -294,6 +220,4 @@ module.exports = {
   deleted,
   logout,
   checkAccount,
-  refreshToken,
-  getPersonalUser,
 };
