@@ -9,6 +9,7 @@ import { MdOutlineEventAvailable } from "react-icons/md";
 import { getHighlightEvent } from "../../features/events/eventSlice";
 import { getNewEvent } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
+
 const Home = () => {
   const dispatch = useDispatch();
   const [newEvent2, setNewEvent2] = useState([]);

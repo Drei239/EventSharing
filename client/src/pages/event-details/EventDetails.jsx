@@ -16,24 +16,21 @@ import Discussions from '../../components/discussions/Discussions';
 const EventDetails = ({ rules }) => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
 	const [selectedColor, setSelectedColor] = React.useState("default");
-	const { id } = useParams()
+	const { id } = useParams();
 	const dispatch = useDispatch();
-	const eventDetail = useSelector(state => state.event.events[0] || null)
-	const allCategories = useSelector(state => state.category.categories || null)
+	const eventDetail = useSelector(state => state.event.events[0] || null);
+	const allCategories = useSelector(state => state.category.categories || null);
 	const userRule = getUserRule();
 	const isOnline = isOnlineEvent();
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 	useEffect(() => { dispatch(getAllCategory()) }, []);
 
-
 	const category = allCategories?.find(category => category?._id === eventDetail?.category);
 	if (category == null) {
 		return false;
 	}; 
 	console.log(category);
-
-	
 
 	function getUserRule() {
 		let isAdmin = true;
@@ -102,23 +99,6 @@ const EventDetails = ({ rules }) => {
 						<button className='members__list'><FaListAlt className="cardEvent-info2-item-icon" /></button>
 					</div>
 					{userRule === rules.ADMIN && <div className='event__status'>
-						{/* <Dropdown>
-							<Dropdown.Button color={selectedColor} shadow>
-								Status
-							</Dropdown.Button>
-							<Dropdown.Menu
-								color={selectedColor}
-								variant="shadow"
-								aria-label="Actions"
-							>
-								<Dropdown.Item>Sắp diễn ra</Dropdown.Item>
-								<Dropdown.Item>Đang diễn ra</Dropdown.Item>
-								<Dropdown.Item>Đã hoàn tất</Dropdown.Item>
-								<Dropdown.Item color="error" withDivider>
-									Sự kiện đã hủy
-								</Dropdown.Item>
-							</Dropdown.Menu>
-						</Dropdown> */}
 						<select className="change__status" id="event__status">
 							<option value="status__item">Sắp diễn ra</option>
 							<option value="status__item">Đang diễn ra</option>
