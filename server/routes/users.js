@@ -7,17 +7,16 @@ const {
   authLogin,
   profileUser,
   updateUserById,
-  refresh,
   checkAccount,
   logout,
   deleted,
-  getPersonalUser,
 } = require("../controllers/userController");
 const {
   protect,
   isAdmin,
   verifyUser,
 } = require("../middleware/authMiddleware");
+
 const {
   registerValidate,
   loginValidate,

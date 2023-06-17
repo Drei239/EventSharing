@@ -6,7 +6,7 @@ const { getPersonalUser } = require("../services/userService");
 
 const createJwt = (value) => {
   try {
-    const token = jwt.sign({ _id: value }, process.env.SECRETKEY, {
+    const accessToken = jwt.sign({ _id: value }, process.env.SECRETKEY, {
       expiresIn: process.env.EXPIRETIME_ACCESS,
     });
 
@@ -14,8 +14,9 @@ const createJwt = (value) => {
       expiresIn: process.env.EXPIRETIME_REFRESH,
     });
 
-    return { token, refreshToken };
+    return { accessToken, refreshToken };
   } catch (error) {
+    return false;
     throw new Error("Create jwt error");
   }
 };
@@ -80,19 +81,39 @@ const authLogin = asyncHandler(async (req, res) => {
   if (user.password) {
     if (user && (await bcrypt.compare(password, user.password))) {
       const jwt = createJwt(user._id);
+      if (jwt) {
+        res.cookie("access", jwt.accessToken, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 2 * 3600000),
+        });
 
-      res.cookie("token", jwt.token, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
+        res.cookie("token", jwt.token, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 2 * 3600000),
+        });
 
-      res.cookie("refresh", jwt.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 720 * 3600000),
-      });
+        res.cookie("refresh", jwt.refreshToken, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 720 * 3600000),
+        });
+        res.cookie("refresh", jwt.refreshToken, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 720 * 3600000),
+        });
 
+        res.status(201).json({
+          success: true,
+          data: "Đăng nhập thành công",
+        });
+        res.end();
+      } else {
+        res.status(400);
+        throw new Error("Create token fail");
+      }
       res.status(201).json({
         success: true,
         data: "Đăng nhập thành công",
@@ -105,18 +126,37 @@ const authLogin = asyncHandler(async (req, res) => {
   } else {
     const jwt = createJwt(user._id);
 
-    res.cookie("token", jwt.token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
+    if (jwt) {
+      res.cookie("access", jwt.accessToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
+      res.cookie("token", jwt.token, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
 
-    res.cookie("refresh", jwt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 720 * 3600000),
-    });
+      res.cookie("refresh", jwt.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 720 * 3600000),
+      });
+      res.cookie("refresh", jwt.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 720 * 3600000),
+      });
 
+      res.status(201).json({
+        success: true,
+        data: "Đăng nhập thành công",
+      });
+    } else {
+      res.status(400);
+      throw new Error("Create token fail");
+    }
     res.status(201).json({
       success: true,
       data: "Đăng nhập thành công",
@@ -208,11 +248,42 @@ const deleted = asyncHandler(async (req, res) => {
   res.status(200).json({ message: "Delete successfully" });
 });
 
+// Log Out
 const logout = (req, res) => {
+  res.clearCookie("access");
+  res.clearCookie("refresh");
   res.clearCookie("token");
   res.clearCookie("refresh");
   res.end();
 };
+
+// check refresh token or not
+const refreshToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies.refresh;
+  const refreshVerify = jwt.verify(refreshToken, process.env.REFRESHKEY);
+
+  if (refreshVerify._id) {
+    const newToken = jwt.sign(
+      { _id: refreshVerify._id },
+      process.env.SECRETKEY,
+      {
+        expiresIn: process.env.EXPIRETIME_ACCESS,
+      }
+    );
+    if (newToken) {
+      res.cookie("access", newToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
+      res.status(200).end();
+    }
+  } else {
+    res.clearCookie("access");
+    res.clearCookie("refresh");
+    res.status(401);
+  }
+});
 
 module.exports = {
   getAllUser,
@@ -223,5 +294,6 @@ module.exports = {
   deleted,
   logout,
   checkAccount,
+  refreshToken,
   getPersonalUser,
 };
