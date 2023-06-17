@@ -46,9 +46,7 @@ header .wrapper {
 }
 
 .header__log {
-  width: 170px;
-  display: flex;
-  justify-content: space-evenly;
+  position: relative;
 }
 
 .header__log,
@@ -56,6 +54,12 @@ header .wrapper {
   color: #fff;
   display: flex;
   align-items: center;
+}
+
+.header__btn-create {
+  padding: 10px;
+  background-color: #161f6d;
+  border-radius: 10px;
 }
 
 .dropdown__catergory {

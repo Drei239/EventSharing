@@ -1,16 +1,24 @@
 import "./Header.css";
-import { Input } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useLocation, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@nextui-org/react";
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, Link } from 'react-router-dom';
+import AvatarComponent from '../avatar/AvatarComponent';
+import { getUserInfo } from '../../features/user/userSlice';
+
 const Header = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const category = useSelector((state) => state.category.categories);
+  const { isLogin, userInfo } = useSelector((state) => state.user);
   const location = useLocation();
   const [scrollTop, setScrollTop] = useState(0);
   const [isHideHeader, setIsHideHeader] = useState(false);
+
+  useEffect(() => {
+    dispatch(getUserInfo());
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -22,10 +30,10 @@ const Header = () => {
       setScrollTop(window.scrollY);
     };
 
-    window.addEventListener("scroll", handleScroll);
+    window.addEventListener('scroll', handleScroll);
 
     return () => {
-      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener('scroll', handleScroll);
     };
   }, [scrollTop]);
   const handleSubmit = (e) => {
@@ -34,36 +42,33 @@ const Header = () => {
         search: e.target.value,
       });
     }
-    //   }
   };
   return (
     <header
-      className={`${location.pathname === "/login-register" ? "active" : ""} ${
-        isHideHeader ? "hide-header" : ""
-      }`}
+      className={`${location.pathname === '/login-register' ? 'active' : ''} ${isHideHeader ? 'hide-header' : ''
+        }`}
     >
-      <div className="wrapper">
-        <div className="header__left-block">
-          <Link className="logo" to="/" alt="">
-            <img src={"../images/logo.png"} />
+      <div className='wrapper'>
+        <div className='header__left-block'>
+          <Link className='logo' to='/' alt=''>
+            <img src={'../images/logo.png'} />
           </Link>
           <div
-            className={`header__search ${
-              location.pathname === "/create-event" ? "active" : ""
-            }`}
+            className={`header__search ${location.pathname === '/create-event' ? 'active' : ''
+              }`}
           >
             <Input
-              width="290px"
-              placeholder="Search"
+              width='290px'
+              placeholder='Search'
               onKeyDown={handleSubmit}
             />
           </div>
-          <div className="header__category">
-            <div className="dropdown">
-              <Link href="/" alt="">
-                <div className="dropdown__catergory">Sự kiện</div>
+          <div className='header__category'>
+            <div className='dropdown'>
+              <Link href='/' alt=''>
+                <div className='dropdown__catergory'>Sự kiện</div>
               </Link>
-              <div className="dropdown__content">
+              <div className='dropdown__content'>
                 {category?.map((item) => {
                   return (
                     <div
@@ -71,7 +76,7 @@ const Header = () => {
                       onClick={() =>
                         navigate(`/events?category=${item.categoryName}`)
                       }
-                      className="category__item"
+                      className='category__item'
                     >
                       {item.categoryName}
                     </div>
@@ -81,11 +86,10 @@ const Header = () => {
             </div>
           </div>
         </div>
-        <div className="header__right-block">
+        <div className='header__right-block'>
           <div
-            className={`create__event ${
-              location.pathname === "/create-event" ? "active" : ""
-            }`}
+            className={`create__event ${location.pathname === '/create-event' ? 'active' : ''
+              }`}
           >
             <Link to="/create-event" alt="">
               <Button color="primary" size="sm">
@@ -93,10 +97,14 @@ const Header = () => {
               </Button>
             </Link>
           </div>
-          <div className="header__log">
-            <Link to="/login-register" className="header_btn" alt="">
-              Đăng nhập | Đăng ký
-            </Link>
+          <div className='header__log'>
+            {isLogin ? (
+              <AvatarComponent {...userInfo}></AvatarComponent>
+            ) : (
+              <Link to='/login-register' className='header_btn' alt=''>
+                Đăng nhập | Đăng ký
+              </Link>
+            )}
           </div>
         </div>
       </div>

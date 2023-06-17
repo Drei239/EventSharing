@@ -98,6 +98,10 @@
 	border-radius: 10px;
 }	
 
+.event__fall {
+	color: red;
+}
+
 .members__list {
 	background: none;
 	border: none;

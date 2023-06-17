@@ -1,6 +1,5 @@
 import React from "react";
 import dayjs from "dayjs";
-import LazyLoad from "react-lazyload";
 import locale from "dayjs/locale/vi";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -49,11 +48,7 @@ const Card = ({
         <Link to={`/event/${_id}`}>
           <div className="card">
             <div className="hot-event"></div>
-            <LazyLoad height={200}>
-              {" "}
-              <img src={banner} alt="" className="card-img" loading="lazy" />
-            </LazyLoad>
-
+            <img src={banner} alt="" className="card-img" loading="lazy" />
             <div className="content-card">
               <span className="card-title" title={title}>
                 {title}

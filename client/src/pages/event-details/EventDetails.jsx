@@ -11,23 +11,34 @@ import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEventById } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
+import { getUserInfo } from "../../features/user/userSlice";
 import Discussions from '../../components/discussions/Discussions';
 
 const EventDetails = ({ rules }) => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
-	const [selectedColor, setSelectedColor] = React.useState("default");
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state.event.events[0] || null);
 	const allCategories = useSelector(state => state.category.categories || null);
+	const allUsers = useSelector(state => state.user.users || null);
 	const userRule = getUserRule();
 	const isOnline = isOnlineEvent();
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 	useEffect(() => { dispatch(getAllCategory()) }, []);
+	useEffect(() => { dispatch(getUserInfo()) }, []);
+
+	console.log(allUsers);
 
 	const category = allCategories?.find(category => category?._id === eventDetail?.category);
+	
 	if (category == null) {
+		return false;
+	}; 
+
+	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
+
+	if (imageList == undefined) {
 		return false;
 	}; 
 	console.log(category);
@@ -50,12 +61,6 @@ const EventDetails = ({ rules }) => {
 		fontSize: '20px',
 		fontWeight: 'bold',
 	}
-	
-	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
-
-	if (imageList == undefined) {
-		return false;
-	}; 
 	
 	return (
 		<div className='wrapper'>
@@ -103,7 +108,7 @@ const EventDetails = ({ rules }) => {
 							<option value="status__item">Sắp diễn ra</option>
 							<option value="status__item">Đang diễn ra</option>
 							<option value="status__item">Đã hoàn tât</option>
-							<option value="status__item event__fall">Sư kiện đã hủy</option>
+							<option value="status__item event__fall">Sự kiện đã hủy</option>
 						</select>
 					</div>}
 					{userRule === rules.USER && <div className='event__status'>event user</div>}
@@ -150,7 +155,6 @@ const EventDetails = ({ rules }) => {
 				{
 					commentsTabs === "comments" ? <Comments /> : <Discussions />
 				}
-
 			</div>
 		</div>
 	);

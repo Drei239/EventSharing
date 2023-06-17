@@ -14,8 +14,7 @@ const Banner = () => {
     return Math.floor(Math.random() * a);
   };
   useEffect(() => {
-    console.log(searchParams);
-    setEvent(events[RandomFuc(events?.length)]);
+    setEvent(events?.length > 0 && events[RandomFuc(events?.length)]);
   }, []);
   const imgBanner = event?.banner || initialImgBanner;
   return (

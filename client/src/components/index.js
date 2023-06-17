@@ -5,3 +5,4 @@ export { default as Filter } from "./filter/filter";
 export { default as Banner } from "./banner/banner";
 export { default as Loading } from "./loading/loading";
 export { default as LoadingBanner } from "./loading/loadingBannner";
+export { default as SlideBar } from "./slideBar/slideBar";
