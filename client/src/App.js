@@ -7,6 +7,8 @@ import CreateEventPage from "./pages/create-event/CreateEventPage";
 import { Divider, NextUIProvider } from "@nextui-org/react";
 import { Home, Events, Setting } from "./pages";
 import { useSelector } from "react-redux";
+import { NextUIProvider } from "@nextui-org/react";
+
 function App() {
   const open = useSelector((state) => state.user.open);
   return (

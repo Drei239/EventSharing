@@ -1,26 +1,33 @@
-var express = require("express");
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
+
 const {
   getAllUser,
-  registerUser,
-  getUserProfile,
-  getUserPersonal,
-  updateUser,
-} = require("../controllers/userController");
+  register,
+  authLogin,
+  profileUser,
+  updateUserById,
+  refresh,
+  checkAccount,
+  logout,
+  deleted,
+} = require('../controllers/userController');
+const { protect, isAdmin } = require('../middleware/authMiddleware');
 const {
-  authMiddleware,
-  checkisUser,
-  verifyAmin,
-} = require("../middleware/authMiddeware");
+  registerValidate,
+  loginValidate,
+  updateUserValidate,
+} = require('../middleware/validate');
+const { ref } = require('joi');
 
-//1.GET ALL USER INFO
-router.get("/all", getAllUser);
-
-//2.REGISTER NEW USER
-router.post("/register", registerUser);
-
-//3.GET USER INFO BY ID
-router.get("/profile/:id", getUserProfile);
+router.get('/profile', protect, profileUser);
+router.get('/getall', protect, isAdmin, getAllUser);
+router.post('/login', authLogin);
+router.post('/register', registerValidate, register);
+router.post('/check', checkAccount);
+router.get('/logout', logout);
+router.post('/update/:id', protect, updateUserValidate, updateUserById);
+router.delete('/admin/:id', protect, isAdmin, deleted);
 
 router.get("/account", getUserPersonal);
 
