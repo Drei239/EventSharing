@@ -1,0 +1,117 @@
+.profile {
+  padding: 70px 50px;
+}
+.profile .btn-submit {
+  width: 150px;
+  height: 40px;
+  font-size: 18px;
+  color: white;
+  border-radius: 5px;
+  background-color: var(--color-primary2);
+  border: none;
+  cursor: pointer;
+  margin-top: 20px;
+}
+.avatar-profile {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  margin: 20px 0;
+  position: relative;
+}
+.avatar-profile .avatar-img {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+}
+.btn-upload-profile {
+  width: 150px;
+  height: 40px;
+  border-radius: 6px;
+  background-color: var(--color-primary2);
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+}
+.form-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 25px;
+  position: relative;
+}
+.input-name {
+  width: 500px;
+
+  /* border: 1px solid rgb(112, 112, 112);
+  border-radius: 5px;
+  padding: 5px 5px; */
+}
+.form-item input {
+  width: 100%;
+
+  padding: 5px 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(112, 112, 112);
+  /* outline: 1px solid var(--color-primary); */
+}
+.form-item input:focus {
+  border: 1px solid var(--color-primary);
+}
+.bio-input {
+  position: relative;
+  width: 500px;
+}
+.bio-input textarea {
+  width: 100%;
+  height: 150px;
+  border-radius: 5px;
+  padding: 10px;
+  border: 1px solid rgb(112, 112, 112);
+}
+.bio-input textarea:focus {
+  border: 1px solid var(--color-primary);
+}
+.input-name {
+  position: relative;
+}
+.number-resignal {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: rgb(112, 112, 112);
+}
+.number-resignal2 {
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+  transform: translateY(-50%);
+  font-size: 14px;
+  color: rgb(112, 112, 112);
+}
+.input-name-item {
+  width: 100%;
+}
+.err-text {
+  color: red;
+  font-size: 12px;
+  position: absolute;
+  bottom: -20px;
+  left: 0;
+}
+.input-err input {
+  border: 1px solid red;
+}
+.remove-image-upload {
+  position: absolute;
+  background-color: transparent;
+  border: none;
+  top: -10px;
+  left: 150px;
+  font-size: 20px;
+  cursor: pointer;
+}

@@ -9,5 +9,8 @@ const eventSucc = {
   SUC_3: "GET THÀNH CÔNG SỰ KIỆN",
   SUC_4: "Tạo Url link thành công",
 };
-
-module.exports = { eventError, eventSucc };
+const userSucc = {
+  SUC_1: "Update successfully",
+  SUC_2: "Get Successfully",
+};
+module.exports = { eventError, eventSucc, userSucc };

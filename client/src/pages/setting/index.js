@@ -1,3 +1,3 @@
-export { default as Management } from "./management";
-export { default as Personal } from "./personal";
-export { default as Profile } from "./profile";
+export { default as Management } from "./management/management";
+export { default as Personal } from "./personal/personal";
+export { default as Profile } from "./profile/profile";

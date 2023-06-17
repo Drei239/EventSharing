@@ -6,6 +6,7 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 
 const connectDatabase = require("./config/database");
+const { handleError } = require("./middleware/errorHandle");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
@@ -41,6 +42,7 @@ process.env.TZ = "Asia/Jakarta";
 app.use(function (req, res, next) {
   next(createError(404));
 });
+app.use(handleError);
 
 // error handler
 app.use(function (err, req, res, next) {
