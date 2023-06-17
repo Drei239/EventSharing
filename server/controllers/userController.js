@@ -173,17 +173,8 @@ const updateUserById = asyncHandler(async (req, res) => {
   user.phone = phone || user.phone;
   user.birthDay = birthDay || user.birthDay;
   user.description = description || user.description;
+
   const updatedUser = await user.save();
-
-  const token = req.token;
-  if (token) {
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
-  }
-
   if (updatedUser) {
     res.status(200).json({
       success: true,

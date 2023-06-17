@@ -1,6 +1,5 @@
 const asyncHandler = require('express-async-handler');
 const jwt = require('jsonwebtoken');
-const { refreshAccessToken } = require('../utils/refreshAccessToken');
 require('dotenv').config({ path: '.env' });
 const userModel = require('../models/userModel');
 
