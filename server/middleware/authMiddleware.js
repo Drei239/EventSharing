@@ -16,7 +16,7 @@ const protect = asyncHandler(async (req, res, next) => {
       req.user = userInfo;
       return next();
     } catch (error) {
-      res.statusCode(400);
+      res.status(400).end();
       throw new Error('Token invalid');
     }
   } else {
