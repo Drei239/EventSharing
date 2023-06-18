@@ -9,6 +9,7 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var eventsRouter = require('./routes/events');
 var categoryRouter = require('./routes/category');
+var orderRouter = require('./routes/orders');
 var cors = require('cors');
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
 app.use('/category', categoryRouter);
+app.use('/orders', orderRouter);
 
 process.env.TZ = 'Asia/Jakarta';
 // catch 404 and forward to error handler

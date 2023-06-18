@@ -8,4 +8,12 @@ function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
     }
 }
 
-module.exports = { inputTimeValidation };
+function inputTitleValidation(existEvent, requestId) {
+    if (existEvent && existEvent._id == requestId || existEvent === null) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+module.exports = { inputTimeValidation, inputTitleValidation };
