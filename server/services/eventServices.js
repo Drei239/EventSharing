@@ -62,55 +62,56 @@ const getPublicEvents = asyncHandler(async (req, res) => {
   }
 });
 
-const getEventsFilter = asyncHandler(async (req, res) => {
-  console.log(req);
-  const { keyWord } = req.query;
-  const queryObj = { ...req.query };
-  try {
-    const excludeField = ["page", "sort", "limit", "search"];
-    excludeField.forEach((el) => delete queryObj[el]);
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/\b(gt,gte,lte,lt)\b/g, (match) => `$${match}`);
-    let query;
-    if (keyWord !== "" && search) {
-      const queryObj = Object.assign(
-        {
-          $or: [
-            { title: { $regex: keyWord, $options: "i" } },
-            { "creator.name": { $regex: keyWord, $options: "i" } },
-          ],
-        },
-        JSON.parse(queryStr)
-      );
-      query = eventModel
-        .find(queryObj)
-        .populate("creator")
-        .exec((err, result) => {
-          console.log(result);
-          if (err) {
-            console.log(err);
-            return;
-          }
-        });
-    } else {
-      query = eventModel.find(JSON.parse(queryStr));
-    }
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort("-createdAt");
-    }
-    const limit = req.query.limit || 10;
-    const page = req.query.page || 1;
-    const skip = (Number(page) - 1) * limit;
-    const eventCount = await Product.countDocuments();
-    const events = await query;
-    return events;
-  } catch (err) {
-    console.log(err);
-    throw Error(eventError.ERR_2);
+const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
+  let queryObj2 = queryObj;
+
+  const excludeField = ["page", "sort", "limit", "keyword"];
+  // loc tu khoa
+  excludeField.forEach((el) => delete queryObj2[el]);
+  let queryStr = JSON.stringify(queryObj2);
+  // thay cac gia tri cua tu khoa
+
+  queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
+  queryStr = JSON.parse(queryStr);
+  if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
+    queryStr.isOnline = queryStr.isOnline === "true";
   }
+  let query;
+  console.log(queryStr);
+  if (queryKey.keyword !== "" && queryKey.keyword) {
+    const queryObj = Object.assign(
+      {
+        $or: [
+          { title: { $regex: queryKey.keyword, $options: "i" } },
+          { location: { $regex: queryKey.keyword, $options: "i" } },
+        ],
+      },
+      queryStr
+    );
+    query = eventModel.find(queryObj);
+  } else {
+    query = eventModel.find(queryStr);
+  }
+  if (queryKey.sort) {
+    const sortBy = queryKey.sort.split(",").join(" ");
+    query = query.sort(sortBy);
+  } else {
+    query = query.sort("-createdAt");
+  }
+  const countryQuery = query.model.countDocuments(query.getFilter());
+  const totalCount = await countryQuery.exec();
+  const limit = queryKey.limit || 10;
+  const page = queryKey.page || 1;
+  const skip = (Number(page) - 1) * limit;
+  query = query.skip(skip).limit(limit).populate("creator category").exec();
+
+  // const eventCount=await eventModel.countDocuments();
+
+  const events = await query;
+  return { events, totalCount };
+  // if (!events) {
+  //   throw Error(eventError.ERR_2);
+  // }
 });
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
@@ -165,4 +166,11 @@ const updateDraftEventInfo = asyncHandler(
     }
   }
 );
-module.exports = { createNewEvent, getPublicEvents, updateDraftEventInfo };
+
+module.exports = {
+  createNewEvent,
+  getPublicEvents,
+  updateDraftEventInfo,
+  getEventsFilter,
+};
+

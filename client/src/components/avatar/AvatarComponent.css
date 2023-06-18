@@ -1,0 +1,77 @@
+.avatar__image {
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+}
+
+.avatar__image img {
+  border-radius: 50%;
+}
+
+.avatar__menu {
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  position: absolute;
+  top: 52px;
+  left: -170px;
+  width: 220px;
+  background-color: #fff;
+  box-shadow: 0 2px 5px gray;
+  color: #000;
+  border-radius: 15px;
+  opacity: 0;
+  transition: all 0.4s;
+}
+
+.avatar__email,
+.avatar__link,
+.avatar__logout {
+  padding: 10px 20px;
+}
+
+.avatar__email {
+  cursor: default;
+}
+
+.avatar__email > p {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.avatar__link > a {
+  display: inline-block;
+  color: #000;
+  line-height: 2;
+  transition: all 0.3s;
+}
+
+.avatar__link > a:hover {
+  margin-left: 3px;
+  font-weight: 700;
+  color: #00abe1;
+}
+
+.avatar__logout p {
+  color: red;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.avatar__logout p .icon {
+  color: red;
+  transform: translateY(4px);
+  margin-right: 3px;
+}
+
+.avatar__logout p:hover {
+  font-weight: 700;
+  margin-left: 5px;
+}
+
+.active {
+  visibility: visible;
+  z-index: 9;
+  opacity: 1;
+}

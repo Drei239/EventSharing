@@ -9,7 +9,8 @@ const eventError = {
 const eventSucc = {
     SUC_1: "TẠO SỰ KIỆN MỚI THÀNH CÔNG!",
     SUC_2: "GET THÀNH CÔNG CÁC SỰ KIỆN PUBLIC!",
-    SUC_3: "GET THÀNH CÔNG SỰ KIỆN!"
+    SUC_3: "GET THÀNH CÔNG SỰ KIỆN!",
+    SUC_4: "Tạo Url link thành công",
 }
 
 const orderError = {
@@ -23,7 +24,14 @@ const orderSucc = {
     SUCC_2: "LẤY THÀNH CÔNG DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
 }
 
+const userSucc = {
+  SUC_1: "Update successfully",
+  SUC_2: "Get Successfully",
+};
+
 module.exports = {
     eventError, eventSucc,
-    orderError, orderSucc
+    orderError, orderSucc,
+    userSucc
 }
+

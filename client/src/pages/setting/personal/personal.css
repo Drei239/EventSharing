@@ -1,0 +1,60 @@
+.personal {
+  padding: 70px 50px;
+}
+.personal h2 {
+  font-size: 35px;
+}
+.personal-info {
+  margin-bottom: 15px;
+}
+.birthday-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.birthday-label,
+.personal-label-gender {
+  margin-bottom: 10px;
+  font-size: 18px;
+  font-weight: 700;
+}
+.birthday-select input[type="number"] {
+  width: 180px;
+  height: 40px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid rgb(112, 112, 112);
+}
+.birthday-select input:focus {
+  border: 1px solid var(--color-primary);
+}
+.birth-select-month {
+  width: 180px;
+  height: 40px;
+}
+.clear-birthday-btn {
+  background-color: transparent;
+  border: none;
+  color: var(--color-primary2);
+  cursor: pointer;
+  margin-top: 15px;
+}
+.clear-birthday-btn:hover {
+  opacity: 0.8;
+}
+.form-gender-item {
+  margin-top: 20px;
+}
+.personal-submit {
+  margin-top: 50px;
+  background-color: var(--color-primary2);
+  border-radius: 5px;
+  font-size: 20px;
+  padding: 5px 15px;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+.personal-submit:hover {
+  opacity: 0.9;
+}

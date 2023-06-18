@@ -126,58 +126,15 @@ const getPublicEvents = asyncHandler(async (req, res) => {
 });
 // search by title + filter
 const getFilterEvents = asyncHandler(async (req, res) => {
-  const { keyword } = req.query;
+  const query = req.query;
   const queryObj = { ...req.query };
   try {
-    const excludeField = ["page", "sort", "limit", "keyword"];
-    // loc tu khoa
-    excludeField.forEach((el) => delete queryObj[el]);
-    let queryStr = JSON.stringify(queryObj);
-    // thay cac gia tri cua tu khoa
+    const data = await eventService.getEventsFilter(queryObj, query);
 
-    queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
-    queryStr = JSON.parse(queryStr);
-    if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
-      queryStr.isOnline = queryStr.isOnline === "true";
-    }
-
-    let query;
-    if (keyword !== "" && keyword) {
-      console.log(queryStr);
-      const queryObj = Object.assign(
-        {
-          $or: [
-            { title: { $regex: keyword, $options: "i" } },
-            { location: { $regex: keyword, $options: "i" } },
-          ],
-        },
-        queryStr
-      );
-      query = eventModel.find(queryObj);
-    } else {
-      console.log(queryStr);
-      query = eventModel.find(queryStr);
-    }
-    if (req.query.sort) {
-      const sortBy = req.query.sort.split(",").join(" ");
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort("-createdAt");
-    }
-    const countryQuery = query.model.countDocuments(query.getFilter());
-    const totalCount = await countryQuery.exec();
-    const limit = req.query.limit || 10;
-    const page = req.query.page || 1;
-    const skip = (Number(page) - 1) * limit;
-    query = query.skip(skip).limit(limit).populate("creator category").exec();
-
-    // const eventCount=await eventModel.countDocuments();
-    const events = await query;
-    console.log(totalCount);
     return res.status(200).json({
       status: 200,
-      data: events,
-      totalCount: totalCount,
+      data: data.events,
+      totalCount: data.totalCount,
       message: eventError.ERR_2,
     });
   } catch (err) {
@@ -315,6 +272,7 @@ const getQueryEvents = asyncHandler(async (req, res) => {
   }
 });
 
+//8.GET
 module.exports = {
   createNewEvent,
   getPublicEvents,
