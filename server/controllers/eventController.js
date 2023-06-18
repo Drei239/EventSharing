@@ -192,14 +192,35 @@ const getEventByCreator = asyncHandler(async (req, res) => {
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
 //CHO PHÉP ADMIN PHÊ DUYỆT HIỂN THỊ SỰ KIỆN (STATUS = "PENDING" => "PUBLIC")
-const updateEvent = asyncHandler(async (req, res) => {
-  const findId = req.params.id;
-  const { title, description, location } = req.body;
-  const updateEvent = await eventService.updateEvent(
-    findId,
+//TRUYỀN XUỐNG 1 OBJECT
+const updateDraftEventInfo = asyncHandler(async (req, res) => {
+  const requestId = req.params.id;
+  const { title,
+    description,
+    banner,
+    imageList,
+    category,
+    isOnline,
+    fee,
+    location,
+    timeEndSignup,
+    timeBegin,
+    timeEnd,
+    limitUser } = req.body;
+  const updateEvent = await eventService.updateDraftEventInfo(
+    requestId,
     title,
     description,
-    location
+    banner,
+    imageList,
+    category,
+    isOnline,
+    fee,
+    location,
+    timeEndSignup,
+    timeBegin,
+    timeEnd,
+    limitUser
   );
   if (updateEvent) {
     res.status(200).json(updateEvent);
@@ -257,7 +278,7 @@ module.exports = {
   getPublicEvents,
   getEventById,
   getEventByCreator,
-  updateEvent,
+  updateDraftEventInfo,
   getEventByTitle,
   getQueryEvents,
   getFilterEvents,

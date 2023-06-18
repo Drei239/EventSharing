@@ -5,7 +5,7 @@ const {
   getPublicEvents,
   getEventById,
   getEventByCreator,
-  updateEvent,
+  updateDraftEventInfo,
   getEventByTitle,
   getQueryEvents,
   getFilterEvents,
@@ -31,8 +31,7 @@ router.get('/user/:id', getEventByCreator);
 
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
-//CHO PHÉP ADMIN PHÊ DUYỆT HIỂN THỊ SỰ KIỆN (STATUS = "PENDING" => "PUBLIC")
-router.put('/update/:id', updateEvent);
+router.put('/update/:id', updateDraftEventInfo);
 
 //6.FIND EVENT BY TITLE
 
