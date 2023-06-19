@@ -11,7 +11,7 @@ const updateUser = async ({ id, data }) => {
 const getAllUsers = async () => {
   const data = await UseCallApi({
     method: "GET",
-    url: `/users/getall`,
+    url: `/users/all`,
   });
   return data;
 };

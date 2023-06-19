@@ -22,7 +22,11 @@ const EventDetails = ({ rules }) => {
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state.event.events[0] || null);
 	const allCategories = useSelector(state => state.category.categories || null);
-	const getUsers = useSelector(state => state.user || null);	
+	const getUsers = useSelector(state => {
+		console.log(state)
+		state.user || null
+	});
+
 	const userRule = getUserRule();
 	const isOnline = isOnlineEvent();
 
@@ -32,20 +36,20 @@ const EventDetails = ({ rules }) => {
 	console.log(getUsers);
 
 	const category = allCategories?.find(category => category?._id === eventDetail?.category);
-	
+
 	if (category == null) {
 		return false;
-	}; 
+	};
 
 	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
 
 	if (imageList == undefined) {
 		return false;
-	}; 
+	};
 
 	function getUserRule() {
 		let isAdmin = true;
-		return isAdmin ? rules.ADMIN : rules.USER 
+		return isAdmin ? rules.ADMIN : rules.USER
 	}
 
 	function isOnlineEvent() {
@@ -61,7 +65,7 @@ const EventDetails = ({ rules }) => {
 		);
 		console.log(eventDetail);
 	}
-	
+
 	const captionStyle = {
 		fontSize: '2em',
 		fontWeight: 'bold',
@@ -70,7 +74,7 @@ const EventDetails = ({ rules }) => {
 		fontSize: '20px',
 		fontWeight: 'bold',
 	}
-	
+
 	return (
 		<div className='wrapper'>
 			<img src={eventDetail?.banner || 'no information'} alt="" className="event__banner" loading="lazy" />
@@ -85,7 +89,7 @@ const EventDetails = ({ rules }) => {
 						<h3 className='info__title'>Thông tin sự kiện</h3>
 						<div className='event__name'><h4>{eventDetail?.title || 'no information'}</h4></div>
 						<Tooltip content={"Developers love Next.js"}>
-						<Button className='event__category' size="xs" color="primary" auto ghost>{category?.categoryName || 'no information'}</Button>
+							<Button className='event__category' size="xs" color="primary" auto ghost>{category?.categoryName || 'no information'}</Button>
 						</Tooltip>
 						<div className='event__adress'>
 							<BiMap className="cardEvent-info2-item-icon" />
@@ -99,7 +103,7 @@ const EventDetails = ({ rules }) => {
 							{dayjs(eventDetail?.timeEnd).format("HH:mm:ss")})
 						</div>
 						<div className='event__type'>{isOnline}</div>
-					</div>					
+					</div>
 				</div>
 				<div className='event__right-block'>
 					<Button size="lg" className='btn__buy' color="primary" bordered='false'>mua vé</Button>

@@ -31,7 +31,7 @@ export const getUserInfo = createAsyncThunk(
   }
 );
 export const getAllUsers = createAsyncThunk(
-  "users/getall",
+  "users/all",
   async ({ rejectWithValue }) => {
     try {
       return await userService.getAllUsers();
