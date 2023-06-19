@@ -19,6 +19,7 @@ body .hidden-scroll {
   overflow: hidden;
   height: 100vh;
 }
+
 .App {
   position: relative;
   width: 100%;

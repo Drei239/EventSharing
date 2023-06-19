@@ -18,7 +18,13 @@ const getEventById = async (eventId) => {
 
   // return response;
 };
-
+const updateEvent = async ({ }) => {
+  const data = await UseCallApi({
+    method: "PUT",
+    url: `/events/update`,
+  });
+  return data;
+};
 const getHighlightEvent = async () => {
   const data = await UseCallApi({
     method: "GET",
@@ -38,6 +44,7 @@ const getNewEvent = async (page) => {
   return data;
 };
 const eventService = {
+  updateEvent,
   getAllEvent,
   getHighlightEvent,
   getNewEvent,

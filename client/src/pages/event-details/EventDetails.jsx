@@ -1,34 +1,35 @@
 import React, { useState, useEffect } from 'react';
 import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
+import Discussions from '../../components/discussions/Discussions';
 import dayjs from "dayjs";
 import { Carousel } from 'react-carousel-minimal';
-import { Button, Dropdown } from "@nextui-org/react";
-import { BiMap, BiMoney } from "react-icons/bi";
+import { Button, Tooltip } from "@nextui-org/react";
+import { BiMap } from "react-icons/bi";
+import { MdOutlineAttachMoney } from "react-icons/md";
 import { GiSandsOfTime, } from "react-icons/gi";
 import { FaListAlt } from "react-icons/fa"
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { getEventById } from "../../features/events/eventSlice";
+import { getEventById, updateEvent } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
 import { getUserInfo } from "../../features/user/userSlice";
-import Discussions from '../../components/discussions/Discussions';
 
 const EventDetails = ({ rules }) => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
+	const [eventStatus, setEventStatus] = useState("Sắp diễn ra");
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state.event.events[0] || null);
 	const allCategories = useSelector(state => state.category.categories || null);
-	const allUsers = useSelector(state => state.user.users || null);
+	const getUsers = useSelector(state => state.user || null);	
 	const userRule = getUserRule();
 	const isOnline = isOnlineEvent();
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 	useEffect(() => { dispatch(getAllCategory()) }, []);
 	useEffect(() => { dispatch(getUserInfo()) }, []);
-
-	console.log(allUsers);
+	console.log(getUsers);
 
 	const category = allCategories?.find(category => category?._id === eventDetail?.category);
 	
@@ -41,7 +42,6 @@ const EventDetails = ({ rules }) => {
 	if (imageList == undefined) {
 		return false;
 	}; 
-	console.log(category);
 
 	function getUserRule() {
 		let isAdmin = true;
@@ -52,6 +52,15 @@ const EventDetails = ({ rules }) => {
 		return eventDetail?.isOnline ? "Online" : "Offline";
 	}
 
+	function handleSelectChange(event) {
+		setEventStatus(event.target.value);
+		dispatch(
+			updateEvent({
+				...eventDetail, eventStatus: event.target.value
+			})
+		);
+		console.log(eventDetail);
+	}
 	
 	const captionStyle = {
 		fontSize: '2em',
@@ -75,7 +84,9 @@ const EventDetails = ({ rules }) => {
 					<div className='event__info'>
 						<h3 className='info__title'>Thông tin sự kiện</h3>
 						<div className='event__name'><h4>{eventDetail?.title || 'no information'}</h4></div>
+						<Tooltip content={"Developers love Next.js"}>
 						<Button className='event__category' size="xs" color="primary" auto ghost>{category?.categoryName || 'no information'}</Button>
+						</Tooltip>
 						<div className='event__adress'>
 							<BiMap className="cardEvent-info2-item-icon" />
 							{eventDetail?.location || 'no information'}
@@ -97,18 +108,19 @@ const EventDetails = ({ rules }) => {
 						<Button bordered color="primary" size="xs"><div className='btn__share'>Chia sẻ</div></Button>
 					</div>
 					<div className='event__price'>
-						<BiMoney className="cardEvent-info2-item-icon" />
-						{eventDetail?.fee || 'no information'}
+						<MdOutlineAttachMoney className="carousel-content-info-icon" />
+						{eventDetail?.fee === 0 ? "Free" : eventDetail?.fee + "$" || 'no information'}
 					</div>
-					<div className='event__members'>So nguoi tham gia
-						<button className='members__list'><FaListAlt className="cardEvent-info2-item-icon" /></button>
+					<div className='event__members'>
+						<button className='members__list'><FaListAlt className="carousel-content-info-icon" /></button>
+						So nguoi tham gia
 					</div>
 					{userRule === rules.ADMIN && <div className='event__status'>
-						<select className="change__status" id="event__status">
-							<option value="status__item">Sắp diễn ra</option>
-							<option value="status__item">Đang diễn ra</option>
-							<option value="status__item">Đã hoàn tât</option>
-							<option value="status__item event__fall">Sự kiện đã hủy</option>
+						<select className="change__status" onChange={handleSelectChange}>
+							<option value="Sắp diễn ra">Sắp diễn ra</option>
+							<option value="Đang diễn ra">Đang diễn ra</option>
+							<option value="Đã hoàn tất">Đã hoàn tất</option>
+							<option value="Sự kiện đã hủy" className="event__fall">Sự kiện đã hủy</option>
 						</select>
 					</div>}
 					{userRule === rules.USER && <div className='event__status'>event user</div>}

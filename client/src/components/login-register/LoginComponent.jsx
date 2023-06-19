@@ -34,6 +34,7 @@ const Login = () => {
 
   const handleLogin = (e) => {
     e.preventDefault();
+    console.log('click');
     if (inputValue.email && inputValue.password) {
       customFetch({
         method: 'post',

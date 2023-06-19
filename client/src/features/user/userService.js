@@ -1,26 +1,22 @@
-const userModel = require("../models/userModel");
-
-const updateUserService = async (id, data) => {
-	const newUser = await userModel
-		.findByIdAndUpdate(
-			id,
-			{
-				name: data?.name,
-				gender: data?.gender,
-				birthDay: data?.birthDay,
-				description: data?.descripiton,
-				avatar: data?.avatar,
-				phone: data.phone,
-			},
-			{ new: true }
-		)
-		.select("name gender birthDay description avatar phone email");
-	return newUser;
+import UseCallApi from "../../hooks/useCallApi";
+const updateUser = async ({ id, data }) => {
+  console.log(data);
+  const res = await UseCallApi({
+    method: "PUT",
+    data: data,
+    url: `/users/update/${id}`,
+  });
+  return res;
 };
-const getPersonalUser = async (id) => {
-	const user = await userModel
-		.findById(id)
-		.select("birthDay gender name description avatar phone email");
-	return user;
+const getAllUsers = async () => {
+  const data = await UseCallApi({
+    method: "GET",
+    url: `/users/getall`,
+  });
+  return data;
 };
-module.exports = { updateUserService, getPersonalUser };
+const userService = {
+  updateUser,
+  getAllUsers,
+};
+export default userService;

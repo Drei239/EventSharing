@@ -251,6 +251,7 @@ const getQueryEvents = asyncHandler(async (req, res) => {
   }
 });
 
+//8.GET
 module.exports = {
   createNewEvent,
   getPublicEvents,

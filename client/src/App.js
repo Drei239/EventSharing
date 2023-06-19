@@ -1,4 +1,3 @@
-import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Footer from './components/footer/Footer';
 import EventDetails from './pages/event-details/EventDetails';
@@ -8,13 +7,14 @@ import CreateEventPage from './pages/create-event/CreateEventPage';
 import { Home, Events, Setting } from './pages';
 import { RULES } from './constants/rules';
 import eventService from './features/events/eventService';
-import { useSelector } from "react-redux";
+import { Route, Routes } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
+import { useSelector } from "react-redux";
 
 function App() {
   const open = useSelector((state) => state.user.open);
   return (
-    <div className={open && "hidden-scroll"}>
+    <div className={open ? "hidden-scroll" : ""}>
       <NextUIProvider>
         <Header />
         <Routes>
