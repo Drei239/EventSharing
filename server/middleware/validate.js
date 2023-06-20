@@ -2,7 +2,6 @@ const Joi = require("joi");
 
 const registerValidate = (req, res, next) => {
   const data = req.body;
-  console.log(data);
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
