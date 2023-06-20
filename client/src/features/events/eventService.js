@@ -27,9 +27,24 @@ const getNewEvent = async (page) => {
 
   return data;
 };
+const getRegisteredEvent = async () => {
+  const data = await UseCallApi({
+    method: "GET",
+    url: "/events/registered-event",
+  });
+  return data;
+};
+const getJoinedEvent = async () => {
+  const data = await UseCallApi({
+    method: "/events/joined-event",
+  });
+  return data;
+};
 const eventService = {
   getAllEvent,
   getHighlightEvent,
   getNewEvent,
+  getRegisteredEvent,
+  getJoinedEvent,
 };
 export default eventService;

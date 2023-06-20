@@ -12,6 +12,7 @@ const {
   deleted,
   refreshToken,
   ratingUser,
+  highlightUser,
 } = require("../controllers/userController");
 const {
   protect,
@@ -35,6 +36,7 @@ router.get("/logout", logout);
 router.put("/update/:id", protect, verifyUser, updateUserById);
 router.delete("/delete/:id", protect, verifyUser, deleted);
 router.put("/rating/:id", protect, ratingUser);
+router.get("/highlight", highlightUser);
 
 // router.get("update", updateUser);
 module.exports = router;

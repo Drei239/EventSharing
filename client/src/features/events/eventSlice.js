@@ -31,6 +31,25 @@ export const getNewEvent = createAsyncThunk(
     try {
       return await eventService.getNewEvent(page);
     } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getRegisterEvent = createAsyncThunk(
+  "event/getRegisterEvent",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await eventService.getRegisteredEvent();
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getJoinedEvent = createAsyncThunk(
+  "event/getJoinedEvent",
+  async (_, { rejectWithValue }) => {
+    try {
+    } catch (err) {
       rejectWithValue(err);
     }
   }
@@ -39,6 +58,8 @@ const initialState = {
   events: [],
   newEvents: [],
   highlightEvent: [],
+  joinedEvent: [],
+  registeredEvent: [],
   filter: {
     category: "",
     sort: "",
@@ -109,6 +130,32 @@ const eventSlice = createSlice({
       state.newEvents = [];
       state.isLoading = false;
       state.message = action.error;
+    });
+    builder.addCase(getJoinedEvent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getJoinedEvent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.joinedEvent = action.payload?.data;
+    });
+    builder.addCase(getJoinedEvent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload.message;
+    });
+    builder.addCase(getRegisterEvent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getRegisterEvent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.registeredEvent = action.payload?.data;
+    });
+    builder.addCase(getRegisterEvent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload.message;
     });
     builder.addCase(handleChangeEvents, (state, action) => {
       state.filter = { ...state.filter, ...action.payload };

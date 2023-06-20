@@ -10,10 +10,13 @@ const {
   getQueryEvents,
   getFilterEvents,
   highlightEvents,
-  getUserHighlight,
+  getJoinedEvent,
+  getRegisteredEvent,
 } = require("../controllers/eventController");
+const { protect } = require("../middleware/authMiddleware");
+
 //1.CREATE NEW EVENT
-router.post("/create", createNewEvent);
+router.post("/create", protect, createNewEvent);
 
 //2.GET ALL EVENT STAUS = "PUBLIC"
 router.get("/all", getPublicEvents);
@@ -43,5 +46,6 @@ router.get("/search/:keyword", getEventByTitle);
 
 router.get("/highlight", highlightEvents);
 
-router.get("/user-highLight", getUserHighlight);
+router.get("/registered-event", protect, getRegisteredEvent);
+router.get("/joined-event", protect, getJoinedEvent);
 module.exports = router;

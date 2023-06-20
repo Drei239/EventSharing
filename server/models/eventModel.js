@@ -1,3 +1,4 @@
+const { date } = require("joi");
 const mongoose = require("mongoose");
 
 const reviewSchema = mongoose.Schema({
@@ -9,19 +10,19 @@ const reviewSchema = mongoose.Schema({
 });
 const locationShecma = mongoose.Schema({
   province: {
-    name: { type: String, require: true },
-    code: { type: Number, require: true },
-    division_type: { type: String, require: true },
+    name: { type: String },
+    code: { type: Number },
+    division_type: { type: String },
   },
   district: {
-    name: { type: String, require: true },
-    code: { type: Number, require: true },
-    division_type: { type: String, require: true },
+    name: { type: String },
+    code: { type: Number },
+    division_type: { type: String },
   },
   ward: {
-    name: { type: String, require: true },
-    code: { type: Number, require: true },
-    division_type: { type: String, require: true },
+    name: { type: String },
+    code: { type: Number },
+    division_type: { type: String },
   },
 });
 const eventSchema = mongoose.Schema({
@@ -39,10 +40,10 @@ const eventSchema = mongoose.Schema({
   isOnline: { type: Boolean, required: true },
   fee: { type: Number, required: true, default: 0 },
   location: locationShecma,
-  timeEndSignup: { type: Date, required: true },
-  timeBegin: { type: Date, required: true },
-  timeEnd: { type: Date, required: true },
-  status: { type: String, required: true, default: "Public" },
+  timeEndSignup: { type: Date, required: true, default: Date.now() },
+  timeBegin: { type: Date, default: Date.now(), required: true },
+  timeEnd: { type: Date, default: Date.now(), required: true },
+  status: { type: String, default: "Public" },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
