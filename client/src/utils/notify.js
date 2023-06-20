@@ -1,16 +1,28 @@
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 
 const notify = (message, type) => {
   switch (type) {
-    case 'success':
+    case "success":
       return toast.success(message, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 3000,
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
-    case 'error':
+    case "error":
       return toast.error(message, {
-        position: toast.POSITION.TOP_RIGHT,
-        autoClose: 3000,
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
       });
   }
 };

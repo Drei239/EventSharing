@@ -7,7 +7,15 @@ const updateUser = async ({ id, data }) => {
   });
   return res;
 };
+const deleteUser = async (id, data) => {
+  const res = await UseCallApi({
+    method: "DELETE",
+    data: data,
+    url: `/users/delete/${id}`,
+  });
+};
 const userService = {
   updateUser,
+  deleteUser,
 };
 export default userService;

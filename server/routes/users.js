@@ -11,6 +11,7 @@ const {
   logout,
   deleted,
   refreshToken,
+  ratingUser,
 } = require("../controllers/userController");
 const {
   protect,
@@ -26,13 +27,14 @@ const {
 const { ref } = require("joi");
 
 router.get("/profile", protect, profileUser);
-router.get("/getall", protect, isAdmin, getAllUser);
+router.get("/getall", getAllUser);
 router.post("/login", authLogin);
 router.post("/register", registerValidate, register);
 router.post("/check", checkAccount);
 router.get("/logout", logout);
-router.put("/update/:id", verifyUser, updateUserValidate, updateUserById);
-router.delete("/admin/:id", protect, isAdmin, deleted);
+router.put("/update/:id", protect, verifyUser, updateUserById);
+router.delete("/delete/:id", protect, verifyUser, deleted);
+router.put("/rating/:id", protect, ratingUser);
 
 // router.get("update", updateUser);
 module.exports = router;

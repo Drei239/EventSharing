@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const eventModel = require("../models/eventModel");
 const eventService = require("../services/eventServices");
 const { eventError, eventSucc } = require("../validators/responsiveMessages");
-
+const orderModel = require("../models/orderModel");
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
 function changeTimeZone(date, timeZone) {
@@ -195,7 +195,8 @@ const getEventByCreator = asyncHandler(async (req, res) => {
 //TRUYỀN XUỐNG 1 OBJECT
 const updateDraftEventInfo = asyncHandler(async (req, res) => {
   const requestId = req.params.id;
-  const { title,
+  const {
+    title,
     description,
     banner,
     imageList,
@@ -206,7 +207,8 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     timeEndSignup,
     timeBegin,
     timeEnd,
-    limitUser } = req.body;
+    limitUser,
+  } = req.body;
   const updateEvent = await eventService.updateDraftEventInfo(
     requestId,
     title,
@@ -271,7 +273,22 @@ const getQueryEvents = asyncHandler(async (req, res) => {
     throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
-
+const getUserHighlight = asyncHandler(async (req, res, next) => {
+  try {
+    const events = await eventModel.find({ creator: req.user._id });
+    const oder = await orderModel.aggregate([
+      {
+        $match: {
+          user,
+        },
+      },
+    ]);
+    const total = eventService.getHighLightUser(100, 10, 100, 250);
+    res.status(200).json(total);
+  } catch (err) {
+    next(err);
+  }
+});
 //8.GET
 module.exports = {
   createNewEvent,
@@ -283,4 +300,5 @@ module.exports = {
   getQueryEvents,
   getFilterEvents,
   highlightEvents,
+  getUserHighlight,
 };

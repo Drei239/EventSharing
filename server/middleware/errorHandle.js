@@ -1,8 +1,6 @@
+const httpError = require("http-errors");
 const createError = (status, message) => {
-  const err = new Error();
-  err.status = status;
-  err.message = message;
-  return err;
+  throw httpError(status, message);
 };
 const handleError = async (err, req, res, next) => {
   const errStatus = err.status || 500;
