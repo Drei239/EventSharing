@@ -14,8 +14,15 @@ const deleteUser = async (id, data) => {
     url: `/users/delete/${id}`,
   });
 };
+const getHighlightUser = async () => {
+  const data = await UseCallApi({
+    url: "/users/highlight",
+  });
+  return data;
+};
 const userService = {
   updateUser,
   deleteUser,
+  getHighlightUser,
 };
 export default userService;

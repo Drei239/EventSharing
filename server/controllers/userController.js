@@ -245,6 +245,16 @@ const ratingUser = asyncHandler(async (req, res, next) => {
     next(err);
   }
 });
+const highlightUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await userService.highlightUser();
+    res
+      .status(200)
+      .json({ status: 200, data: user, message: "get User thanh cong" });
+  } catch (err) {
+    next(err);
+  }
+});
 const logout = (req, res) => {
   res.clearCookie("token");
   res.clearCookie("refresh");
@@ -261,4 +271,5 @@ module.exports = {
   logout,
   checkAccount,
   ratingUser,
+  highlightUser,
 };

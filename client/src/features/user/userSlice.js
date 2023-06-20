@@ -4,6 +4,7 @@ import userService from "./userService";
 
 const initialState = {
   userInfo: {},
+  userHighlight: [],
   isLoading: true,
   isLogin: false,
   message: "",
@@ -49,6 +50,17 @@ export const deleteUser = createAsyncThunk(
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await userService.deleteUser(id, data);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getHighlightUser = createAsyncThunk(
+  "user/getHighlight",
+  async (_, { rejectWithValue }) => {
+    try {
+      const res = await userService.getHighlightUser();
       return res;
     } catch (err) {
       return rejectWithValue(err);
@@ -111,6 +123,18 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.message = action.payload.message;
         state.isError = true;
+      });
+    builder
+      .addCase(getHighlightUser.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getHighlightUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.userHighlight = action.payload?.data;
+      })
+      .addCase(getHighlightUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.message = action.payload.message;
       });
     builder.addCase(openModal, (state) => {
       state.open = true;
