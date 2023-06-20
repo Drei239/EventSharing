@@ -201,9 +201,8 @@ const CreateEventPage = () => {
     if (isSuccess) {
       const location =
         [...typeEvent][0].toLowerCase() === 'offline'
-          ? `${inputValue.address}, ${[...ward][0]}, ${[...district][0]}, ${
-              [...city][0]
-            }`
+          ? `${inputValue.address}, ${[...ward][0]}, ${[...district][0]}, ${[...city][0]
+          }`
           : 'Online';
       const timeBegin = covertDatetimeToISO(
         inputValue.dateStart,

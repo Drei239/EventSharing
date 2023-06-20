@@ -19,8 +19,8 @@ body .hidden-scroll {
   overflow: hidden;
   height: 100vh;
 }
+
 .App {
-  text-align: center;
   position: relative;
   width: 100%;
 }

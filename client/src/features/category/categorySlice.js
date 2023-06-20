@@ -14,6 +14,7 @@ export const getAllCategory = createAsyncThunk("category/getAll", async () => {
     console.log(err);
   }
 });
+
 const CategorySlice = createSlice({
   name: "category",
   initialState,
