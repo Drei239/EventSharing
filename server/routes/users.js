@@ -24,7 +24,7 @@ const {
 } = require("../middleware/validate");
 const { ref } = require("joi");
 
-router.get("/profile", protect, profileUser);
+router.get("/profile", protect, profileUser); 
 router.get("/getall", protect, isAdmin, getAllUser);
 router.post("/login", authLogin);
 router.post("/register", registerValidate, register);

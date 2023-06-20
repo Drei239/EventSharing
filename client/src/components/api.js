@@ -53,3 +53,71 @@ export const updateComment = async (text) => {
 export const deleteComment = async () => {
 	return {};
 };
+
+
+
+// [
+// 	{
+// 		"commentId": "string1",
+// 		"text": "text1",
+// 		"user": {
+// 			"name": "name",
+// 			"avatar": "link"
+// 		},
+// 		"date": "time1",
+// 		"reply": [
+// 			{
+// 				"commentBody": "info1"
+// 			},
+// 			{
+// 				"commentBody": "info2"
+// 			},
+// 			{
+// 				"commentBody": "info3"
+// 			},
+// 			{
+// 				"commentBody": "info4"
+// 			}
+// 		]
+// 	},
+// 	{
+// 		"commentId": "string2",
+// 		"text": "text2",
+// 		"user": {},
+// 		"date": "time2",
+// 		"reply": [
+// 			{
+// 				"commentBody": "info5"
+// 			},
+// 			{
+// 				"commentBody": "info6"
+// 			},
+// 			{
+// 				"commentBody": "info7"
+// 			},
+// 			{
+// 				"commentBody": "info8"
+// 			}
+// 		]
+// 	},
+// 	{
+// 		"commentId": "string3",
+// 		"text": "text3",
+// 		"user": {},
+// 		"date": "time3",
+// 		"reply": [
+// 			{
+// 				"commentBody": "info9"
+// 			},
+// 			{
+// 				"commentBody": "info10"
+// 			},
+// 			{
+// 				"commentBody": "info11"
+// 			},
+// 			{
+// 				"commentBody": "info12"
+// 			}
+// 		]
+// 	}
+// ]

@@ -30,16 +30,6 @@ export const getUserInfo = createAsyncThunk(
     }
   }
 );
-export const getAllUsers = createAsyncThunk(
-  "users/all",
-  async ({ rejectWithValue }) => {
-    try {
-      return await userService.getAllUsers();
-    } catch (err) {
-      rejectWithValue(err);
-    }
-  }
-);
 export const updateInfo = createAsyncThunk(
   "user/updateUser",
   async ({ id, data }, { rejectWithValue }) => {
@@ -51,7 +41,6 @@ export const updateInfo = createAsyncThunk(
     }
   }
 );
-
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -75,20 +64,6 @@ const userSlice = createSlice({
         state.isLoading = false;
         state.isLogin = false;
       });
-    builder.addCase(getAllUsers.pending, (state, action) => {
-      state.isLoading = true;
-    });
-    builder.addCase(getAllUsers.fulfilled, (state, action) => {
-      state.getAllUsers = action.payload?.data;
-      state.isLoading = false;
-      state.isSuccess = true;
-    });
-    builder.addCase(getAllUsers.rejected, (state, action) => {
-      state.isError = true;
-      state.isLoading = false;
-      state.message = action.error;
-    });
-
     builder.addCase(updateInfo.pending, (state) => {
       state.isLoading = true;
     });

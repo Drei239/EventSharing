@@ -8,15 +8,7 @@ const updateUser = async ({ id, data }) => {
   });
   return res;
 };
-const getAllUsers = async () => {
-  const data = await UseCallApi({
-    method: "GET",
-    url: `/users/all`,
-  });
-  return data;
-};
 const userService = {
   updateUser,
-  getAllUsers,
 };
 export default userService;
