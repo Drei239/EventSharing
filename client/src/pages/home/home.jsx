@@ -6,20 +6,27 @@ import { BsCalendar4Event } from "react-icons/bs";
 import "./home.css";
 import { VscOrganization } from "react-icons/vsc";
 import { MdOutlineEventAvailable } from "react-icons/md";
-import { getHighlightEvent } from "../../features/events/eventSlice";
-import { getNewEvent } from "../../features/events/eventSlice";
+import {
+  getHighlightEvent,
+  getNewEvent,
+  getRegisterEvent,
+  getJoinedEvent,
+} from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
-
+import { getHighlightUser } from "../../features/user/userSlice";
 const Home = () => {
   const dispatch = useDispatch();
   const [newEvent2, setNewEvent2] = useState([]);
-  const { newEvents, isLoading, countDocument } = useSelector(
-    (state) => state.event
-  );
+  const { newEvents, isLoading, countDocument, joinedEvent, registeredEvent } =
+    useSelector((state) => state.event);
+  const { userHighlight } = useSelector((state) => state.user);
   const [page, setPage] = useState(1);
   useEffect(() => {
     dispatch(getHighlightEvent());
     dispatch(getAllCategory());
+    dispatch(getJoinedEvent());
+    dispatch(getRegisterEvent());
+    dispatch(getHighlightUser());
   }, []);
   useEffect(() => {
     dispatch(getNewEvent(page));
@@ -61,45 +68,17 @@ const Home = () => {
             <span className="strike-right"></span>
           </div>
         )}
-
         <div className="title-home">
           <h2>Nhà tổ chức sự kiện nổi bật</h2>
           <div className="underline-title">
             <VscOrganization className="icon-calendar-home" />
           </div>
         </div>
-
         <div className="card-organizers">
-          <CardOrg
-            title="Phòng trà Bến Thành"
-            img={
-              "https://static.tkbcdn.com/Upload/organizerlogo/2022/10/22/725454.jpg"
-            }
-          />
-          <CardOrg
-            title="Phòng trà Bến Thành"
-            img={
-              "https://static.tkbcdn.com/Upload/organizerlogo/2022/10/22/725454.jpg"
-            }
-          />
-          <CardOrg
-            title="Phòng trà Bến Thành"
-            img={
-              "https://static.tkbcdn.com/Upload/organizerlogo/2022/10/22/725454.jpg"
-            }
-          />
-          <CardOrg
-            title="Phòng trà Bến Thành"
-            img={
-              "https://static.tkbcdn.com/Upload/organizerlogo/2022/10/22/725454.jpg"
-            }
-          />
-          <CardOrg
-            title="Phòng trà Bến Thành"
-            img={
-              "https://static.tkbcdn.com/Upload/organizerlogo/2022/10/22/725454.jpg"
-            }
-          />
+          {userHighlight.length > 0 &&
+            userHighlight.map((item) => {
+              return <CardOrg title={item.name} img={item.avatar} />;
+            })}
         </div>
         <div className="btn-show">
           <span className="strike-left"></span>
@@ -112,72 +91,31 @@ const Home = () => {
             <MdOutlineEventAvailable className="icon-calendar-home" />
           </div>
         </div>
-
         <div className="card-events">
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
-          <CardEvent
-            title={"Trọng Hiếu - DANCE YOUR ENEGRY UP MINISHOW"}
-            img={
-              "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/05/23/7CCE31.jpg"
-            }
-            date={"Thu Jan 01 2023 05:30:00"}
-            author="Live Music"
-          />
+          {joinedEvent &&
+            joinedEvent.length > 0 &&
+            joinedEvent.map((item) => {
+              return <CardEvent {...item.event} key={item._id} />;
+            })}
+        </div>
+        <div className="btn-show">
+          <span className="strike-left"></span>
+          <button>Xem thêm</button>
+          <span className="strike-right"></span>
+        </div>
+
+        <div className="title-home">
+          <h2>Sự kiện đã đăng kí gần đây</h2>
+          <div className="underline-title">
+            <MdOutlineEventAvailable className="icon-calendar-home" />
+          </div>
+        </div>
+        <div className="card-events">
+          {registeredEvent &&
+            registeredEvent.length > 0 &&
+            registeredEvent.map((item) => {
+              return <CardEvent {...item.event} key={item._id} />;
+            })}
         </div>
         <div className="btn-show">
           <span className="strike-left"></span>

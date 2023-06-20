@@ -13,10 +13,12 @@ const UseCallApi = async ({ method, url, data }) => {
     }
     return response.data;
   } catch (err) {
-    if (err.response) {
-      const { status, message } = err.response;
+    if (err) {
+      console.log(err);
+      const { status, message } = err.response.data;
       console.error(`Mã trạng thái lỗi:${status}`);
       console.error("Thông điệp lỗi", message);
+      throw new Error(err.response.data.message);
     } else {
       console.error("Lỗi gọi API:", err.message);
     }

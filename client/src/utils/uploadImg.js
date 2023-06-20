@@ -8,7 +8,6 @@ export const uploadImage = async (files) => {
       formData.append("images", files[i]);
     }
   }
-  console.log(formData);
   if (formData) {
     const response = await UseCallApi({
       data: formData,

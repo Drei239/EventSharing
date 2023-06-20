@@ -1,34 +1,51 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
-const { string } = require('joi');
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
+const { string } = require("joi");
 const schema = mongoose.Schema;
-
+const Joi = require("joi");
 const userSchema = new schema({
   name: { type: String, required: true },
   email: { type: String, required: true },
-  password: { type: String },
+  password: { type: Joi.string().min(8) },
   birthDay: { type: Date },
   phone: { type: Number },
-  description: { type: String, default: '' },
+  description: { type: String, default: "" },
   avatar: {
-    type: String,
+    type: Joi.string(),
     default:
-      'https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg',
+      "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
   },
   isAdmin: {
-    type: Boolean,
+    type: Joi.boolean(),
     required: true,
     default: false,
   },
-  userRating: {
-    type: Number,
-    required: true,
-    default: 0,
+  gender: {
+    type: Joi.string(),
   },
+  userRating: [
+    {
+      star: {
+        type: Number,
+        default: 0,
+      },
+      postedBy: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+      comment: { type: String },
+      time: { type: Date, default: Date.now() },
+      img: { type: String },
+    },
+  ],
   createdAt: {
     type: Date,
     required: true,
     default: Date.now,
+  },
+  totalRating: {
+    type: Number,
+    default: 0,
   },
 });
 
@@ -36,8 +53,8 @@ const userSchema = new schema({
 //   return await bcrypt.compare(enteredPassword, this.password);
 // };
 
-userSchema.pre('save', async function (next) {
-  if (!this.isModified('password')) {
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
     next();
   }
 
@@ -45,5 +62,5 @@ userSchema.pre('save', async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 module.exports = User;

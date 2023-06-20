@@ -10,13 +10,14 @@ import eventService from './features/events/eventService';
 import { Route, Routes } from "react-router-dom";
 import { NextUIProvider } from "@nextui-org/react";
 import { useSelector } from "react-redux";
-
+import { ToastContainer } from "react-toastify";
 function App() {
   const open = useSelector((state) => state.user.open);
   return (
     <div className={open ? "hidden-scroll" : ""}>
       <NextUIProvider>
         <Header />
+        <ToastContainer limit={3} />
         <Routes>
           <Route path="/login-register" element={<LoginRegisterPage />} />
           <Route path="/create-event" element={<CreateEventPage />} />

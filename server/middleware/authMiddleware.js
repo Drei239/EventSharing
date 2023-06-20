@@ -5,7 +5,8 @@ require("dotenv").config({ path: ".env" });
 const userModel = require("../models/userModel");
 
 const protect = asyncHandler(async (req, res, next) => {
-  const accessToken = req.cookies.access;
+  const accessToken = req.cookies.token;
+  const refreshToken = req.cookies.refresh;
 
   if (accessToken) {
     try {
@@ -15,11 +16,18 @@ const protect = asyncHandler(async (req, res, next) => {
       req.user = userInfo;
       return next();
     } catch (error) {
-      res.status(401).json({ tokenExpires: true });
+      res.status(400).end();
       throw new Error("Token invalid");
     }
   } else {
-    res.status(401).json({ tokenExpires: true });
+    const newToken = refreshAccessToken(refreshToken);
+    if (newToken) {
+      req.token = newToken;
+      return next();
+    } else {
+      res.statusCode(400);
+      throw new Error("Token invalid");
+    }
   }
 });
 
@@ -32,14 +40,11 @@ const isAdmin = (req, res, next) => {
   }
 };
 const verifyUser = (req, res, next) => {
-  protect(req, res, (err) => {
-    if (err) {
-      next(err);
-    } else if (req.user.id === req.params.id || req.user.isAdmin) {
-      next();
-    } else {
-      return next(createError(401, "You are not authorized"));
-    }
-  });
+  if (req.user?._id == req.params.id) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error("Not authorized");
+  }
 };
 module.exports = { protect, isAdmin, verifyUser };
