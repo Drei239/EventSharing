@@ -40,14 +40,11 @@ const isAdmin = (req, res, next) => {
   }
 };
 const verifyUser = (req, res, next) => {
-  protect(req, res, (err) => {
-    if (err) {
-      next(err);
-    } else if (req.user.id === req.params.id || req.user?.isAdmin) {
-      next();
-    } else {
-      return next(createError(401, "You are not authorized"));
-    }
-  });
+  if (req.user?._id == req.params.id) {
+    next();
+  } else {
+    res.status(401);
+    throw new Error("Not authorized");
+  }
 };
 module.exports = { protect, isAdmin, verifyUser };

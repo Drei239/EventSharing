@@ -1,4 +1,3 @@
-
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
@@ -7,14 +6,14 @@ var logger = require("morgan");
 var bodyParser = require("body-parser");
 
 const connectDatabase = require("./config/database");
-const { handleError } = require("./middleware/errorHandle");
+const { errorMiddleware } = require("./middleware/errorMiddleware");
 
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 var eventsRouter = require("./routes/events");
 var categoryRouter = require("./routes/category");
 var uploadRouter = require("./routes/upload");
-var orderRouter = require('./routes/orders');
+var orderRouter = require("./routes/orders");
 var cors = require("cors");
 var app = express();
 
@@ -44,7 +43,7 @@ app.use("/users", usersRouter);
 app.use("/events", eventsRouter);
 app.use("/category", categoryRouter);
 app.use("/upload", uploadRouter);
-app.use('/orders', orderRouter);
+app.use("/orders", orderRouter);
 
 process.env.TZ = "Asia/Jakarta";
 
@@ -52,9 +51,11 @@ process.env.TZ = "Asia/Jakarta";
 app.use(function (req, res, next) {
   next(createError(404));
 });
-// app.use(handleError);
-
-// error handler
+// function errorHandler(err, req, res, next) {
+//   console.error(err.message);
+//   res.status(500).json({ error: "Internal Server Error" });
+// }
+// app.use(errorHandler);
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

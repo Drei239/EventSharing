@@ -131,7 +131,8 @@ const updateDraftEventInfo = asyncHandler(
     timeEndSignup,
     timeBegin,
     timeEnd,
-    limitUser) => {
+    limitUser
+  ) => {
     const updateEvent = await eventModel.findOne({ _id: requestId });
     if (updateEvent.status === "Draft") {
       updateEvent.title = title || updateEvent.title;
@@ -149,10 +150,13 @@ const updateDraftEventInfo = asyncHandler(
 
       const existEvent = await eventModel.findOne({ title: updateEvent.title });
       if (eventValidators.inputTitleValidation(existEvent, requestId)) {
-        if (eventValidators.inputTimeValidation(
-          updateEvent.timeEndSignup,
-          updateEvent.timeBegin,
-          updateEvent.timeEnd)) {
+        if (
+          eventValidators.inputTimeValidation(
+            updateEvent.timeEndSignup,
+            updateEvent.timeBegin,
+            updateEvent.timeEnd
+          )
+        ) {
           const updatedEvent = await updateEvent.save();
           return updatedEvent;
         } else {
@@ -166,11 +170,28 @@ const updateDraftEventInfo = asyncHandler(
     }
   }
 );
+const getHighLightUser = (
+  totalParticipants,
+  numEvents,
+  numReviews,
+  averageRating
+) => {
+  const participantWeight = 0.3; // Trọng số cho tổng số lượt tham gia (40%)
+  const eventWeight = 0.1; // Trọng số cho số sự kiện (30%)
+  const reviewWeight = 0.1; // Trọng số cho số đánh giá (20%)
+  const ratingWeight = 0.5; // Trọng số cho điểm đánh giá (10%)
 
+  const prominence =
+    totalParticipants * participantWeight +
+    numEvents * eventWeight -
+    numReviews * reviewWeight +
+    averageRating * ratingWeight;
+  return prominence;
+};
 module.exports = {
   createNewEvent,
   getPublicEvents,
   updateDraftEventInfo,
   getEventsFilter,
+  getHighLightUser,
 };
-

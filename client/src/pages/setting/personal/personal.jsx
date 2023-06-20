@@ -1,14 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import { useFormik } from "formik";
 import Select, { components } from "react-select";
-import yup, { number } from "yup";
+import { object, number } from "yup";
 import dayjs from "dayjs";
-import { month } from "../../../data/data";
-import DatePicker from "react-datepicker";
-import { Radio } from "@nextui-org/react";
-import { object } from "yup";
+import { useSelector, useDispatch } from "react-redux";
+import { Radio, useModal } from "@nextui-org/react";
 import "react-datepicker/dist/react-datepicker.css";
 import "./personal.css";
+import { month } from "../../../data/data";
+import { LoadingLayout } from "../../../components";
+import { updateInfo } from "../../../features/user/userSlice";
+import notify from "../../../utils/notify";
 const groupStyles = {
   border: `2px dotted #161f6d`,
   borderRadius: "5px",
@@ -22,14 +24,14 @@ const Group = (props) => (
 );
 
 const Personal = () => {
-  const validateSchema = object().shape({
-    year: number()
-      .min(1903, "Năm sinh phải lớn hơn 1903")
-      .max(dayjs().year(), "Năm sinh của bạn không được lớn hơn năm hiện tại"),
-    day: number()
-      .min(1, "Ngày sinh không hợp lệ")
-      .max(dayInMonth, "Ngày sinh không hợp lệ"),
-  });
+  const dispatch = useDispatch();
+  const { isLoading, userInfo, isSuccess, message } = useSelector(
+    (state) => state.user
+  );
+  const { setVisible, bindings } = useModal();
+
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [requestError, setRequestError] = useState(false);
   const formik = useFormik({
     initialValues: {
       day: null,
@@ -37,9 +39,21 @@ const Personal = () => {
       year: null,
       gender: "female",
     },
-    validationSchema: validateSchema,
+    // validationSchema: validateSchema,
     onSubmit: async (values) => {
       console.log(values);
+      await dispatch(
+        updateInfo({
+          id: userInfo._id,
+          data: {
+            gender: values.gender,
+            birthDay: dayjs()
+              .set("date", values.day)
+              .set("month", values.month?.value)
+              .set("year", values.year),
+          },
+        })
+      );
     },
   });
   var dayInMonth =
@@ -51,10 +65,9 @@ const Personal = () => {
 
   const handleChangeMonth = (selectOption) => {
     formik.setFieldValue("month", selectOption);
-    formik.setFieldValue("day", null);
+    formik.setFieldValue("day", 1);
   };
   const handleChangeGender = (option) => {
-    console.log(option);
     formik.setFieldValue("gender", option);
   };
   const handleClearBirthday = async () => {
@@ -62,7 +75,33 @@ const Personal = () => {
     formik.setFieldValue("month", null);
     formik.setFieldValue("year", null);
   };
-
+  useEffect(() => {
+    if (userInfo) {
+      formik.setFieldValue("gender", userInfo?.gender || "");
+      formik.setFieldValue("day", dayjs(userInfo?.birthDay).date() || null);
+      console.log(month[dayjs(userInfo?.birthDay).month()]);
+      formik.setFieldValue(
+        "month",
+        month[dayjs(userInfo?.birthDay).month()] || null
+      );
+      formik.setFieldValue("year", dayjs(userInfo?.birthDay).year() || null);
+    }
+  }, [userInfo]);
+  useEffect(() => {
+    setVisible(isLoading);
+  }, [isLoading]);
+  useEffect(() => {
+    if (isSuccess && requestSuccess) {
+      notify("Cập nhật tài khoản thành công", "success");
+    }
+    setRequestSuccess(true);
+  }, [isSuccess]);
+  useEffect(() => {
+    if (message && requestError) {
+      notify(message, "error");
+    }
+    setRequestError(true);
+  }, [message]);
   return (
     <div className="personal">
       <h2>Personal info</h2>
@@ -88,7 +127,6 @@ const Personal = () => {
               name="month"
               value={formik.values.month}
               options={month}
-              defaultValue={month[0]}
               components={{ Group }}
               onChange={handleChangeMonth}
               className="birth-select-month"
@@ -134,8 +172,11 @@ const Personal = () => {
             <Radio value="not-answer">I'd prefer not to answer</Radio>
           </Radio.Group>
         </div>
-        <button className="personal-submit">Save Changes</button>
+        <button className="personal-submit" type="submit">
+          Save Changes
+        </button>
       </form>
+      <LoadingLayout loading={bindings} />
     </div>
   );
 };
