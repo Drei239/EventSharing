@@ -172,6 +172,13 @@
   width: 30%;
 }
 
+.create-event__dropdown {
+  width: 190px;
+  padding: 5px 10px;
+  border: 1px solid #00abe1;
+  border-radius: 10px;
+}
+
 @media screen and (max-width: 1400px) {
   .create-event {
     width: 80%;

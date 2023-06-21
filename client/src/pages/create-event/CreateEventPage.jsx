@@ -21,6 +21,8 @@ const CreateEventPage = () => {
     quantityTicket: '',
     description: '',
     address: '',
+    typeEvent: 'offline',
+    category: '',
     dateStart: '',
     dateEnd: '',
     dateRegisterEnd: '',
@@ -31,14 +33,20 @@ const CreateEventPage = () => {
   const [isBannerLoading, setIsBannerLoading] = useState(false);
   const [isImageEventLoaing, setIsImageEventLoaing] = useState(false);
   const [categoryList, setCategoryList] = useState([]);
-  const [typeEvent, setTypeEvent] = useState(new Set(['offline']));
-  const [category, setCategory] = useState('');
   const [banner, setBanner] = useState();
   const [imageEvent, setImageEvent] = useState([]);
   const [isFree, setIsFree] = useState(false);
-  const [city, setCity] = useState('');
-  const [district, setDistrict] = useState('');
-  const [ward, setWard] = useState('');
+  const [city, setCity] = useState({
+    name: '',
+    code: '',
+    division_type: '',
+  });
+  const [district, setDistrict] = useState({
+    name: '',
+    code: '',
+    division_type: '',
+  });
+  const [ward, setWard] = useState({ name: '', code: '', division_type: '' });
 
   useEffect(() => {
     customFetch
@@ -180,7 +188,7 @@ const CreateEventPage = () => {
       feeTicket = inputValue.fee;
     }
 
-    if ([...typeEvent][0].toLowerCase() === 'online') {
+    if (inputValue.typeEvent === 'online') {
       isLocation = true;
     } else {
       isLocation = inputValue.address && city && district && ward;
@@ -193,14 +201,14 @@ const CreateEventPage = () => {
       checkDateEndStart.isValid &&
       checkDateRegisterStart.isValid &&
       inputValue.description &&
-      category &&
+      inputValue.category &&
       banner.length > 0 &&
       imageEvent.length > 0 &&
       isLocation;
 
     if (isSuccess) {
       const location =
-        [...typeEvent][0].toLowerCase() === 'offline'
+        inputValue.typeEvent === 'offline'
           ? `${inputValue.address}, ${[...ward][0]}, ${[...district][0]}, ${
               [...city][0]
             }`
@@ -218,8 +226,7 @@ const CreateEventPage = () => {
         inputValue.timeRegisterEnd
       );
       const { _id } = categoryList?.find(
-        (item) =>
-          item.categoryName.toLowerCase() === [...category][0].toLowerCase()
+        (item) => item.categoryName.toLowerCase() === inputValue.category
       );
 
       const data = {
@@ -228,7 +235,7 @@ const CreateEventPage = () => {
         banner: banner,
         imageList: imageEvent,
         category: _id,
-        isOnline: [...typeEvent][0].toLowerCase() === 'online',
+        isOnline: inputValue.typeEvent === 'online',
         fee: Number(inputValue.fee),
         location,
         timeBegin,
@@ -255,8 +262,6 @@ const CreateEventPage = () => {
           }
           setBanner('');
           setImageEvent([]);
-          setTypeEvent(new Set(['offline']));
-          setCategory('');
           setCity('');
           setDistrict('');
           setWard('');
@@ -267,6 +272,8 @@ const CreateEventPage = () => {
             quantityTicket: '',
             description: '',
             address: '',
+            typeEvent: 'offline',
+            category: '',
             dateStart: '',
             dateEnd: '',
             dateRegisterEnd: '',
@@ -283,7 +290,21 @@ const CreateEventPage = () => {
     }
   };
 
-  console.log('imgaEvent', imageEvent);
+  const renderWard = () => {
+    const wards = provinces
+      .find((item) => item.name === city.name)
+      .districts.find((item) => item.name === district.name)
+      .wards.sort(compare);
+    if (wards) {
+      return wards.map((ward, index) => (
+        <option key={index} value={ward.name}>
+          {ward.name}
+        </option>
+      ));
+    } else {
+      setWard({ ...ward, name: 'ward' });
+    }
+  };
 
   return (
     <div className='create-event'>
@@ -480,44 +501,35 @@ const CreateEventPage = () => {
           />
           <div className='create-event__form--display'>
             <span>Hình thức tổ chức</span>
-            <Dropdown>
-              <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-                {typeEvent}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label='Hình thức tổ chức'
-                disallowEmptySelection
-                selectionMode='single'
-                onSelectionChange={setTypeEvent}
-              >
-                <Dropdown.Item key='offline'>Offline</Dropdown.Item>
-                <Dropdown.Item key='online'>Online</Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <select
+              name='typeEvent'
+              className='create-event__dropdown'
+              value={inputValue.typeEvent}
+              onChange={handleOnchange}
+            >
+              <option value='offline'>Offline</option>
+              <option value='online'>Online</option>
+            </select>
           </div>
           <div className='create-event__form--display'>
             <span>Thể loại</span>
-            <Dropdown>
-              <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-                {category || 'Hãy chọn'}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label='Thể loại'
-                disallowEmptySelection
-                selectionMode='single'
-                onSelectionChange={setCategory}
-              >
-                {categoryList?.map((item) => (
-                  <Dropdown.Item key={item.categoryName}>
-                    {item.categoryName}
-                  </Dropdown.Item>
-                ))}
-              </Dropdown.Menu>
-            </Dropdown>
+            <select
+              name='category'
+              className='create-event__dropdown'
+              value={inputValue.category}
+              onChange={handleOnchange}
+            >
+              <option value=''>- Mời bạn chọn -</option>
+              {categoryList?.map((item, index) => (
+                <option value={item.categoryName} key={index}>
+                  {item.categoryName}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {[...typeEvent][0].toLowerCase() === 'offline' && (
+        {inputValue.typeEvent === 'offline' && (
           <div className='create-event__address'>
             <Input
               label='Địa điểm tổ chức'
@@ -527,72 +539,58 @@ const CreateEventPage = () => {
               onChange={handleOnchange}
             />
             <br />
-            <Dropdown>
-              <Dropdown.Button flat css={{ tt: 'capitalize' }}>
-                {city || 'Tỉnh/Thành phố'}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label='Tỉnh thành'
-                disallowEmptySelection
-                selectionMode='single'
-                onSelectionChange={setCity}
-              >
-                {provinces.sort(compare).map((item, index) => {
-                  return (
-                    <Dropdown.Item key={item.name}>{item.name}</Dropdown.Item>
-                  );
-                })}
-              </Dropdown.Menu>
-            </Dropdown>
+            <select
+              name='city'
+              className='create-event__dropdown'
+              value={city.name}
+              onChange={(e) => {
+                setCity({ ...city, name: e.target.value });
+                setDistrict({ ...district, name: '' });
+                setWard({ ...ward, name: '' });
+              }}
+            >
+              <option value=''>- Tỉnh/Thành phố -</option>
+              {provinces.sort(compare).map((city, index) => (
+                <option value={city.name} key={index}>
+                  {city.name}
+                </option>
+              ))}
+            </select>
 
-            <Dropdown>
-              <Dropdown.Button
-                disabled={city ? false : true}
-                flat
-                css={{ tt: 'capitalize' }}
-              >
-                {district || 'Quận/Huyện'}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label='Quận huyện'
-                disallowEmptySelection
-                selectionMode='single'
-                onSelectionChange={setDistrict}
-              >
-                {city &&
-                  provinces
-                    .find((item) => item.name === [...city][0])
-                    .districts.sort(compare)
-                    .map((item) => (
-                      <Dropdown.Item key={item.name}>{item.name}</Dropdown.Item>
-                    ))}
-              </Dropdown.Menu>
-            </Dropdown>
+            <select
+              name='district'
+              className='create-event__dropdown'
+              value={district.name}
+              disabled={city.name ? false : true}
+              onChange={(e) => {
+                setDistrict({ ...district, name: e.target.value });
+                setWard({ ...ward, name: '' });
+              }}
+            >
+              <option value=''>- Quận/Huyện -</option>
+              {city?.name &&
+                provinces
+                  .find((item) => item.name === city?.name)
+                  .districts.sort(compare)
+                  .map((district, index) => (
+                    <option key={index} value={district.name}>
+                      {district.name}
+                    </option>
+                  ))}
+            </select>
 
-            <Dropdown>
-              <Dropdown.Button
-                disabled={district ? false : true}
-                flat
-                css={{ tt: 'capitalize' }}
-              >
-                {ward || 'Phường/Xã'}
-              </Dropdown.Button>
-              <Dropdown.Menu
-                aria-label='Phường xã'
-                disallowEmptySelection
-                selectionMode='single'
-                onSelectionChange={setWard}
-              >
-                {district &&
-                  provinces
-                    .find((item) => item.name === [...city][0])
-                    .districts.find((item) => item.name === [...district][0])
-                    .wards.sort(compare)
-                    .map((item) => (
-                      <Dropdown.Item key={item.name}>{item.name}</Dropdown.Item>
-                    ))}
-              </Dropdown.Menu>
-            </Dropdown>
+            <select
+              name='ward'
+              className='create-event__dropdown'
+              value={ward.name}
+              disabled={district.name ? false : true}
+              onChange={(e) => setWard({ ...ward, name: e.target.value })}
+            >
+              <option value='' disabled={ward.name === 'ward'}>
+                - Phường/Xã -
+              </option>
+              {district.name && renderWard()}
+            </select>
           </div>
         )}
 
