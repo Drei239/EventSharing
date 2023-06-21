@@ -11,4 +11,7 @@ const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 // Có ít nhất 6 ký tự vừa chữ và số
 const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
-export { nameRegex, emailRegex, passwordRegex, titleRegex };
+const urlRegex =
+  /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/g;
+
+export { nameRegex, emailRegex, passwordRegex, titleRegex, urlRegex };

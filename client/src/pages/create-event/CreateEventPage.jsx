@@ -3,9 +3,9 @@ import {
   useValidateDatetime,
   useValidateRegex,
 } from '../../hooks/validateHooks';
-import { titleRegex } from '../../constants/regex';
+import { titleRegex, urlRegex } from '../../constants/regex';
 import customFetch from '../../utils/axios.config';
-import { Button, Dropdown, Input, Loading, Switch } from '@nextui-org/react';
+import { Button, Input, Loading, Switch } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
 import imageCompression from 'browser-image-compression';
@@ -23,6 +23,7 @@ const CreateEventPage = () => {
     address: '',
     typeEvent: 'offline',
     category: '',
+    linkOnline: '',
     dateStart: '',
     dateEnd: '',
     dateRegisterEnd: '',
@@ -36,17 +37,9 @@ const CreateEventPage = () => {
   const [banner, setBanner] = useState();
   const [imageEvent, setImageEvent] = useState([]);
   const [isFree, setIsFree] = useState(false);
-  const [city, setCity] = useState({
-    name: '',
-    code: '',
-    division_type: '',
-  });
-  const [district, setDistrict] = useState({
-    name: '',
-    code: '',
-    division_type: '',
-  });
-  const [ward, setWard] = useState({ name: '', code: '', division_type: '' });
+  const [city, setCity] = useState('');
+  const [district, setDistrict] = useState('');
+  const [ward, setWard] = useState('');
 
   useEffect(() => {
     customFetch
@@ -104,6 +97,12 @@ const CreateEventPage = () => {
     inputValue.quantityTicket,
     /^[0-9]*$/,
     'Chỉ được phép nhập số'
+  );
+
+  const urlHepler = useValidateRegex(
+    inputValue.linkOnline,
+    urlRegex,
+    'Đường dẫn không đúng định dạng'
   );
 
   // Kiểm tra ngày bắt đầu sự kiện luôn luôn trước ngày kết thúc
@@ -180,6 +179,7 @@ const CreateEventPage = () => {
     e.preventDefault();
     let isLocation = false;
     let feeTicket;
+    let isLink = false;
 
     if (isFree) {
       inputValue.fee = 0;
@@ -190,8 +190,36 @@ const CreateEventPage = () => {
 
     if (inputValue.typeEvent === 'online') {
       isLocation = true;
+      if (inputValue.linkOnline) {
+        isLink = urlHepler.isValid;
+      }
     } else {
-      isLocation = inputValue.address && city && district && ward;
+      isLink = true;
+      const cityLocation = provinces.find((item) => item.name === city);
+      const districtLocation = cityLocation.districts.find(
+        (item) => item.name === district
+      );
+      const wardLocation = districtLocation.wards.find(
+        (item) => item.name === ward
+      );
+      isLocation = {
+        address: inputValue.address,
+        province: {
+          name: cityLocation.name,
+          code: cityLocation.code,
+          division_type: cityLocation.division_type,
+        },
+        district: {
+          name: districtLocation.name,
+          code: districtLocation.code,
+          division_type: districtLocation.division_type,
+        },
+        ward: {
+          name: wardLocation.name,
+          code: wardLocation.code,
+          division_type: wardLocation.division_type,
+        },
+      };
     }
 
     const isSuccess =
@@ -204,15 +232,10 @@ const CreateEventPage = () => {
       inputValue.category &&
       banner.length > 0 &&
       imageEvent.length > 0 &&
-      isLocation;
+      isLocation &&
+      isLink;
 
     if (isSuccess) {
-      const location =
-        inputValue.typeEvent === 'offline'
-          ? `${inputValue.address}, ${[...ward][0]}, ${[...district][0]}, ${
-              [...city][0]
-            }`
-          : 'Online';
       const timeBegin = covertDatetimeToISO(
         inputValue.dateStart,
         inputValue.timeStart
@@ -226,7 +249,8 @@ const CreateEventPage = () => {
         inputValue.timeRegisterEnd
       );
       const { _id } = categoryList?.find(
-        (item) => item.categoryName.toLowerCase() === inputValue.category
+        (item) =>
+          item.categoryName.toLowerCase() === inputValue.category.toLowerCase()
       );
 
       const data = {
@@ -237,20 +261,26 @@ const CreateEventPage = () => {
         category: _id,
         isOnline: inputValue.typeEvent === 'online',
         fee: Number(inputValue.fee),
-        location,
+        location: inputValue.typeEvent === 'offline' ? isLocation : '',
+        linkOnline:
+          inputValue.typeEvent === 'online' ? inputValue.linkOnline : '',
         timeBegin,
         timeEnd: timeEndEvent,
         timeEndSignup,
         limitUser: Number(inputValue.quantityTicket),
-        creator: '6464f337c4fcda89dc23cf31',
+        creator: '6464f32bc4fcda89dc23cf30',
         reviews: [],
       };
+
+      console.log(data);
 
       try {
         const response = await customFetch({
           method: 'POST',
           url: '/events/create',
           data: JSON.stringify(data),
+        }).catch((error) => {
+          console.log(error);
         });
 
         if (response.status === 200) {
@@ -292,8 +322,8 @@ const CreateEventPage = () => {
 
   const renderWard = () => {
     const wards = provinces
-      .find((item) => item.name === city.name)
-      .districts.find((item) => item.name === district.name)
+      .find((item) => item.name === city)
+      .districts.find((item) => item.name === district)
       .wards.sort(compare);
     if (wards) {
       return wards.map((ward, index) => (
@@ -529,7 +559,7 @@ const CreateEventPage = () => {
           </div>
         </div>
 
-        {inputValue.typeEvent === 'offline' && (
+        {inputValue.typeEvent === 'offline' ? (
           <div className='create-event__address'>
             <Input
               label='Địa điểm tổ chức'
@@ -542,11 +572,11 @@ const CreateEventPage = () => {
             <select
               name='city'
               className='create-event__dropdown'
-              value={city.name}
+              value={city}
               onChange={(e) => {
-                setCity({ ...city, name: e.target.value });
-                setDistrict({ ...district, name: '' });
-                setWard({ ...ward, name: '' });
+                setCity(e.target.value);
+                setDistrict('');
+                setWard('');
               }}
             >
               <option value=''>- Tỉnh/Thành phố -</option>
@@ -560,17 +590,17 @@ const CreateEventPage = () => {
             <select
               name='district'
               className='create-event__dropdown'
-              value={district.name}
-              disabled={city.name ? false : true}
+              value={district}
+              disabled={city ? false : true}
               onChange={(e) => {
-                setDistrict({ ...district, name: e.target.value });
-                setWard({ ...ward, name: '' });
+                setDistrict(e.target.value);
+                setWard('');
               }}
             >
               <option value=''>- Quận/Huyện -</option>
-              {city?.name &&
+              {city &&
                 provinces
-                  .find((item) => item.name === city?.name)
+                  .find((item) => item.name === city)
                   .districts.sort(compare)
                   .map((district, index) => (
                     <option key={index} value={district.name}>
@@ -582,16 +612,27 @@ const CreateEventPage = () => {
             <select
               name='ward'
               className='create-event__dropdown'
-              value={ward.name}
-              disabled={district.name ? false : true}
-              onChange={(e) => setWard({ ...ward, name: e.target.value })}
+              value={ward}
+              disabled={district ? false : true}
+              onChange={(e) => setWard(e.target.value)}
             >
-              <option value='' disabled={ward.name === 'ward'}>
+              <option value='' disabled={ward === 'ward'}>
                 - Phường/Xã -
               </option>
-              {district.name && renderWard()}
+              {district && renderWard()}
             </select>
           </div>
+        ) : (
+          <Input
+            label='Đường dẫn tham gia hình thức online'
+            name='linkOnline'
+            value={inputValue.linkOnline}
+            status={urlHepler.color}
+            color={urlHepler.color}
+            helperText={urlHepler.text}
+            helperColor={urlHepler.color}
+            onChange={handleOnchange}
+          />
         )}
 
         <p className='create-event__description'>Mô tả sự kiện</p>
