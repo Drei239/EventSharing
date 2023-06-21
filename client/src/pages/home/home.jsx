@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import { GoOrganization } from "react-icons/go";
 import { CardEvent, CardOrg, Carousel, Loading } from "../../components";
 import { BsCalendar4Event } from "react-icons/bs";
@@ -14,6 +15,7 @@ import {
 } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
 import { getHighlightUser } from "../../features/user/userSlice";
+import EmptyIcon from "../../assets/empty.svg";
 const Home = () => {
   const dispatch = useDispatch();
   const [newEvent2, setNewEvent2] = useState([]);
@@ -97,12 +99,22 @@ const Home = () => {
               return <CardEvent {...item.event} key={item._id} />;
             })}
         </div>
-        <div className="btn-show">
-          <span className="strike-left"></span>
-          <button>Xem thêm</button>
-          <span className="strike-right"></span>
-        </div>
-
+        {joinedEvent && joinedEvent.length > 0 && (
+          <div className="btn-show">
+            <span className="strike-left"></span>
+            <button>Xem thêm</button>
+            <span className="strike-right"></span>
+          </div>
+        )}
+        {!joinedEvent && (
+          <div className="empty-events-home">
+            <img src={EmptyIcon} alt="" />
+            <p>You have not joined for any events</p>
+            <Link to="/events" reloadDocument={true}>
+              Discover new events
+            </Link>
+          </div>
+        )}
         <div className="title-home">
           <h2>Sự kiện đã đăng kí gần đây</h2>
           <div className="underline-title">
@@ -116,12 +128,25 @@ const Home = () => {
               return <CardEvent {...item.event} key={item._id} />;
             })}
         </div>
-        <div className="btn-show">
-          <span className="strike-left"></span>
-          <button>Xem thêm</button>
-          <span className="strike-right"></span>
-        </div>
+        {registeredEvent && registeredEvent.length > 0 && (
+          <div className="btn-show">
+            <span className="strike-left"></span>
+            <button>Xem thêm</button>
+            <span className="strike-right"></span>
+          </div>
+        )}
+        {!registeredEvent ||
+          (registeredEvent.length <= 0 && (
+            <div className="empty-events-home">
+              <img src={EmptyIcon} alt="" />
+              <p>You have not registered for any events</p>
+              <Link to="/events" reloadDocument={true}>
+                Discover new events
+              </Link>
+            </div>
+          ))}
       </div>
+
       {isLoading && <Loading />}
     </div>
   );

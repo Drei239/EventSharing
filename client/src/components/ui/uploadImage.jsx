@@ -84,7 +84,7 @@ const UploadImage = () => {
                     <Cropper
                       image={imgSrc}
                       crop={crop}
-                      aspect={4 / 3}
+                      aspect={3 / 3}
                       rotation={rotate}
                       onCropChange={setCrop}
                       onCropComplete={onCropComplete}
