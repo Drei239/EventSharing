@@ -6,6 +6,7 @@ var logger = require('morgan');
 var bodyParser = require('body-parser');
 
 const connectDatabase = require('./config/database');
+const { errorMiddleware } = require('./middleware/errorMiddleware');
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -26,8 +27,8 @@ app.use(
     origin: 'http://localhost:3001',
   })
 );
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

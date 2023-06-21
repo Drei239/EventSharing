@@ -24,12 +24,11 @@ const uploadPhoto = multer({
   limits: { fieldSize: 2000000 },
 });
 const eventImgResize = async (req, res, next) => {
-  console.log('b');
   if (!req.files) return next();
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
-        .resize(500, 300)
+        .resize(300, 300)
         .toFormat('jpeg')
         .jpeg({ quality: 100 })
         .toFile(`public/images/events/${file.filename}`);
