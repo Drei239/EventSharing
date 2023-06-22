@@ -1,8 +1,8 @@
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModel");
-const userService = require("../services/userService");
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/userModel');
+const userService = require('../services/userService');
 const createJwt = (value) => {
   try {
     const token = jwt.sign({ _id: value }, process.env.SECRETKEY, {
@@ -15,7 +15,7 @@ const createJwt = (value) => {
 
     return { token, refreshToken };
   } catch (error) {
-    throw new Error("Create jwt error");
+    throw new Error('Create jwt error');
   }
 };
 
@@ -25,23 +25,13 @@ const getAllUser = asyncHandler(async (req, res) => {
   res.json(users);
 });
 
-const checkAccount = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-  const emailExists = await userModel.findOne({ email: email.toLowerCase() });
-  if (emailExists) {
-    res.json({ accountExists: true });
-  } else {
-    res.json({ accountExists: false });
-  }
-});
-
 //2.REGISTER NEW USER
 const register = asyncHandler(async (req, res) => {
   const { name, email, password, avatar } = req.body;
   const lowerCaseEmail = email.toLowerCase();
   const userExists = await userModel.findOne({ email: lowerCaseEmail });
   if (userExists) {
-    return res.status(400).json({ message: "Email đã có tài khoản" });
+    return res.status(400).json({ message: 'Email đã có tài khoản' });
   }
 
   let newUser;
@@ -62,12 +52,12 @@ const register = asyncHandler(async (req, res) => {
   if (newUser) {
     res.status(201).json({
       success: true,
-      data: "Tạo tài khoản thành công",
+      data: 'Tạo tài khoản thành công',
     });
   } else {
     return res
       .status(400)
-      .json({ success: false, message: "Tạo tài khoản thất bại" });
+      .json({ success: false, message: 'Tạo tài khoản thất bại' });
   }
 });
 
@@ -80,13 +70,13 @@ const authLogin = asyncHandler(async (req, res) => {
     if (user && (await bcrypt.compare(password, user.password))) {
       const jwt = createJwt(user._id);
 
-      res.cookie("token", jwt.token, {
+      res.cookie('access', jwt.token, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
       });
 
-      res.cookie("refresh", jwt.refreshToken, {
+      res.cookie('refresh', jwt.refreshToken, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 720 * 3600000),
@@ -94,23 +84,23 @@ const authLogin = asyncHandler(async (req, res) => {
 
       res.status(201).json({
         success: true,
-        data: "Đăng nhập thành công",
+        data: 'Đăng nhập thành công',
       });
     } else {
       return res
         .status(401)
-        .json({ success: false, message: "Email or password is incorrect" });
+        .json({ success: false, message: 'Email or password is incorrect' });
     }
   } else {
     const jwt = createJwt(user._id);
 
-    res.cookie("token", jwt.token, {
+    res.cookie('access', jwt.token, {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 2 * 3600000),
     });
 
-    res.cookie("refresh", jwt.refreshToken, {
+    res.cookie('refresh', jwt.refreshToken, {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 720 * 3600000),
@@ -118,7 +108,7 @@ const authLogin = asyncHandler(async (req, res) => {
 
     res.status(201).json({
       success: true,
-      data: "Đăng nhập thành công",
+      data: 'Đăng nhập thành công',
     });
   }
 });
@@ -126,16 +116,6 @@ const authLogin = asyncHandler(async (req, res) => {
 //4. GET USER PROFILE
 const profileUser = asyncHandler((req, res) => {
   const user = req.user;
-  const token = req.token;
-
-  if (token) {
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
-  }
-
   res.status(200).json(user);
   res.end();
 });
@@ -161,7 +141,7 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   if (oldPassword) {
     const passwordVerify = await bcrypt.compare(oldPassword, user.password);
     if (!passwordVerify) {
-      res.status(400).json({ status: 400, message: "Password is not match" });
+      res.status(400).json({ status: 400, message: 'Password is not match' });
     }
     if (passwordVerify && newPassword) {
       user.password = newPassword;
@@ -181,15 +161,6 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   user.gender = gender || user.gender;
   const updatedUser = await user.save();
 
-  const token = req.token;
-  if (token) {
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
-  }
-
   if (updatedUser) {
     res.status(200).json({
       success: true,
@@ -197,7 +168,7 @@ const updateUserById = asyncHandler(async (req, res, next) => {
     });
   } else {
     res.status(400);
-    throw new Error("Update fail");
+    throw new Error('Update fail');
   }
 });
 
@@ -206,9 +177,9 @@ const deleted = asyncHandler(async (req, res, next) => {
   try {
     const user = await userModel.findById(req.params.id);
     if (!user) {
-      res.status(404).json({ status: 400, message: "User not found" });
+      res.status(404).json({ status: 400, message: 'User not found' });
     }
-    console.log("a");
+    console.log('a');
     const comparePassword = await bcrypt.compare(
       req.body.password,
       user.password
@@ -216,14 +187,14 @@ const deleted = asyncHandler(async (req, res, next) => {
 
     if (!comparePassword) {
       if (!req.user?.isAdmin) {
-        res.status(400).json({ status: 400, message: "Mật khẩu không đúng" });
+        res.status(400).json({ status: 400, message: 'Mật khẩu không đúng' });
       } else {
         await userModel.findByIdAndDelete(user._id);
-        res.status(200).json({ message: "Delete successfully" });
+        res.status(200).json({ message: 'Delete successfully' });
       }
     } else {
       await userModel.findByIdAndDelete(user._id);
-      res.status(200).json({ message: "Delete successfully" });
+      res.status(200).json({ message: 'Delete successfully' });
     }
   } catch (err) {
     next(err);
@@ -240,16 +211,56 @@ const ratingUser = asyncHandler(async (req, res, next) => {
     });
     res
       .status(200)
-      .json({ status: 200, data: updateRating, message: "comment thanh cong" });
+      .json({ status: 200, data: updateRating, message: 'comment thanh cong' });
   } catch (err) {
     next(err);
   }
 });
+const highlightUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await userService.highlightUser();
+    res
+      .status(200)
+      .json({ status: 200, data: user, message: 'get User thanh cong' });
+  } catch (err) {
+    next(err);
+  }
+});
+
+// Logout
 const logout = (req, res) => {
-  res.clearCookie("token");
-  res.clearCookie("refresh");
+  res.clearCookie('token');
+  res.clearCookie('refresh');
   res.end();
 };
+
+// check refresh token or not
+const refreshToken = asyncHandler(async (req, res) => {
+  const refreshToken = req.cookies.refresh;
+  const refreshVerify = jwt.verify(refreshToken, process.env.REFRESHKEY);
+
+  if (refreshVerify._id) {
+    const newToken = jwt.sign(
+      { _id: refreshVerify._id },
+      process.env.SECRETKEY,
+      {
+        expiresIn: process.env.EXPIRETIME_ACCESS,
+      }
+    );
+    if (newToken) {
+      res.cookie('access', newToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
+      res.status(200).end();
+    }
+  } else {
+    res.clearCookie('access');
+    res.clearCookie('refresh');
+    res.status(401);
+  }
+});
 
 module.exports = {
   getAllUser,
@@ -259,6 +270,7 @@ module.exports = {
   updateUserById,
   deleted,
   logout,
-  checkAccount,
   ratingUser,
+  highlightUser,
+  refreshToken,
 };

@@ -27,13 +27,13 @@ const userSchema = new schema({
     {
       star: {
         type: Number,
+        default: 0,
       },
       postedBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "User",
-        required: true,
       },
-      comment: { type: String, required: true },
+      comment: { type: String },
       time: { type: Date, default: Date.now() },
       img: { type: String },
     },

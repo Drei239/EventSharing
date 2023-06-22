@@ -1,11 +1,18 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const { createNewOrder, getOrdersByEventId,
-    updateAllByEventId, updateRequestOrder } = require('../controllers/orderController');
-const { protect } = require('../middleware/authMiddleware');
+const {
+  createNewOrder,
+  getOrdersByEventId,
+  updateOdrder, 
+  updateAllByEventId, 
+  updateRequestOrder
+} = require("../controllers/orderController");
+const { protect } = require("../middleware/authMiddleware");
 
 //1.CREATE NEW ORDER
-router.post("/create", createNewOrder);
+router.post("/create", protect, createNewOrder);
+
+router.put("/update/:id", protect, updateOdrder);
 
 //2.GET ORDERS BY EVENT ID
 router.get("/event/:id", getOrdersByEventId);
@@ -17,3 +24,4 @@ router.put("/event/:id/updateAll", updateAllByEventId);
 router.put("/event/:id/updateRequest", protect, updateRequestOrder);
 
 module.exports = router;
+

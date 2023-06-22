@@ -47,7 +47,7 @@ function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
 }
 
 //1.CREATE NEW EVENT
-const createNewEvent = asyncHandler(async (req, res) => {
+const createNewEvent = asyncHandler(async (req, res, next) => {
   const {
     title,
     description,
@@ -81,7 +81,7 @@ const createNewEvent = asyncHandler(async (req, res) => {
         timeEndSignup,
         timeBegin,
         timeEnd,
-        creator,
+        req.user._id,
         limitUser,
         reviews
       );
@@ -89,7 +89,8 @@ const createNewEvent = asyncHandler(async (req, res) => {
         .status(200)
         .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
     } catch (error) {
-      return res.status(400).json({ status: 400, message: eventError.ERR_1 });
+      // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
+      next(err);
     }
   } else {
     res.status(401);
@@ -159,7 +160,7 @@ const highlightEvents = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json({ status: 200, data: events, message: eventError.ERR_2 });
+      .json({ status: 200, data: events, message: eventSucc.SUC_2 });
   } catch (err) {
     throw Error(err);
   }
@@ -275,23 +276,30 @@ const getQueryEvents = asyncHandler(async (req, res) => {
     throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
-const getUserHighlight = asyncHandler(async (req, res, next) => {
+
+//8.GET
+const getJoinedEvent = asyncHandler(async (req, res, next) => {
+  const id = req.user._id;
   try {
-    const events = await eventModel.find({ creator: req.user._id });
-    const oder = await orderModel.aggregate([
-      {
-        $match: {
-          user,
-        },
-      },
-    ]);
-    const total = eventService.getHighLightUser(100, 10, 100, 250);
-    res.status(200).json(total);
+    const events = await eventService.attendedEvent(id);
+    res
+      .status(200)
+      .json({ status: 200, message: eventSucc.SUC_3, data: events });
   } catch (err) {
     next(err);
   }
 });
-//8.GET
+const getRegisteredEvent = asyncHandler(async (req, res, next) => {
+  const id = req.user._id;
+  try {
+    const events = await eventService.registeredEvent(id);
+    res
+      .status(200)
+      .json({ status: 200, message: eventSucc.SUC_3, data: events });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -302,5 +310,6 @@ module.exports = {
   getQueryEvents,
   getFilterEvents,
   highlightEvents,
-  getUserHighlight,
+  getJoinedEvent,
+  getRegisteredEvent,
 };

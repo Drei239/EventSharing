@@ -2,7 +2,7 @@ const asyncHandler = require("express-async-handler");
 const eventModel = require("../models/eventModel");
 const eventValidators = require("../validators/eventValidators");
 const { eventError, eventSucc } = require("../validators/responsiveMessages");
-const { request } = require("express");
+const orderModel = require("../models/orderModel");
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(
@@ -170,28 +170,23 @@ const updateDraftEventInfo = asyncHandler(
     }
   }
 );
-const getHighLightUser = (
-  totalParticipants,
-  numEvents,
-  numReviews,
-  averageRating
-) => {
-  const participantWeight = 0.3; // Trọng số cho tổng số lượt tham gia (40%)
-  const eventWeight = 0.1; // Trọng số cho số sự kiện (30%)
-  const reviewWeight = 0.1; // Trọng số cho số đánh giá (20%)
-  const ratingWeight = 0.5; // Trọng số cho điểm đánh giá (10%)
-
-  const prominence =
-    totalParticipants * participantWeight +
-    numEvents * eventWeight -
-    numReviews * reviewWeight +
-    averageRating * ratingWeight;
-  return prominence;
+const attendedEvent = async (id) => {
+  const event = await orderModel
+    .find({ user: id, isJoined: true })
+    .populate("event user");
+  return event;
+};
+const registeredEvent = async (id) => {
+  const event = await orderModel
+    .find({ user: id.toString(), isPaid: true })
+    .populate("event user");
+  return event;
 };
 module.exports = {
   createNewEvent,
   getPublicEvents,
   updateDraftEventInfo,
   getEventsFilter,
-  getHighLightUser,
+  attendedEvent,
+  registeredEvent,
 };
