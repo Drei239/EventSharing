@@ -167,9 +167,11 @@ const highlightEvents = asyncHandler(async (req, res) => {
 
 //3.GET INFO EVENT BY ID
 const getEventById = asyncHandler(async (req, res) => {
-  const event = await eventModel.find({ _id: req.params.id });
+  const event = await eventModel.find({ _id: req.params.id })
+    .populate('category')
+    .populate('creator', '_id name avatar totalRating');
   if (event) {
-    res.status(200).json({ event });
+    res.status(200).json(event);
   } else {
     res.status(401);
     throw new Error("KHÔNG TÌM THẤY EVENT!");
