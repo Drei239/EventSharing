@@ -129,7 +129,7 @@ h3 {
 	grid-area: bottom;
 	width: 100%;
 	padding: 50px 60px;
-	margin-bottom: 10px;
+	margin-bottom: 20px;
 	display: flex;
 	flex-direction: column;
 	border: 1px #00abe1 solid;
@@ -137,17 +137,6 @@ h3 {
 	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 	-moz-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
-}
-
-.gallery__container {
-	width: 1210px;
-	height: 700px;
-	border: 1px #00abe1 solid;
-	border-radius: 10px;
-	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
-	-moz-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
-	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
-
 }
 
 .event__gallery {
