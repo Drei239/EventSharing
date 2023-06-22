@@ -9,6 +9,6 @@ const titleRegex =
 const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
 
 // Có ít nhất 6 ký tự vừa chữ và số
-const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
 
 export { nameRegex, emailRegex, passwordRegex, titleRegex };
