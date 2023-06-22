@@ -61,13 +61,14 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
     timeEndSignup,
     timeBegin,
     timeEnd,
-    creator,
     limitUser,
     reviews,
   } = req.body;
+
   // Sau khi gán userInfo = req.user
   // const creator = req.user.id;
   // loại bỏ giá trị creator ở req.body
+  console.log(inputTimeValidation(timeEndSignup, timeBegin, timeEnd));
   if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
     try {
       const newEvent = await eventService.createNewEvent(
@@ -92,7 +93,7 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
         .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
     } catch (error) {
       // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
-      next(err);
+      next(error);
     }
   } else {
     res.status(401);
@@ -207,6 +208,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     isOnline,
     fee,
     location,
+    linkOnline,
     timeEndSignup,
     timeBegin,
     timeEnd,
@@ -222,6 +224,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     isOnline,
     fee,
     location,
+    linkOnline,
     timeEndSignup,
     timeBegin,
     timeEnd,

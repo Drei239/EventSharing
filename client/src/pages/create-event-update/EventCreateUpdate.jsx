@@ -8,13 +8,16 @@ import customFetch from '../../utils/axios.config';
 import { Button, Input, Loading, Switch } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
+import { useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import covertDatetimeToISO from '../../utils/coverDatetimeToIso';
 import provinces from '../../data/provinces.json';
 import notify from '../../utils/notify.js';
 import './CreateEventPage.css';
-import axios from 'axios';
 
-const CreateEventPage = () => {
+const EventCreateUpdate = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     title: '',
     fee: '',
@@ -40,6 +43,8 @@ const CreateEventPage = () => {
   const [city, setCity] = useState('');
   const [district, setDistrict] = useState('');
   const [ward, setWard] = useState('');
+  const [event, setEvent] = useState({});
+  const editorRef = useRef(null);
 
   useEffect(() => {
     customFetch
@@ -50,10 +55,67 @@ const CreateEventPage = () => {
       .catch((error) => {
         console.log(error.response);
       });
+
+    if (searchParams.get('type') === 'update') {
+      customFetch
+        .get(`/events/get/${searchParams.get('id')}`)
+        .then((resp) => setEvent(resp.data.event[0]));
+    }
   }, []);
 
+  useEffect(() => {
+    let tiny;
+
+    if (event?._id) {
+      if (event.fee === 0) {
+        setIsFree(true);
+      }
+
+      const timeBegin = new Date(event?.timeBegin);
+      const timeEnd = new Date(event?.timeEnd);
+      const timeEndSignup = new Date(event?.timeEndSignup);
+      const date = (data) => {
+        return `${data.getFullYear()}-${('0' + (data.getMonth() + 1)).slice(
+          -2
+        )}-${('0' + data.getDate()).slice(-2)}`;
+      };
+      const time = (data) => {
+        return `${('0' + data.getHours()).slice(-2)}:${(
+          '0' + data.getMinutes()
+        ).slice(-2)}`;
+      };
+
+      setInputValue({
+        title: event.title,
+        fee: String(event.fee),
+        quantityTicket: String(event.limitUser),
+        typeEvent: event.isOnline ? 'online' : 'offline',
+        category: categoryList?.find((item) => item._id === event?.category)
+          .categoryName,
+        linkOnline: event.linkOnline,
+        description: event.description,
+        dateStart: date(timeBegin),
+        timeStart: time(timeBegin),
+        dateEnd: date(timeEnd),
+        timeEnd: time(timeEnd),
+        dateRegisterEnd: date(timeEndSignup),
+        timeRegisterEnd: time(timeEndSignup),
+      });
+      setBanner(event.banner);
+      setImageEvent(event.imageList);
+      tiny = setTimeout(() => {
+        if (editorRef.current) {
+          editorRef.current.setContent(event.description);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      clearTimeout(tiny);
+    };
+  }, [event]);
+
   // RichTextEditor
-  const editorRef = useRef(null);
   const log = () => {
     if (editorRef.current) {
       setInputValue({
@@ -67,7 +129,7 @@ const CreateEventPage = () => {
   const titleHepler = useValidateRegex(
     inputValue.title,
     titleRegex,
-    'Tiêu đề không được quá 150 ký tự và không chứa ký tự đặc biệt'
+    'Tiêu đề không được quá 150 ký tự'
   );
 
   // Validate giá vé chỉ được nhập số
@@ -156,6 +218,7 @@ const CreateEventPage = () => {
 
   // Xứ lý các trường nhập dữ liệu thay đổi lưu vào state
   const handleOnchange = (e) => {
+    console.log(e.target.value);
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   };
 
@@ -163,7 +226,7 @@ const CreateEventPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let isLocation = false;
-    let feeTicket;
+    let feeTicket, location;
     let isLink = false;
 
     if (isFree) {
@@ -173,13 +236,14 @@ const CreateEventPage = () => {
       feeTicket = inputValue.fee;
     }
 
-    if (inputValue.typeEvent === 'online') {
-      isLocation = true;
-      if (inputValue.linkOnline) {
-        isLink = urlHepler.isValid;
-      }
-    } else {
-      isLink = true;
+    isLocation =
+      inputValue.typeEvent === 'online'
+        ? true
+        : inputValue.address && city && district && ward;
+
+    isLink = inputValue.typeEvent === 'online' ? urlHepler.isValid : true;
+
+    if (inputValue.typeEvent === 'offline') {
       const cityLocation = provinces.find((item) => item.name === city);
       const districtLocation = cityLocation.districts.find(
         (item) => item.name === district
@@ -187,7 +251,7 @@ const CreateEventPage = () => {
       const wardLocation = districtLocation.wards.find(
         (item) => item.name === ward
       );
-      isLocation = {
+      location = {
         address: inputValue.address,
         province: {
           name: cityLocation.name,
@@ -215,7 +279,7 @@ const CreateEventPage = () => {
       checkDateRegisterStart.isValid &&
       inputValue.description &&
       inputValue.category &&
-      banner.length > 0 &&
+      banner &&
       imageEvent.length > 0 &&
       isLocation &&
       isLink;
@@ -233,6 +297,7 @@ const CreateEventPage = () => {
         inputValue.dateRegisterEnd,
         inputValue.timeRegisterEnd
       );
+
       const { _id } = categoryList?.find(
         (item) =>
           item.categoryName.toLowerCase() === inputValue.category.toLowerCase()
@@ -241,34 +306,40 @@ const CreateEventPage = () => {
       const data = {
         title: inputValue.title,
         description: inputValue.description,
-        banner: banner,
+        banner,
         imageList: imageEvent,
         category: _id,
         isOnline: inputValue.typeEvent === 'online',
         fee: Number(inputValue.fee),
-        location: inputValue.typeEvent === 'offline' ? isLocation : '',
+        location: inputValue.typeEvent === 'offline' ? location : {},
         linkOnline:
           inputValue.typeEvent === 'online' ? inputValue.linkOnline : '',
         timeBegin,
         timeEnd: timeEndEvent,
         timeEndSignup,
         limitUser: Number(inputValue.quantityTicket),
-        creator: '6464f32bc4fcda89dc23cf30',
         reviews: [],
       };
 
-      console.log(data);
-
-      try {
-        const response = await customFetch({
-          method: 'POST',
-          url: '/events/create',
-          data: JSON.stringify(data),
-        }).catch((error) => {
-          console.log(error);
-        });
-
-        if (response.status === 200) {
+      if (searchParams.get('type') === 'update') {
+        try {
+          const response = await customFetch({
+            method: 'put',
+            url: `/events/update/${searchParams.get('id')}`,
+            data: JSON.stringify(data),
+          });
+          notify('Cập nhật thành công', 'success');
+          navigate(-1);
+        } catch (error) {
+          notify('Cập nhật thất bại', 'error');
+        }
+      } else {
+        try {
+          const response = await customFetch({
+            method: 'post',
+            url: '/events/create',
+            data: JSON.stringify(data),
+          });
           notify('Tạo sự kiện thành công', 'success');
 
           // Reset value
@@ -288,6 +359,7 @@ const CreateEventPage = () => {
             description: '',
             address: '',
             typeEvent: 'offline',
+            linkOnline: '',
             category: '',
             dateStart: '',
             dateEnd: '',
@@ -296,12 +368,10 @@ const CreateEventPage = () => {
             timeEnd: '',
             timeRegisterEnd: '',
           });
+        } catch (error) {
+          notify('Tạo sự kiện thất bại', 'error');
         }
-      } catch (error) {
-        notify('Tạo sự kiện thất bại', 'error');
       }
-    } else {
-      notify('Tạo sự kiện thất bại', 'error');
     }
   };
 
@@ -341,7 +411,11 @@ const CreateEventPage = () => {
 
   return (
     <div className='create-event'>
-      <h2>Tạo sự kiện mới</h2>
+      {searchParams.get('type') === 'update' ? (
+        <h2>Cập nhật sự kiện</h2>
+      ) : (
+        <h2>Tạo sự kiện mới</h2>
+      )}
       <p
         style={{
           color: 'gray',
@@ -350,7 +424,9 @@ const CreateEventPage = () => {
           fontSize: '0.9rem',
         }}
       >
-        Nhập đầy đủ thông tin trước khi nhấn tạo sự kiện.
+        {`Nhập đầy đủ thông tin trước khi nhấn ${
+          searchParams.get('type') === 'update' ? 'cập nhật' : 'tạo'
+        } sự kiện.`}
       </p>
       <form className='create-event__form' onSubmit={handleSubmit}>
         <Input
@@ -375,11 +451,10 @@ const CreateEventPage = () => {
             disabled={isBannerLoading}
             onChange={async (e) => {
               if (e.target.files.length > 0) {
-                console.log('a');
                 setIsBannerLoading(true);
                 const url = await apiUrlImg(e.target.files);
-                if (url) {
-                  setBanner(url);
+                if (url.length > 0) {
+                  setBanner(url[0]);
                   setIsBannerLoading(false);
                 } else {
                   setIsBannerLoading(false);
@@ -434,7 +509,7 @@ const CreateEventPage = () => {
               if (e.target.files.length > 0) {
                 setIsImageEventLoaing(true);
                 const url = await apiUrlImg(e.target.files);
-                if (url) {
+                if (url.length > 0) {
                   setImageEvent([...imageEvent, ...url]);
                   setIsImageEventLoaing(false);
                 } else {
@@ -635,8 +710,6 @@ const CreateEventPage = () => {
               'autolink',
               'lists',
               'link',
-              'image',
-              'charmap',
               'preview',
               'anchor',
               'searchreplace',
@@ -751,7 +824,7 @@ const CreateEventPage = () => {
           </div>
         </section>
         <Button type='submit' className='create-event__button'>
-          Tạo mới
+          {searchParams.get('type') === 'update' ? 'Cập nhật' : 'Tạo mới'}
         </Button>
       </form>
       <ToastContainer />
@@ -759,4 +832,4 @@ const CreateEventPage = () => {
   );
 };
 
-export default CreateEventPage;
+export default EventCreateUpdate;
