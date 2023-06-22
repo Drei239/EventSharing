@@ -57,17 +57,23 @@ const updateAllByEventId = asyncHandler(async (requestEvent, isPaid, isRefund, i
     }
 });
 
-const updateRequestOrder = asyncHandler(async (requestId, updateData) => {
-    const updateOrder = await orderModel.bulkWrite(updateData.map((data) => ({
-        updateOne: {
-            filter: { event: data.event, user: data.user },
-            update: { isPaid: data.isPaid, isJoined: data.isJoined, isRefund: data.isRefund }
+const updateRequestOrder = asyncHandler(async (requestUserId, requestEventId, updateData) => {
+    const requestEvent = await eventModel.findOne({ _id: requestEventId });
+    if (requestEvent.creator.toString() === requestUserId.toString()) {
+        const updateOrder = await orderModel.bulkWrite(updateData.map((data) => ({
+            updateOne: {
+                filter: { _id: data.orderId, event: requestEventId },
+                update: { isPaid: data.isPaid, isJoined: data.isJoined, isRefund: data.isRefund }
+            }
+        })));
+        console
+        if (updateOrder && updateOrder.matchedCount != 0) {
+            return updateOrder;
+        } else {
+            throw Error(resMes.orderError.ERR_4);
         }
-    })));
-    if (updateOrder && updateOrder.matchedCount != 0) {
-        return updateOrder;
     } else {
-        throw Error(resMes.orderError.ERR_4);
+        throw Error(resMes.orderError.ERR_5);
     }
 });
 

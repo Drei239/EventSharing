@@ -41,9 +41,11 @@ const updateAllByEventId = asyncHandler(async (req, res) => {
 
 //4.PUT - UPDATE REQUEST ORDERS
 const updateRequestOrder = asyncHandler(async (req, res) => {
+    const requestUserId = req.user._id;
+    const requestEventId = req.params.id;
     const updateData = req.body;
     try {
-        const orders = await orderService.updateRequestOrder(updateData);
+        const orders = await orderService.updateRequestOrder(requestUserId, requestEventId, updateData);
         return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_3 });
     } catch (error) {
         return res.status(400).json({ status: 400, message: error.message });

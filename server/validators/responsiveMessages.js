@@ -17,7 +17,8 @@ const orderError = {
     ERR_1: "BẠN ĐÃ ĐĂNG KÝ THAM GIA SỰ KIỆN NÀY RỒI!",
     ERR_2: "SỰ KIỆN ĐÃ ĐẠT GIỚI HẠN SỐ NGƯỜI ĐĂNG KÝ THAM GIA!",
     ERR_3: "KHÔNG TÌM THẤY DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
-    ERR_4: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THẤT BẠI",
+    ERR_4: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THẤT BẠI!",
+    ERR_5: "CHỈ CÓ NGƯỜI TỔ CHỨC MỚI CÓ QUYỀN CẬP NHẬT THÔNG TIN NÀY!"
 }
 
 const orderSucc = {
