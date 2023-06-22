@@ -28,7 +28,7 @@ const eventImgResize = async (req, res, next) => {
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
-        .resize(300, 300)
+        .resize(400, 300)
         .toFormat('jpeg')
         .jpeg({ quality: 100 })
         .toFile(`public/images/events/${file.filename}`);

@@ -13,6 +13,7 @@ var usersRouter = require('./routes/users');
 var eventsRouter = require('./routes/events');
 var categoryRouter = require('./routes/category');
 var uploadRouter = require('./routes/upload');
+var orderRouter = require('./routes/orders');
 var cors = require('cors');
 var app = express();
 
@@ -33,6 +34,7 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -41,14 +43,19 @@ app.use('/users', usersRouter);
 app.use('/events', eventsRouter);
 app.use('/category', categoryRouter);
 app.use('/upload', uploadRouter);
+app.use('/orders', orderRouter);
 
 process.env.TZ = 'Asia/Jakarta';
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
   next(createError(404));
 });
-
-// error handler
+// function errorHandler(err, req, res, next) {
+//   console.error(err.message);
+//   res.status(500).json({ error: "Internal Server Error" });
+// }
+// app.use(errorHandler);
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

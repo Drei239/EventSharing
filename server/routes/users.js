@@ -7,7 +7,6 @@ const {
   authLogin,
   profileUser,
   updateUserById,
-  checkAccount,
   logout,
   deleted,
   refreshToken,
@@ -26,8 +25,8 @@ router.get('/logout', logout);
 router.get('/refresh', refreshToken);
 router.post('/login', authLogin);
 router.post('/register', registerValidate, register);
-router.post('/check', checkAccount);
 router.post('/update/:id', protect, updateUserValidate, updateUserById);
 router.delete('/admin/:id', protect, isAdmin, deleted);
 
+// router.get("update", updateUser);
 module.exports = router;

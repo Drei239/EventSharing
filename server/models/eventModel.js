@@ -26,6 +26,7 @@ const locationShecma = mongoose.Schema({
     division_type: { type: String },
   },
 });
+
 const eventSchema = mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },

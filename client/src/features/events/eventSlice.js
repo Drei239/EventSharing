@@ -5,11 +5,32 @@ import {
   createAction,
 } from "@reduxjs/toolkit";
 import eventService from "./eventService";
+export const updateEvent = createAsyncThunk(
+  "event/updateEvent",
+  async ({ id }, { rejectWithValue }) => {
+    try {
+      const res = await eventService.updateUser({ id });
+      return res;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 export const getEvent = createAsyncThunk(
   "event/getAllEvent",
   async (search, { rejectWithValue }) => {
     try {
       return await eventService.getAllEvent(search);
+    } catch (err) {
+      rejectWithValue(err);
+    }
+  }
+);
+export const getEventById = createAsyncThunk(
+  "event/get/${eventId}",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      return await eventService.getEventById(eventId);
     } catch (err) {
       rejectWithValue(err);
     }
@@ -31,6 +52,25 @@ export const getNewEvent = createAsyncThunk(
     try {
       return await eventService.getNewEvent(page);
     } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getRegisterEvent = createAsyncThunk(
+  "event/getRegisterEvent",
+  async (_, { rejectWithValue }) => {
+    try {
+      return await eventService.getRegisteredEvent();
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getJoinedEvent = createAsyncThunk(
+  "event/getJoinedEvent",
+  async (_, { rejectWithValue }) => {
+    try {
+    } catch (err) {
       rejectWithValue(err);
     }
   }
@@ -39,6 +79,8 @@ const initialState = {
   events: [],
   newEvents: [],
   highlightEvent: [],
+  joinedEvent: [],
+  registeredEvent: [],
   filter: {
     category: "",
     sort: "",
@@ -81,6 +123,29 @@ const eventSlice = createSlice({
       state.isError = true;
       state.isLoading = false;
     });
+    builder.addCase(updateEvent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(updateEvent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.events = action.payload.event;
+    });
+    builder.addCase(updateEvent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.message = action.error;
+    });
+    builder.addCase(getEventById.pending, (state, action) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getEventById.fulfilled, (state, action) => {
+      state.events = action.payload.event;
+      state.isLoading = false;
+      state.isSuccess = true;
+    });
+    builder.addCase(getEventById.rejected, (state, action) => {
+      state.isError = true;
+      state.isLoading = false;
+    });
     builder.addCase(getHighlightEvent.pending, (state, action) => {
       state.isLoading = true;
     });
@@ -109,6 +174,32 @@ const eventSlice = createSlice({
       state.newEvents = [];
       state.isLoading = false;
       state.message = action.error;
+    });
+    builder.addCase(getJoinedEvent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getJoinedEvent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.joinedEvent = action.payload?.data;
+    });
+    builder.addCase(getJoinedEvent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload.message;
+    });
+    builder.addCase(getRegisterEvent.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getRegisterEvent.fulfilled, (state, action) => {
+      state.isLoading = false;
+      state.isSuccess = true;
+      state.registeredEvent = action.payload?.data;
+    });
+    builder.addCase(getRegisterEvent.rejected, (state, action) => {
+      state.isLoading = false;
+      state.isError = true;
+      state.message = action.payload.message;
     });
     builder.addCase(handleChangeEvents, (state, action) => {
       state.filter = { ...state.filter, ...action.payload };
