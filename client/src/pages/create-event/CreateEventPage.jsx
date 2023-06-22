@@ -8,11 +8,11 @@ import customFetch from '../../utils/axios.config';
 import { Button, Input, Loading, Switch } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
-import imageCompression from 'browser-image-compression';
 import covertDatetimeToISO from '../../utils/coverDatetimeToIso';
 import provinces from '../../data/provinces.json';
 import notify from '../../utils/notify.js';
 import './CreateEventPage.css';
+import axios from 'axios';
 
 const CreateEventPage = () => {
   const [inputValue, setInputValue] = useState({
@@ -51,21 +51,6 @@ const CreateEventPage = () => {
         console.log(error.response);
       });
   }, []);
-
-  // Compress lại hình ảnh trước khi upload
-  const handleImageCompress = async (img) => {
-    const option = {
-      maxSizeMB: 1,
-      maxWidthOrHeight: 1920,
-    };
-
-    try {
-      const compressedFile = await imageCompression(img, option);
-      return compressedFile;
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   // RichTextEditor
   const editorRef = useRef(null);
@@ -336,6 +321,24 @@ const CreateEventPage = () => {
     }
   };
 
+  const apiUrlImg = async (data) => {
+    try {
+      const formData = new FormData();
+      for (let i = 0; i < data.length; i++) {
+        formData.append('images', data[i]);
+      }
+      const resp = await customFetch.post('/upload?folder=event', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      return resp.data.data;
+    } catch (error) {
+      return false;
+    }
+  };
+
   return (
     <div className='create-event'>
       <h2>Tạo sự kiện mới</h2>
@@ -371,18 +374,16 @@ const CreateEventPage = () => {
             accept='image/*'
             disabled={isBannerLoading}
             onChange={async (e) => {
-              setIsBannerLoading(true);
-              const reader = new FileReader();
-
-              reader.onload = () => {
-                setIsBannerLoading(false);
-                setBanner(reader.result);
-              };
-              if (e.target.files[0]) {
-                const img = await handleImageCompress(e.target.files[0]);
-                reader.readAsDataURL(img);
-              } else {
-                setIsBannerLoading(false);
+              if (e.target.files.length > 0) {
+                console.log('a');
+                setIsBannerLoading(true);
+                const url = await apiUrlImg(e.target.files);
+                if (url) {
+                  setBanner(url);
+                  setIsBannerLoading(false);
+                } else {
+                  setIsBannerLoading(false);
+                }
               }
             }}
           />
@@ -430,28 +431,15 @@ const CreateEventPage = () => {
             accept='image/*'
             disabled={isImageEventLoaing}
             onChange={async (e) => {
-              setIsImageEventLoaing(true);
-              const reader = new FileReader();
-              const imageList = [...e.target.files];
-
-              if (imageList) {
-                console.log('first');
-                const images = [];
-                imageList?.map((item) => {
-                  reader.onload = () => {
-                    images.push(reader.result);
-                    setIsImageEventLoaing(false);
-                    setImageEvent([...imageEvent, ...images]);
-                  };
-
-                  handleImageCompress(item)
-                    .then((result) => reader.readAsDataURL(result))
-                    .catch((error) => {
-                      console.log(error);
-                    });
-                });
-              } else {
-                setIsImageEventLoaing(false);
+              if (e.target.files.length > 0) {
+                setIsImageEventLoaing(true);
+                const url = await apiUrlImg(e.target.files);
+                if (url) {
+                  setImageEvent([...imageEvent, ...url]);
+                  setIsImageEventLoaing(false);
+                } else {
+                  setIsImageEventLoaing(false);
+                }
               }
             }}
           />
