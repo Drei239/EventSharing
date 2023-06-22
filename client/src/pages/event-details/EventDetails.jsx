@@ -5,7 +5,6 @@ import Discussions from '../../components/discussions/Discussions';
 import EventModal from '../../components/ui/eventModal';
 import dayjs from "dayjs";
 import { Carousel } from 'react-carousel-minimal';
-import PhotoAlbum from "react-photo-album";
 import { Button, Tooltip, Link } from "@nextui-org/react";
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
@@ -138,7 +137,6 @@ const EventDetails = () => {
 						maxHeight: "300px",
 					}}
 				/>
-					<PhotoAlbum layout="rows" photos={imageList}/>
 				</div>
 				<div className='comment__container'>
 					<Button.Group>
