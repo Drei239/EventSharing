@@ -3,9 +3,8 @@ import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
 import Discussions from '../../components/discussions/Discussions';
 import EventModal from '../../components/ui/eventModal';
+import Gallery from '../../components/gallery/Gallery';
 import dayjs from "dayjs";
-import { Carousel } from 'react-carousel-minimal';
-import PhotoAlbum from "react-photo-album";
 import { Button, Tooltip, Link } from "@nextui-org/react";
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
@@ -34,7 +33,7 @@ const EventDetails = () => {
 		return false;
 	};
 
-	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
+	const imageList = eventDetail?.imageList;
 
 	if (imageList == undefined) {
 		return false;
@@ -106,39 +105,18 @@ const EventDetails = () => {
 					<div className="event__title">
 						<h3 className='event__description'>Giới thiệu</h3>
 						<p className='description__item'>{eventDetail?.description || 'no information'}</p>
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
 					</div>
 				</div>
-				<div style={{
-					padding: "5px 0",
-				}}>
+				<div className="gallery__container">
 					<h3 className="event__gallery">
 						Gallery
 					</h3>
-					<Carousel
-					data={imageList}
-					time={5000}
-					width="100%"
-					height="300px"
-					captionStyle={captionStyle}
-					radius="10px"
-					slideNumber={true}
-					slideNumberStyle={slideNumberStyle}
-					automatic={true}
-					dots={true}
-					pauseIconColor="white"
-					pauseIconSize="40px"
-					slideBackgroundColor="darkgrey"
-					slideImageFit="cover"
-					thumbnails={true}
-					thumbnailWidth="100px"
-					style={{
-						alignItems: "center",
-						textAlign: "center",
-						maxWidth: "100%",
-						maxHeight: "300px",
-					}}
-				/>
-					<PhotoAlbum layout="rows" photos={imageList}/>
+					<Gallery imageList={imageList} />
 				</div>
 				<div className='comment__container'>
 					<Button.Group>
