@@ -14,21 +14,23 @@ const eventSucc = {
 };
 
 const orderError = {
-  ERR_1: "BẠN ĐÃ ĐĂNG KÝ THAM GIA SỰ KIỆN NÀY RỒI!",
-  ERR_2: "SỰ KIỆN ĐÃ ĐẠT GIỚI HẠN SỐ NGƯỜI ĐĂNG KÝ THAM GIA!",
-  ERR_3: "KHÔNG TÌM THẤY DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
-  ERR_4: "KHÔNG TÌM THẤY SỰ KIỆN",
-};
+    ERR_1: "BẠN ĐÃ ĐĂNG KÝ THAM GIA SỰ KIỆN NÀY RỒI!",
+    ERR_2: "SỰ KIỆN ĐÃ ĐẠT GIỚI HẠN SỐ NGƯỜI ĐĂNG KÝ THAM GIA!",
+    ERR_3: "KHÔNG TÌM THẤY DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
+    ERR_4: "KHÔNG TÌM THẤY SỰ KIỆN",
+    ERR_5: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THẤT BẠI!",
+    ERR_6: "CHỈ CÓ NGƯỜI TỔ CHỨC MỚI CÓ QUYỀN CẬP NHẬT THÔNG TIN NÀY!"
+}
 
 const orderSucc = {
-  SUCC_1: "ĐĂNG KÝ THAM GIA SỰ KIỆN THÀNH CÔNG!",
-  SUCC_2: "LẤY THÀNH CÔNG DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
-  SUCC_3: "CẬP NHẬT DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN THÀNH CÔNG",
-};
+    SUCC_1: "ĐĂNG KÝ THAM GIA SỰ KIỆN THÀNH CÔNG!",
+    SUCC_2: "LẤY THÀNH CÔNG DANH SÁCH NGƯỜI ĐĂNG KÝ THAM GIA SỰ KIỆN!",
+    SUCC_3: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THÀNH CÔNG!"
+}
 
 const userSucc = {
-  SUC_1: "Update successfully",
-  SUC_2: "Get Successfully",
+    SUC_1: "Update successfully",
+    SUC_2: "Get Successfully",
 };
 
 module.exports = {
