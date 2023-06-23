@@ -29,14 +29,14 @@ function App() {
               </NotLoggedInOnly>
             }
           />
-          <Route
+          {/* <Route
             path="/create-event"
             element={
               <LoggedInOnly>
                 <CreateEventPage />
               </LoggedInOnly>
             }
-          />
+          /> */}
           <Route path="/management-event" element={<EventManagement />} />
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />

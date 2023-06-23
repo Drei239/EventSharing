@@ -46,13 +46,13 @@ const Card = ({
     <>
       {!isLoading && (
         <Link to={`/event/${_id}`}>
-          <div className="card">
+          <div className="card-items">
             <div className="hot-event"></div>
             <img src={banner} alt="" className="card-img" loading="lazy" />
             <div className="content-card">
-              <span className="card-title" title={title}>
+              <p className="card-title" title={title}>
                 {title}
-              </span>
+              </p>
               <div>
                 <span className="card-author">{creator && creator?.name}</span>
               </div>
@@ -62,12 +62,6 @@ const Card = ({
                   <div className="cardEvent-info1-category">
                     {category?.categoryName}
                   </div>
-                </div>
-                <div className="card-calendar">
-                  <BsCalendar3WeekFill className="card-calendar-icon" />
-                  <span className="card-calendar-text">
-                    {dayjs(timeBegin).format("Ngày DD [tháng] MM [năm] YYYY")}
-                  </span>
                 </div>
               </div>
               <div className="card-calendar">

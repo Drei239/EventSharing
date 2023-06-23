@@ -25,6 +25,16 @@ export const getOrderbyId = createAsyncThunk(
     }
   }
 );
+export const updateOneOrder = createAsyncThunk(
+  "order/updateOneOrder",
+  async ({ id, status }, { rejectWithValue }) => {
+    try {
+      return await orderService.updateOneOrder(id, status);
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 const orderSlice = createSlice({
   name: "order",
   initialState,
@@ -44,6 +54,24 @@ const orderSlice = createSlice({
         state.isError = true;
         state.isLoading = true;
         state.message = action.payload?.message;
+      });
+    builder
+      .addCase(updateOneOrder.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(updateOneOrder.fulfilled, (state, action) => {
+        const data = action.payload?.data;
+        state.isLoading = false;
+        const index = state.orders.findIndex(
+          (order) => order._id === data?._id
+        );
+        state.orders[index] = data;
+        state.isSuccess = true;
+      })
+      .addCase(updateOneOrder.rejected, (state, action) => {
+        state.message = action.payload?.message;
+        state.isLoading = false;
+        state.isError = true;
       });
   },
 });

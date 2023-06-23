@@ -179,7 +179,7 @@ const eventSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getNewEvent.fulfilled, (state, action) => {
-      state.newEvents = action.payload?.data || null;
+      state.newEvents = action.payload?.data;
       state.countDocument = action.payload?.totalCount;
       state.isLoading = false;
       state.isSuccess = true;

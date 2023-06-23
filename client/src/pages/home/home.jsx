@@ -42,7 +42,7 @@ const Home = () => {
     console.log(countDocument);
   }, [countDocument]);
   useEffect(() => {
-    if (request) {
+    if (request && newEvents) {
       setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
     }
     setRequest(true);
@@ -87,7 +87,8 @@ const Home = () => {
           </div>
         </div>
         <div className="card-organizers">
-          {userHighlight.length > 0 &&
+          {userHighlight &&
+            userHighlight.length > 0 &&
             userHighlight.map((item) => {
               return <CardOrg title={item.name} img={item.avatar} />;
             })}

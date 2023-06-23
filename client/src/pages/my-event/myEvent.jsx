@@ -16,6 +16,7 @@ import dayjs from "dayjs";
 import "./myEvent.css";
 import OpenIcon from "../../assets/icon-open.png";
 import { Checkbox } from "@mui/material";
+import { updateOneOrder } from "../../features/order/orderSlice";
 const orderStatusOption = [
   {
     label: "Tất cả đơn hàng",
@@ -62,11 +63,11 @@ const columns = [
 const statusOption = [
   {
     label: "Chưa thanh toán",
-    value: "unPain",
+    value: "unpaid",
   },
   {
     label: "Đã thanh toán",
-    value: "pain",
+    value: "paid",
   },
   {
     label: "Đã tham gia",
@@ -90,13 +91,13 @@ const MyEvent = () => {
   const { orders, isLoading, isSuccess, isError, countDocument } = useSelector(
     (state) => state.order
   );
-
   const rows = [];
   for (let i = 0; i < orders.length; i++) {
     rows.push({
       key: i + 1,
       no1: i + 1,
       timeOrder: orders[i]?.createdAt,
+      orderId: orders[i]?._id,
       ...orders[i]?.user,
     });
   }
@@ -129,6 +130,9 @@ const MyEvent = () => {
 
   const hanleChangeStatus = (selectedOption) => {
     setStatusSelected(selectedOption);
+  };
+  const handleChangeStatusOrder = (selectedOption, id) => {
+    dispatch(updateOneOrder({ status: selectedOption.value, id: id }));
   };
   useEffect(() => {
     if (id) {
@@ -228,80 +232,81 @@ const MyEvent = () => {
             </div>
           </div>
           <div>
-            <TableContainer>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>
-                      <Checkbox
-                        indeterminate={
-                          selected.length > 0 && selected.length < rows.length
-                        }
-                        checked={
-                          rows.length > 0 && selected.length === rows.length
-                        }
-                        onChange={onSelectAllClick}
-                      />
-                    </TableCell>
-                    <TableCell>No1</TableCell>
-                    <TableCell>Thời gian đặt hàng</TableCell>
-                    <TableCell>Tên</TableCell>
-                    <TableCell>Email</TableCell>
-                    <TableCell width={100}>Phone</TableCell>
-                    <TableCell>Status</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row, index) => (
-                    <>
-                      {row.name && (
-                        <TableRow
-                          key={row._id}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
-                          }}
-                          onClick={() => handleClick(row._id)}
-                        >
-                          <TableCell>
-                            <Checkbox
-                              checked={selected.indexOf(row._id) !== -1}
-                              inputProps={{
-                                "aria-labelledby": `enhanced-table-checkbox-${index}`,
-                              }}
-                            />
-                          </TableCell>
-                          <TableCell component="th" scope="row">
-                            {row.no1}
-                          </TableCell>
-                          <TableCell>
-                            {dayjs(row.timeOrder).format(
-                              "ddd ,DD/MM/YYYY, hh:mm "
-                            )}
-                          </TableCell>
-                          <TableCell>{row.name}</TableCell>
-                          <TableCell>{row.email}</TableCell>
-                          <TableCell>{row.phone}</TableCell>
-                          <TableCell align="left">
-                            <Select
-                              className="my-event-filter-select"
-                              options={orderStatusOption}
-                              defaultValue={orderStatusOption[0]}
-                              styles={{
-                                control: (baseStyles, state) => ({
-                                  ...baseStyles,
-                                  height: "30px",
-                                  width: 150,
-                                }),
-                              }}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <Checkbox
+                      indeterminate={
+                        selected.length > 0 && selected.length < rows.length
+                      }
+                      checked={
+                        rows.length > 0 && selected.length === rows.length
+                      }
+                      onChange={onSelectAllClick}
+                    />
+                  </TableCell>
+                  <TableCell>No1</TableCell>
+                  <TableCell>Thời gian đặt hàng</TableCell>
+                  <TableCell>Tên</TableCell>
+                  <TableCell>Email</TableCell>
+                  <TableCell width={100}>Phone</TableCell>
+                  <TableCell>Status</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row, index) => (
+                  <>
+                    {row.name && (
+                      <TableRow
+                        key={row._id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                        onClick={() => handleClick(row._id)}
+                      >
+                        <TableCell>
+                          <Checkbox
+                            checked={selected.indexOf(row._id) !== -1}
+                            inputProps={{
+                              "aria-labelledby": `enhanced-table-checkbox-${index}`,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          {row.no1}
+                        </TableCell>
+                        <TableCell>
+                          {dayjs(row.timeOrder).format(
+                            "ddd ,DD/MM/YYYY, hh:mm "
+                          )}
+                        </TableCell>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell>{row.email}</TableCell>
+                        <TableCell>{row.phone}</TableCell>
+                        <TableCell align="left">
+                          <Select
+                            className="my-event-filter-select"
+                            options={statusOption}
+                            styles={{
+                              control: (baseStyles, state) => ({
+                                ...baseStyles,
+                                height: "30px",
+                                width: 150,
+                              }),
+                            }}
+                            onChange={(e) =>
+                              handleChangeStatusOrder(e, row?.orderId)
+                            }
+                          />
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </>
+                ))}
+              </TableBody>
+            </Table>
+
             <TablePagination
               rowsPerPageOptions={[5, 10, 20]}
               component="div"
