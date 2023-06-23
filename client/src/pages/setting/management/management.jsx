@@ -83,19 +83,19 @@ const Management = () => {
   }, [isSuccess2]);
   return (
     <motion.div layout className="management">
-      <h2 className="management-title">Account management</h2>
+      <h2 className="management-title">Quản lý tài khoản</h2>
       <div>
-        <h3>Change your password</h3>
+        <h3>Thay đổi mật khẩu</h3>
         <p className="management-info">
-          When you change your password, you will be automatically signed out
-          from your other sessions
+          Khi bạn thay đổi mật khẩu, bạn sẽ tự động đăng xuất từ các phiên khác
+          của bạn
         </p>
         <Button
           className="btn-show-changePass"
           bordered
           onClick={() => setOpenChangePassword(!openChangePassword)}
         >
-          Change password
+          Thay đổi mật khẩu
         </Button>
         {openChangePassword && (
           <motion.div
@@ -108,7 +108,7 @@ const Management = () => {
             <form onSubmit={formik.handleSubmit}>
               <div className="password-input-items">
                 <div className="password-input-item">
-                  <label htmlFor="current-password">Current Password</label>
+                  <label htmlFor="current-password">Mật khẩu hiện tại</label>
                   <Input.Password
                     id="current-password"
                     value={formik.values.currentPassword}
@@ -123,7 +123,7 @@ const Management = () => {
                   </span>
                 </div>
                 <div className="password-input-item">
-                  <label>New Password</label>
+                  <label>Mật khẩu mới</label>
                   <Input.Password
                     value={formik.values.newPassword}
                     name="newPassword"
@@ -136,9 +136,10 @@ const Management = () => {
                   </span>
                 </div>
                 <div className="password-input-item">
-                  <label>Confirm Password</label>
+                  <label>Xác nhận mật khẩu</label>
                   <Input.Password
                     value={formik.values.confirmPassword}
+                    s
                     name="confirmPassword"
                     onChange={formik.handleChange}
                     // labelPlaceholder="Confirm Password"
@@ -150,23 +151,23 @@ const Management = () => {
                   </span>
                 </div>
               </div>
-              <Button type="submit">Submit</Button>
+              <Button type="submit">Lưu</Button>
             </form>
           </motion.div>
         )}
       </div>
       <motion.div layout className="mangement-deactivate">
-        <h3>Deactivate your account</h3>
+        <h3>Khóa tài khoản của bạn</h3>
         <p className="management-info">
-          If your decide to use Meetup again, you'll need to created a new
-          account
+          Nếu quyết định sử dụng lại Meetup, bạn sẽ cần tạo một tài khoản mới
+          tài khoản
         </p>
         <Button
           onClick={() => setOpenDeleteAccount(true)}
           bordered
           className="btn-show-deleteAcc"
         >
-          Deactivate account
+          Hủy kích hoạt tài khoản
         </Button>
       </motion.div>
       <Modal
@@ -177,16 +178,18 @@ const Management = () => {
         width={500}
       >
         <div className="deactivate-content">
-          <h4 className="deactivate-title">Deactive your account</h4>
-          <p className="deactivate-info1">Are your sure you want to do this?</p>
+          <h4 className="deactivate-title">Hủy kích hoạt tài khoản của bạn</h4>
+          <p className="deactivate-info1">
+            Bạn có chắc chắn muốn làm điều này?
+          </p>
           <p className="deactivate-info2">
-            If you decide to use Meetup again, you'll need to create a new
-            account.
+            Nếu quyết định sử dụng lại Meetup, bạn sẽ cần tạo một tài khoản mới
+            tài khoản.
           </p>
           <div className="deactivate-password">
             <div className="deactive-password-info">
-              <span>Password</span>
-              <button>Forgot password?</button>
+              <span>Mật Khẩu</span>
+              <button>Quên mật khẩu?</button>
             </div>
             <form onSubmit={formik2.handleSubmit}>
               <div className="password-input-item">
@@ -213,7 +216,7 @@ const Management = () => {
                 </span>
               </div>
               <Button className="btn-submit-deactivate" type="submit">
-                Submit
+                Xoá
               </Button>
             </form>
           </div>

@@ -1,21 +1,21 @@
-const sharp = require('sharp');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+const sharp = require("sharp");
+const multer = require("multer");
+const path = require("path");
+const fs = require("fs");
 const multerStorage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, path.join(__dirname, '../public/images'));
+    cb(null, path.join(__dirname, "../public/images"));
   },
   filename(req, file, callback) {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    callback(null, file.fieldname + '-' + uniqueSuffix + '.jpeg');
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    callback(null, file.fieldname + "-" + uniqueSuffix + ".jpeg");
   },
 });
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
   } else {
-    cb({ message: 'Unsupported file format' }, false);
+    cb({ message: "Unsupported file format" }, false);
   }
 };
 const uploadPhoto = multer({
@@ -28,8 +28,8 @@ const eventImgResize = async (req, res, next) => {
   await Promise.all(
     req.files.map(async (file) => {
       await sharp(file.path)
-        .resize(400, 300)
-        .toFormat('jpeg')
+        .resize(300, 300)
+        .toFormat("jpeg")
         .jpeg({ quality: 100 })
         .toFile(`public/images/events/${file.filename}`);
       fs.unlinkSync(`public/images/${file.filename}`);

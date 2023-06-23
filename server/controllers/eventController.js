@@ -63,6 +63,7 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
     timeEnd,
     limitUser,
     reviews,
+    status,
   } = req.body;
 
   // Sau khi gán userInfo = req.user
@@ -86,7 +87,8 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
         timeEnd,
         req.user._id,
         limitUser,
-        reviews
+        reviews,
+        status
       );
       return res
         .status(200)
@@ -305,6 +307,18 @@ const getRegisteredEvent = asyncHandler(async (req, res, next) => {
     next(err);
   }
 });
+const getAllEventOfUser = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const { status, keyword } = req.query;
+  try {
+    const events = await eventService.getAllEventOfUser(id, status, keyword);
+    res
+      .status(200)
+      .json({ status: 200, data: events, message: eventSucc.SUC_3 });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -317,4 +331,5 @@ module.exports = {
   highlightEvents,
   getJoinedEvent,
   getRegisteredEvent,
+  getAllEventOfUser,
 };

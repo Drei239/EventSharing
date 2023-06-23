@@ -35,69 +35,185 @@ const createNewOrder = asyncHandler(async (event, user, creator) => {
 });
 
 //2.GET ALL ORDER OF EVENT BY ID
-const getOrdersByEventId = asyncHandler(async (requestEvent) => {
-  const orders = await orderModel.find({ event: requestEvent })
-    .populate("event")
-    .populate("user", "name");
-  if (orders && orders.length !== 0) {
-    return orders;
-  } else {
-    throw Error(resMes.orderError.ERR_3);
+const getOrdersByEventId = asyncHandler(
+  async ({ requestEvent, keyword, status, sort, page, limit }) => {
+    let orders;
+    const startIndex = (Number(page) - 1) * limit;
+    switch (status) {
+      case "unpaid": {
+        orders = await orderModel
+          .find({ event: requestEvent, isPaid: false })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "joined": {
+        orders = await orderModel
+          .find({ event: requestEvent, isJoined: true })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "refunded": {
+        orders = await orderModel
+          .find({ event: requestEvent, isRefund: true })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "paid": {
+        orders = await orderModel
+          .find({ event: requestEvent, isPaid: true })
+          .populate("event")
+          .populate({
+            path: "user",
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      default: {
+        orders = await orderModel
+          .find({ event: requestEvent })
+          .populate("event")
+          .populate({
+            path: "user",
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+      }
+    }
+
+    const newOrder = await orders.reduce((arr, item) => {
+      if (item.user) {
+        return [...arr, item];
+      } else {
+        return arr;
+      }
+    }, []);
+    if (newOrder && newOrder.length !== 0) {
+      return {
+        countDocument: newOrder.length,
+        data: newOrder.slice(startIndex, startIndex + limit),
+      };
+    } else if (orders && orders.length !== 0) {
+      return {
+        countDocument: newOrder.length,
+        data: [orders[0]],
+      };
+    } else {
+      const eventOrder = await eventModel.findById(requestEvent);
+
+      return {
+        countDocument: newOrder.length,
+        data: [{ event: eventOrder }],
+      };
+    }
   }
-});
+);
 
 //3.UPDATE ALL ORDER
-const updateAllByEventId = asyncHandler(async (requestUserId, requestEventId, isPaid, isRefund, isJoined) => {
-  const requestEvent = await eventModel.findOne({ _id: requestEventId });
-  if (requestEvent !== null) {
-    if (requestEvent.creator.toString() === requestUserId.toString()) {
-      const updateOrders = await orderModel.updateMany({ event: requestEventId }, {
-        $set: {
-          isPaid: isPaid,
-          isRefund: isRefund,
-          isJoined: isJoined,
+const updateAllByEventId = asyncHandler(
+  async (requestUserId, requestEventId, isPaid, isRefund, isJoined) => {
+    const requestEvent = await eventModel.findOne({ _id: requestEventId });
+    if (requestEvent !== null) {
+      if (requestEvent.creator.toString() === requestUserId.toString()) {
+        const updateOrders = await orderModel.updateMany(
+          { event: requestEventId },
+          {
+            $set: {
+              isPaid: isPaid,
+              isRefund: isRefund,
+              isJoined: isJoined,
+            },
+          }
+        );
+        if (updateOrders && updateOrders.matchedCount != 0) {
+          return updateOrders;
+        } else {
+          throw Error(resMes.orderError.ERR_5);
         }
-      });
-      if (updateOrders && updateOrders.matchedCount != 0) {
-        return updateOrders;
       } else {
-        throw Error(resMes.orderError.ERR_5);
+        throw Error(resMes.orderError.ERR_6);
       }
     } else {
-      throw Error(resMes.orderError.ERR_6);
+      throw Error(resMes.orderError.ERR_4);
     }
-  } else {
-    throw Error(resMes.orderError.ERR_4);
   }
-
-
-});
+);
 
 //4.UPDATE REQUEST ORDER
-const updateRequestOrder = asyncHandler(async (requestUserId, requestEventId, updateData) => {
-  const requestEvent = await eventModel.findOne({ _id: requestEventId });
-  if (requestEvent !== null) {
-    if (requestEvent.creator.toString() === requestUserId.toString()) {
-      const updateOrder = await orderModel.bulkWrite(updateData.map((data) => ({
-        updateOne: {
-          filter: { _id: data.orderId, event: requestEventId },
-          update: { isPaid: data.isPaid, isJoined: data.isJoined, isRefund: data.isRefund }
+const updateRequestOrder = asyncHandler(
+  async (requestUserId, requestEventId, updateData) => {
+    const requestEvent = await eventModel.findOne({ _id: requestEventId });
+    if (requestEvent !== null) {
+      if (requestEvent.creator.toString() === requestUserId.toString()) {
+        const updateOrder = await orderModel.bulkWrite(
+          updateData.map((data) => ({
+            updateOne: {
+              filter: { _id: data.orderId, event: requestEventId },
+              update: {
+                isPaid: data.isPaid,
+                isJoined: data.isJoined,
+                isRefund: data.isRefund,
+              },
+            },
+          }))
+        );
+        console;
+        if (updateOrder && updateOrder.matchedCount != 0) {
+          return updateOrder;
+        } else {
+          throw Error(resMes.orderError.ERR_5);
         }
-      })));
-      console
-      if (updateOrder && updateOrder.matchedCount != 0) {
-        return updateOrder;
       } else {
-        throw Error(resMes.orderError.ERR_5);
+        throw Error(resMes.orderError.ERR_6);
       }
     } else {
-      throw Error(resMes.orderError.ERR_6);
+      throw Error(resMes.orderError.ERR_4);
     }
-  } else {
-    throw Error(resMes.orderError.ERR_4);
   }
-
-});
+);
 
 const updateOrder = async ({ creatorId, orderId, data }) => {
   const findOrder = await orderModel.findById(orderId).populate("event user");
@@ -114,4 +230,10 @@ const updateOrder = async ({ creatorId, orderId, data }) => {
   return findOrder;
 };
 
-module.exports = { createNewOrder, getOrdersByEventId, updateOrder, updateAllByEventId, updateRequestOrder };
+module.exports = {
+  createNewOrder,
+  getOrdersByEventId,
+  updateOrder,
+  updateAllByEventId,
+  updateRequestOrder,
+};

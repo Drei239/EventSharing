@@ -52,7 +52,13 @@ const getRegisteredEvent = async () => {
 };
 const getJoinedEvent = async () => {
   const data = await UseCallApi({
-    method: "/events/joined-event",
+    url: "/events/joined-event",
+  });
+  return data;
+};
+const getAllEventofUser = async (id, status, keyword) => {
+  const data = await UseCallApi({
+    url: `/events/all-ofUser/${id}?status=${status}&keyword=${keyword}`,
   });
   return data;
 };
@@ -64,5 +70,6 @@ const eventService = {
   getEventById,
   getRegisteredEvent,
   getJoinedEvent,
+  getAllEventofUser,
 };
 export default eventService;
