@@ -35,17 +35,122 @@ const createNewOrder = asyncHandler(async (event, user, creator) => {
 });
 
 //2.GET ALL ORDER OF EVENT BY ID
-const getOrdersByEventId = asyncHandler(async (requestEvent) => {
-  const orders = await orderModel
-    .find({ event: requestEvent })
-    .populate("event")
-    .populate("user");
-  if (orders && orders.length !== 0) {
-    return orders;
-  } else {
-    throw Error(resMes.orderError.ERR_3);
+const getOrdersByEventId = asyncHandler(
+  async ({ requestEvent, keyword, status, sort, page, limit }) => {
+    let orders;
+    const startIndex = (Number(page) - 1) * limit;
+    switch (status) {
+      case "unpaid": {
+        orders = await orderModel
+          .find({ event: requestEvent, isPaid: false })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "joined": {
+        orders = await orderModel
+          .find({ event: requestEvent, isJoined: true })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "refunded": {
+        orders = await orderModel
+          .find({ event: requestEvent, isRefund: true })
+          .populate("event")
+          .populate({
+            path: "user",
+
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      case "paid": {
+        orders = await orderModel
+          .find({ event: requestEvent, isPaid: true })
+          .populate("event")
+          .populate({
+            path: "user",
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+        break;
+      }
+      default: {
+        orders = await orderModel
+          .find({ event: requestEvent })
+          .populate("event")
+          .populate({
+            path: "user",
+            match: {
+              $or: [
+                { name: { $regex: keyword, $options: "i" } },
+                { email: { $regex: keyword, $options: "i" } },
+              ],
+            },
+          })
+          .sort(sort);
+      }
+    }
+
+    const newOrder = await orders.reduce((arr, item) => {
+      if (item.user) {
+        return [...arr, item];
+      } else {
+        return arr;
+      }
+    }, []);
+    if (newOrder && newOrder.length !== 0) {
+      return {
+        countDocument: newOrder.length,
+        data: newOrder.slice(startIndex, startIndex + limit),
+      };
+    } else if (orders && orders.length !== 0) {
+      return {
+        countDocument: newOrder.length,
+        data: [orders[0]],
+      };
+    } else {
+      const eventOrder = await eventModel.findById(requestEvent);
+
+      return {
+        countDocument: newOrder.length,
+        data: [{ event: eventOrder }],
+      };
+    }
   }
-});
+);
 
 //
 const updateOrder = async ({ creatorId, orderId, data }) => {

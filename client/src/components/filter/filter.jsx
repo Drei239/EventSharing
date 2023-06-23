@@ -113,6 +113,9 @@ const Filter = () => {
     dispatch(getAllCategory());
   }, []);
   useEffect(() => {
+    console.log(selectedDate);
+  }, [selectedDate]);
+  useEffect(() => {
     if (searchParams.get("category")) {
       setSelectValue(
         newCategories?.find(

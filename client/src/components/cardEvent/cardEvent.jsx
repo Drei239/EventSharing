@@ -78,7 +78,9 @@ const Card = ({
               </div>
               <div className="cardEvent-info2-item">
                 <BiMap className="cardEvent-info2-item-icon" />
-                <span className="cardEvent-info2-item-text">{location}</span>
+                <span className="cardEvent-info2-item-text">
+                  {location?.province ? location.province.name : ""}
+                </span>
               </div>
               <div className="cardEvent-info2-item">
                 <BiMoney className="cardEvent-info2-item-icon" />

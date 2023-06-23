@@ -49,8 +49,23 @@ export const getJoinedEvent = createAsyncThunk(
   "event/getJoinedEvent",
   async (_, { rejectWithValue }) => {
     try {
+      return await eventService.getJoinedEvent();
     } catch (err) {
-      rejectWithValue(err);
+      return rejectWithValue(err);
+    }
+  }
+);
+export const getAllEventofUser = createAsyncThunk(
+  "event/getAllEventOfUser",
+  async (data, { rejectWithValue }) => {
+    try {
+      return await eventService.getAllEventofUser(
+        data?.id,
+        data?.status,
+        data?.keyword
+      );
+    } catch (err) {
+      return rejectWithValue(err);
     }
   }
 );
@@ -121,7 +136,7 @@ const eventSlice = createSlice({
     });
     builder.addCase(getNewEvent.fulfilled, (state, action) => {
       state.newEvents = action.payload?.data || null;
-      // state.countDocument = action.payload.totalCount;
+      state.countDocument = action.payload?.totalCount;
       state.isLoading = false;
       state.isSuccess = true;
     });
@@ -156,6 +171,19 @@ const eventSlice = createSlice({
       state.isLoading = false;
       state.isError = true;
       state.message = action.payload.message;
+    });
+    builder.addCase(getAllEventofUser.pending, (state) => {
+      state.isLoading = true;
+    });
+    builder.addCase(getAllEventofUser.fulfilled, (state, action) => {
+      state.events = action.payload?.data;
+      state.isLoading = false;
+      state.isSuccess = true;
+    });
+    builder.addCase(getAllEventofUser.rejected, (state, action) => {
+      state.isLoading = false;
+      state.message = action.payload?.message;
+      state.isError = true;
     });
     builder.addCase(handleChangeEvents, (state, action) => {
       state.filter = { ...state.filter, ...action.payload };

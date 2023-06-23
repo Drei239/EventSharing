@@ -20,7 +20,8 @@ const createNewEvent = asyncHandler(
     timeEnd,
     creator,
     limitUser,
-    reviews
+    reviews,
+    status
   ) => {
     const newEvent = await eventModel.create({
       title,
@@ -37,6 +38,7 @@ const createNewEvent = asyncHandler(
       creator,
       limitUser,
       reviews,
+      status,
     });
     if (newEvent) {
       return newEvent;
@@ -86,6 +88,7 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
           { location: { $regex: queryKey.keyword, $options: "i" } },
         ],
       },
+      { status: "Public" },
       queryStr
     );
     query = eventModel.find(queryObj);
@@ -182,6 +185,52 @@ const registeredEvent = async (id) => {
     .populate("event user");
   return event;
 };
+const getAllEventOfUser = async (id, status, keyword) => {
+  switch (status) {
+    case "public": {
+      if (keyword) {
+        return await eventModel.find({
+          creator: id,
+          status: "Public",
+          title: { $regex: keyword, $options: "i" },
+        });
+      }
+
+      return await eventModel.find({ creator: id, status: "Public" });
+    }
+    case "draft": {
+      if (keyword) {
+        return await eventModel.find({
+          creator: id,
+          status: "draft",
+          title: { $regex: keyword, $options: "i" },
+        });
+      }
+      return await eventModel.find({ creator: id, status: "draft" });
+    }
+    case "completed": {
+      if (keyword) {
+        return await eventModel.find({
+          creator: id,
+          timeEnd: { $lte: new Date() },
+          title: { $regex: keyword, $options: "i" },
+        });
+      }
+      return await eventModel.find({
+        creator: id,
+        timeEnd: { $lte: new Date() },
+      });
+    }
+    default:
+      if (keyword) {
+        return await eventModel.find({
+          creator: id,
+          title: { $regex: keyword, $options: "i" },
+        });
+      }
+      return await eventModel.find({ creator: id });
+  }
+};
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -189,4 +238,5 @@ module.exports = {
   getEventsFilter,
   attendedEvent,
   registeredEvent,
+  getAllEventOfUser,
 };

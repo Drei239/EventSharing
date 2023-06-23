@@ -7,6 +7,9 @@ import { BsCalendar4Event } from "react-icons/bs";
 import "./home.css";
 import { VscOrganization } from "react-icons/vsc";
 import { MdOutlineEventAvailable } from "react-icons/md";
+import { motion } from "framer-motion";
+import userIcon from "../../assets/user.svg";
+import { EmptyEvent } from "../../components";
 import {
   getHighlightEvent,
   getNewEvent,
@@ -19,10 +22,12 @@ import EmptyIcon from "../../assets/empty.svg";
 const Home = () => {
   const dispatch = useDispatch();
   const [newEvent2, setNewEvent2] = useState([]);
+  const { isLogin } = useSelector((state) => state.user);
   const { newEvents, isLoading, countDocument, joinedEvent, registeredEvent } =
     useSelector((state) => state.event);
   const { userHighlight } = useSelector((state) => state.user);
   const [page, setPage] = useState(1);
+  const [request, setRequest] = useState(false);
   useEffect(() => {
     dispatch(getHighlightEvent());
     dispatch(getAllCategory());
@@ -33,12 +38,17 @@ const Home = () => {
   useEffect(() => {
     dispatch(getNewEvent(page));
   }, [page]);
-
   useEffect(() => {
-    setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
+    console.log(countDocument);
+  }, [countDocument]);
+  useEffect(() => {
+    if (request) {
+      setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
+    }
+    setRequest(true);
   }, [newEvents]);
   return (
-    <div className="home">
+    <motion.div layout className="home">
       <Carousel />
       <div>
         <div className="title-home">
@@ -62,7 +72,7 @@ const Home = () => {
           {isLoading && <Loading />}
           {isLoading && <Loading />}
         </div>
-        {page <= Math.floor(countDocument / 4) && (
+        {-page > -Math.floor(countDocument / 4) && (
           <div className="btn-show">
             <span className="strike-left"></span>
             <button onClick={() => setPage(page + 1)}>Xem thêm</button>
@@ -81,11 +91,7 @@ const Home = () => {
               return <CardOrg title={item.name} img={item.avatar} />;
             })}
         </div>
-        <div className="btn-show">
-          <span className="strike-left"></span>
-          <button>Xem thêm</button>
-          <span className="strike-right"></span>
-        </div>
+
         <div className="title-home">
           <h2>Sự kiện đã tham gia gần đây</h2>
           <div className="underline-title">
@@ -106,14 +112,21 @@ const Home = () => {
             <span className="strike-right"></span>
           </div>
         )}
-        {!joinedEvent && (
-          <div className="empty-events-home">
-            <img src={EmptyIcon} alt="" />
-            <p>You have not joined for any events</p>
-            <Link to="/events" reloadDocument={true}>
-              Discover new events
-            </Link>
-          </div>
+        {isLogin && !joinedEvent && (
+          <EmptyEvent
+            icon={EmptyIcon}
+            message="Bạn chưa tham gia sự kiện nào"
+            link="/events"
+            messageLink="Khám phá các sự kiện mới nhất"
+          />
+        )}
+        {!isLogin && (
+          <EmptyEvent
+            icon={userIcon}
+            message="Bạn chưa đăng nhập ? Xin vui lòng đăng nhập để xem các sự kiện đã đăng ký"
+            link={"/login"}
+            messageLink="Đăng nhập vào tài khoản của bạn"
+          />
         )}
         <div className="title-home">
           <h2>Sự kiện đã đăng kí gần đây</h2>
@@ -135,20 +148,26 @@ const Home = () => {
             <span className="strike-right"></span>
           </div>
         )}
-        {!registeredEvent ||
-          (registeredEvent.length <= 0 && (
-            <div className="empty-events-home">
-              <img src={EmptyIcon} alt="" />
-              <p>You have not registered for any events</p>
-              <Link to="/events" reloadDocument={true}>
-                Discover new events
-              </Link>
-            </div>
-          ))}
+        {isLogin && (!registeredEvent || registeredEvent.length <= 0) && (
+          <EmptyEvent
+            icon={EmptyIcon}
+            message="Bạn chưa đăng kí sự kiện nào"
+            link="/events"
+            messageLink="Khám phá các sự kiện mới nhất"
+          />
+        )}
+        {!isLogin && (
+          <EmptyEvent
+            icon={userIcon}
+            message="Bạn chưa đăng nhập ? Xin vui lòng đăng nhập để xem các sự kiện đã đăng ký"
+            link={"/login"}
+            messageLink="Đăng nhập vào tài khoản của bạn"
+          />
+        )}
       </div>
 
       {isLoading && <Loading />}
-    </div>
+    </motion.div>
   );
 };
 

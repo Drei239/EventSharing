@@ -72,12 +72,12 @@ const UploadImage = () => {
                 <div {...getRootProps({ className: "upload-dropzone" })}>
                   <input {...getInputProps()} />
                   <AiOutlineCloudUpload className="upload-icon" />
-                  <h2>Add a photo</h2>
+                  <h2>Thêm một ảnh</h2>
                   <p>
                     Kéo và thả ảnh hoặc nhấp vào nút bên dưới để chọn ảnh bạn
                     muốn tải lên
                   </p>
-                  <button className="upload-btn">Upload photo</button>
+                  <button className="upload-btn">Tải ảnh lên</button>
                 </div>
                 {imgSrc && (
                   <div className="crop">
@@ -124,9 +124,9 @@ const UploadImage = () => {
               {imgSrc && (
                 <div className="btn-uploadImg">
                   <button className="btn-save" onClick={showCroppedImage}>
-                    Save Changes
+                    Lưu thay đổi
                   </button>
-                  <button className="btn-cancel">Cancel</button>
+                  <button className="btn-cancel">Huỷ</button>
                 </div>
               )}
             </div>

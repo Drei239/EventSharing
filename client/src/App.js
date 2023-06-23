@@ -5,9 +5,10 @@ import Header from "./components/header/Header";
 import LoginRegisterPage from "./pages/login-register/LoginRegisterPage";
 import CreateEventPage from "./pages/create-event/CreateEventPage";
 import { NextUIProvider } from "@nextui-org/react";
-import { Home, Events, Setting } from "./pages";
+import { Home, Events, Setting, EventManagement, MyEvent } from "./pages";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
+import { NotLoggedInOnly, LoggedInOnly } from "./components";
 function App() {
   const open = useSelector((state) => state.user.open);
   return (
@@ -16,11 +17,34 @@ function App() {
         <Header />
         <ToastContainer limit={3} />
         <Routes>
-          <Route path="/login-register" element={<LoginRegisterPage />} />
-          <Route path="/create-event" element={<CreateEventPage />} />
+          <Route
+            path="/login-register"
+            element={
+              <NotLoggedInOnly>
+                <LoginRegisterPage />
+              </NotLoggedInOnly>
+            }
+          />
+          <Route
+            path="/create-event"
+            element={
+              <LoggedInOnly>
+                <CreateEventPage />
+              </LoggedInOnly>
+            }
+          />
+          <Route path="/management-event" element={<EventManagement />} />
           <Route path="/" element={<Home />} />
           <Route path="/events" element={<Events />} />
-          <Route path="/account/*" element={<Setting />} />
+          <Route
+            path="/account/*"
+            element={
+              <LoggedInOnly>
+                <Setting />
+              </LoggedInOnly>
+            }
+          />
+          <Route path="/my-events/:id" element={<MyEvent />} />
         </Routes>
         <Footer />
       </NextUIProvider>
