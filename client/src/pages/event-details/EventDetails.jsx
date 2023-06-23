@@ -33,7 +33,7 @@ const EventDetails = () => {
 		return false;
 	};
 
-	const imageList = eventDetail?.imageList;
+	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
 
 	if (imageList == undefined) {
 		return false;
@@ -105,18 +105,15 @@ const EventDetails = () => {
 					<div className="event__title">
 						<h3 className='event__description'>Giới thiệu</h3>
 						<p className='description__item'>{eventDetail?.description || 'no information'}</p>
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
-						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic sed laboriosam non, enim, aspernatur dolorum vitae libero iste voluptate deserunt neque magnam exercitationem quam, itaque unde fugiat placeat illo? Rerum?
 					</div>
 				</div>
-				<div className="gallery__container">
+				<div style={{
+					padding: "5px 0",
+				}}>
 					<h3 className="event__gallery">
 						Gallery
 					</h3>
-					<Gallery imageList={imageList} />
+					<Gallery imageList={imageList}></Gallery>
 				</div>
 				<div className='comment__container'>
 					<Button.Group>
