@@ -20,6 +20,7 @@ function App() {
         <Header />
         <ToastContainer limit={3} />
         <Routes>
+          <Route path="/event-create-update" element={<EventCreateUpdate />} />
           <Route
             path="/login-register"
             element={
