@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 import styled from "styled-components";
 import "./carousel.css";
 import dayjs from "dayjs";
@@ -114,9 +115,11 @@ const Carousel = () => {
                     </div>
                   </div>
                   <div className="carousel-content-btn">
-                    <button className="carousel-content-btn-item">
-                      Chi tiết
-                    </button>
+                    <Link to={`/event/${item._id}`}>
+                      <button className="carousel-content-btn-item">
+                        Chi tiết
+                      </button>
+                    </Link>
                     <button className="carousel-content-btn-item">
                       Mua vé
                     </button>

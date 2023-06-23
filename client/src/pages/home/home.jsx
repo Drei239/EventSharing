@@ -65,6 +65,7 @@ const Home = () => {
           {newEvent2 &&
             newEvent2.length > 0 &&
             newEvent2.map((item) => {
+              console.log(item);
               return <CardEvent {...item} key={item._id} />;
             })}
           {isLoading && <Loading />}

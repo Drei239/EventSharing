@@ -1,11 +1,12 @@
 import './Header.css';
-import { Input } from '@nextui-org/react';
+import { Input, Button } from '@nextui-org/react';
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
 import AvatarComponent from '../avatar/AvatarComponent';
 import { getUserInfo } from '../../features/user/userSlice';
+import { AiFillCaretDown } from 'react-icons/ai';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -52,11 +53,11 @@ const Header = () => {
       <div className='wrapper'>
         <div className='header__left-block'>
           <Link className='logo' to='/' alt=''>
-            <img src={'./images/logo.png'} />
+            <img src={'../images/logo.png'} />
           </Link>
           <div
             className={`header__search ${
-              location.pathname === '/create-event' ? 'active' : ''
+              location.pathname === '/event-create-update' ? 'active' : ''
             }`}
           >
             <Input
@@ -67,9 +68,10 @@ const Header = () => {
           </div>
           <div className='header__category'>
             <div className='dropdown'>
-              <Link href='/' alt=''>
-                <div className='dropdown__catergory'>Sự kiện</div>
-              </Link>
+              <div className='dropdown__catergory'>
+                Sự kiện
+                <AiFillCaretDown className='cardEvent-info2-item-icon' />
+              </div>
               <div className='dropdown__content'>
                 {category?.map((item) => {
                   return (
@@ -89,15 +91,20 @@ const Header = () => {
           </div>
         </div>
         <div className='header__right-block'>
-          <div
-            className={`create__event ${
-              location.pathname === '/create-event' ? 'active' : ''
-            }`}
-          >
-            <Link to='/create-event' alt=''>
-              <div className='header_btn header__btn-create'>Tạo sự kiện</div>
-            </Link>
-          </div>
+          {userInfo?._id ? (
+            <div
+              className={`create__event ${
+                location.pathname === '/event-create-update' ? 'active' : ''
+              }`}
+            >
+              <Link to='/create-event' alt=''>
+                <Button color='primary' size='sm'>
+                  Tạo sự kiện
+                </Button>
+              </Link>
+            </div>
+          ) : null}
+
           <div className='header__log'>
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>

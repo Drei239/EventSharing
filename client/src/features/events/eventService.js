@@ -9,6 +9,22 @@ const getAllEvent = async (search) => {
   });
   return data;
 };
+
+const getEventById = async (eventId) => {
+  const response = await axios.get(
+    `http://localhost:3002/events/get/${eventId}`
+  )
+  return response.data;
+
+  // return response;
+};
+const updateEvent = async ({ }) => {
+  const data = await UseCallApi({
+    method: "PUT",
+    url: `/events/update`,
+  });
+  return data;
+};
 const getHighlightEvent = async () => {
   const data = await UseCallApi({
     method: "GET",
@@ -47,9 +63,11 @@ const getAllEventofUser = async (id, status, keyword) => {
   return data;
 };
 const eventService = {
+  updateEvent,
   getAllEvent,
   getHighlightEvent,
   getNewEvent,
+  getEventById,
   getRegisteredEvent,
   getJoinedEvent,
   getAllEventofUser,

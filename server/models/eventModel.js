@@ -8,7 +8,10 @@ const reviewSchema = mongoose.Schema({
   rating: { type: Number, required: true },
   user: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
 });
-const locationShecma = {
+
+const locationShecma = mongoose.Schema({
+  address: { type: String },
+
   province: {
     name: { type: String },
     code: { type: Number },
@@ -24,8 +27,8 @@ const locationShecma = {
     code: { type: Number },
     division_type: { type: String },
   },
-  address: String,
-};
+});
+
 const eventSchema = mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
@@ -39,6 +42,7 @@ const eventSchema = mongoose.Schema({
     ref: "Category",
   },
   isOnline: { type: Boolean, required: true },
+  linkOnline: { type: String },
   fee: { type: Number, required: true, default: 0 },
   location: locationShecma,
   timeEndSignup: { type: Date, required: true, default: Date.now() },

@@ -152,7 +152,69 @@ const getOrdersByEventId = asyncHandler(
   }
 );
 
-//
+//3.UPDATE ALL ORDER
+const updateAllByEventId = asyncHandler(
+  async (requestUserId, requestEventId, isPaid, isRefund, isJoined) => {
+    const requestEvent = await eventModel.findOne({ _id: requestEventId });
+    if (requestEvent !== null) {
+      if (requestEvent.creator.toString() === requestUserId.toString()) {
+        const updateOrders = await orderModel.updateMany(
+          { event: requestEventId },
+          {
+            $set: {
+              isPaid: isPaid,
+              isRefund: isRefund,
+              isJoined: isJoined,
+            },
+          }
+        );
+        if (updateOrders && updateOrders.matchedCount != 0) {
+          return updateOrders;
+        } else {
+          throw Error(resMes.orderError.ERR_5);
+        }
+      } else {
+        throw Error(resMes.orderError.ERR_6);
+      }
+    } else {
+      throw Error(resMes.orderError.ERR_4);
+    }
+  }
+);
+
+//4.UPDATE REQUEST ORDER
+const updateRequestOrder = asyncHandler(
+  async (requestUserId, requestEventId, updateData) => {
+    const requestEvent = await eventModel.findOne({ _id: requestEventId });
+    if (requestEvent !== null) {
+      if (requestEvent.creator.toString() === requestUserId.toString()) {
+        const updateOrder = await orderModel.bulkWrite(
+          updateData.map((data) => ({
+            updateOne: {
+              filter: { _id: data.orderId, event: requestEventId },
+              update: {
+                isPaid: data.isPaid,
+                isJoined: data.isJoined,
+                isRefund: data.isRefund,
+              },
+            },
+          }))
+        );
+        console;
+        if (updateOrder && updateOrder.matchedCount != 0) {
+          return updateOrder;
+        } else {
+          throw Error(resMes.orderError.ERR_5);
+        }
+      } else {
+        throw Error(resMes.orderError.ERR_6);
+      }
+    } else {
+      throw Error(resMes.orderError.ERR_4);
+    }
+  }
+);
+
 const updateOrder = async ({ creatorId, orderId, data }) => {
   const findOrder = await orderModel.findById(orderId).populate("event user");
   if (!findOrder) {
@@ -168,4 +230,10 @@ const updateOrder = async ({ creatorId, orderId, data }) => {
   return findOrder;
 };
 
-module.exports = { createNewOrder, getOrdersByEventId, updateOrder };
+module.exports = {
+  createNewOrder,
+  getOrdersByEventId,
+  updateOrder,
+  updateAllByEventId,
+  updateRequestOrder,
+};

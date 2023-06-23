@@ -9,7 +9,9 @@ const getAllCategory = async () => {
 
   return data;
 };
+
 const categoryService = {
   getAllCategory,
 };
+
 export default categoryService;

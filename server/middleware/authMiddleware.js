@@ -1,33 +1,24 @@
-const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
-const { refreshAccessToken } = require("../utils/refreshAccessToken");
-require("dotenv").config({ path: ".env" });
-const userModel = require("../models/userModel");
+const asyncHandler = require('express-async-handler');
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '.env' });
+const userModel = require('../models/userModel');
 
 const protect = asyncHandler(async (req, res, next) => {
-  const accessToken = req.cookies.token;
-  const refreshToken = req.cookies.refresh;
+  const accessToken = req.cookies.access;
 
   if (accessToken) {
     try {
       const userVerify = jwt.verify(accessToken, process.env.SECRETKEY);
       const userId = userVerify._id;
-      const userInfo = await userModel.findById(userId).select("-password");
+      const userInfo = await userModel.findById(userId).select('-password');
       req.user = userInfo;
       return next();
     } catch (error) {
-      res.status(400).end();
-      throw new Error("Token invalid");
+      res.status(401).json({ tokenExpires: true });
+      throw new Error('Token invalid');
     }
   } else {
-    const newToken = refreshAccessToken(refreshToken);
-    if (newToken) {
-      req.token = newToken;
-      return next();
-    } else {
-      res.statusCode(400);
-      throw new Error("Token invalid");
-    }
+    res.status(401).json({ tokenExpires: true });
   }
 });
 
@@ -36,15 +27,8 @@ const isAdmin = (req, res, next) => {
     next();
   } else {
     res.status(401);
-    throw new Error("Member is not admin");
+    throw new Error('Member is not admin');
   }
 };
-const verifyUser = (req, res, next) => {
-  if (req.user?._id == req.params.id) {
-    next();
-  } else {
-    res.status(401);
-    throw new Error("Not authorized");
-  }
-};
-module.exports = { protect, isAdmin, verifyUser };
+
+module.exports = { protect, isAdmin };
