@@ -32,7 +32,7 @@ router.get("/get/:id", getEventById);
 //LẤY DANH SÁCH SỰ KIỆN CỦA 1 USER ĐỂ HIỂN THỊ TRÊN PROFILE?
 //NẾU REQUEST USER = CREATOR -> GET FULL EVENT (BAO GỒM DRAFT, PENDING)
 //NẾU REQUEST USER = GUEST -> DON'T GET DRAFT, PENDING
-router.get("/user/:id", getEventByCreator);
+// router.get("/user/:id", getEventByCreator);
 
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
@@ -40,14 +40,13 @@ router.put("/update/:id", updateDraftEventInfo);
 
 //6.FIND EVENT BY TITLE
 
-router.get("/search/:keyword", getEventByTitle);
+// router.get("/search/:keyword", getEventByTitle);
 
 //7.GET EVENTS BY QUERY
 // router.get('/dasdas', getQueryEvents);
 
 router.get("/highlight", highlightEvents);
-
 router.get("/registered-event", protect, getRegisteredEvent);
 router.get("/joined-event", protect, getJoinedEvent);
-router.get("/all-ofUser/:id", protect, verifyUser, getAllEventOfUser);
+router.get("/user/:id", protect, verifyUser, getAllEventOfUser);
 module.exports = router;
