@@ -12,7 +12,7 @@ export const useValidateRegex = (value, regex, message) => {
     return {
       text: isValid ? '' : message,
       color: isValid ? '' : 'error',
-      isValid,
+      isValid: isValid?.length > 0 ? true : false,
     };
   }, [value]);
 };

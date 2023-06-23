@@ -12,8 +12,9 @@ const {
   highlightEvents,
   getJoinedEvent,
   getRegisteredEvent,
+  getAllEventOfUser,
 } = require("../controllers/eventController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, verifyUser } = require("../middleware/authMiddleware");
 
 //1.CREATE NEW EVENT
 router.post("/create", protect, createNewEvent);
@@ -48,4 +49,5 @@ router.get("/highlight", highlightEvents);
 
 router.get("/registered-event", protect, getRegisteredEvent);
 router.get("/joined-event", protect, getJoinedEvent);
+router.get("/all-ofUser/:id", protect, verifyUser, getAllEventOfUser);
 module.exports = router;

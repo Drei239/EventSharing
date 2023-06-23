@@ -1,13 +1,12 @@
-import "./Header.css";
-import { Input, Button } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import './Header.css';
+import { Input, Button } from '@nextui-org/react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useLocation, Link } from 'react-router-dom';
 import AvatarComponent from '../avatar/AvatarComponent';
 import { getUserInfo } from '../../features/user/userSlice';
-import { AiFillCaretDown } from "react-icons/ai";
-
+import { AiFillCaretDown } from 'react-icons/ai';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -47,8 +46,9 @@ const Header = () => {
   };
   return (
     <header
-      className={`${location.pathname === '/login-register' ? 'active' : ''} ${isHideHeader ? 'hide-header' : ''
-        }`}
+      className={`${location.pathname === '/login-register' ? 'active' : ''} ${
+        isHideHeader ? 'hide-header' : ''
+      }`}
     >
       <div className='wrapper'>
         <div className='header__left-block'>
@@ -56,8 +56,9 @@ const Header = () => {
             <img src={'../images/logo.png'} />
           </Link>
           <div
-            className={`header__search ${location.pathname === '/create-event' ? 'active' : ''
-              }`}
+            className={`header__search ${
+              location.pathname === '/event-create-update' ? 'active' : ''
+            }`}
           >
             <Input
               width='290px'
@@ -89,16 +90,20 @@ const Header = () => {
           </div>
         </div>
         <div className='header__right-block'>
-          <div
-            className={`create__event ${location.pathname === '/create-event' ? 'active' : ''
+          {userInfo?._id ? (
+            <div
+              className={`create__event ${
+                location.pathname === '/event-create-update' ? 'active' : ''
               }`}
-          >
-            <Link to="/create-event" alt="">
-              <Button color="primary" size="sm">
-                Tạo sự kiện
-              </Button>
-            </Link>
-          </div>
+            >
+              <Link to='/create-event' alt=''>
+                <Button color='primary' size='sm'>
+                  Tạo sự kiện
+                </Button>
+              </Link>
+            </div>
+          ) : null}
+
           <div className='header__log'>
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>

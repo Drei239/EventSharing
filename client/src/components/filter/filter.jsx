@@ -23,6 +23,7 @@ import {
   locationFil,
   sortFilter,
 } from "../../data/filter";
+import data from "../../data/provinces.json";
 import { CustomSelect } from "../ui/select";
 const createCustomControl =
   (iconComponent) =>
@@ -34,6 +35,9 @@ const createCustomControl =
       </components.Control>
     );
   };
+const location = data.reduce((arr, item) => {
+  return [...arr, { label: item.name, value: item.code }];
+}, []);
 const CustomControl1 = createCustomControl(<FiMapPin />);
 const CustomControl2 = createCustomControl(<BsFillGrid3X3GapFill />);
 const CustomControl3 = createCustomControl(<RiVidiconLine />);
@@ -109,6 +113,9 @@ const Filter = () => {
     dispatch(getAllCategory());
   }, []);
   useEffect(() => {
+    console.log(selectedDate);
+  }, [selectedDate]);
+  useEffect(() => {
     if (searchParams.get("category")) {
       setSelectValue(
         newCategories?.find(
@@ -127,8 +134,8 @@ const Filter = () => {
       <div className="categories">
         <div className="select">
           <CustomSelect
-            options={locationFil}
-            defaultValue={locationFil[0]}
+            options={location}
+            defaultValue={location[0]}
             components={{ Control: CustomControl1 }}
 
             // onChange={handleChangeSelectLocation}

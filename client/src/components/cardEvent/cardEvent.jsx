@@ -70,23 +70,31 @@ const Card = ({
                   </span>
                 </div>
               </div>
-              <div className="cardEvent-info2">
-                <div className="cardEvent-info2-item">
-                  <GiSandsOfTime className="cardEvent-info2-item-icon" />
-                  <span className="cardEvent-info2-item-text">
-                    {checkDate(timeBegin, timeEnd)}
-                  </span>
-                </div>
-                <div className="cardEvent-info2-item">
-                  <BiMap className="cardEvent-info2-item-icon" />
-                  <span className="cardEvent-info2-item-text">{location}</span>
-                </div>
-                <div className="cardEvent-info2-item">
-                  <BiMoney className="cardEvent-info2-item-icon" />
-                  <span className="cardEvent-info2-item-text">
-                    {fee === 0 ? "free" : `${fee} đ`}
-                  </span>
-                </div>
+              <div className="card-calendar">
+                <BsCalendar3WeekFill className="card-calendar-icon" />
+                <span className="card-calendar-text">
+                  {dayjs(timeBegin).format("Ngày DD [tháng] MM [năm] YYYY")}
+                </span>
+              </div>
+            </div>
+            <div className="cardEvent-info2">
+              <div className="cardEvent-info2-item">
+                <GiSandsOfTime className="cardEvent-info2-item-icon" />
+                <span className="cardEvent-info2-item-text">
+                  {checkDate(timeBegin, timeEnd)}
+                </span>
+              </div>
+              <div className="cardEvent-info2-item">
+                <BiMap className="cardEvent-info2-item-icon" />
+                <span className="cardEvent-info2-item-text">
+                  {location?.province ? location.province.name : ""}
+                </span>
+              </div>
+              <div className="cardEvent-info2-item">
+                <BiMoney className="cardEvent-info2-item-icon" />
+                <span className="cardEvent-info2-item-text">
+                  {fee === 0 ? "free" : `${fee} đ`}
+                </span>
               </div>
             </div>
           </div>
