@@ -20,13 +20,13 @@ const createNewOrder = asyncHandler(async (req, res) => {
 
 //2.GET ALL ORDER OF EVENT BY ID
 const getOrdersByEventId = asyncHandler(async (req, res) => {
-    const requestEvent = req.params.id;
-    try {
-        const orders = await orderService.getOrdersByEventId(requestEvent);
-        return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_2 });
-    } catch (error) {
-        return res.status(400).json({ status: 400, message: error.message });
-    }
+  const requestEvent = req.params.id;
+  try {
+    const orders = await orderService.getOrdersByEventId(requestEvent);
+    return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_2 });
+  } catch (error) {
+    return res.status(400).json({ status: 400, message: error.message });
+  }
 });
 
 const updateOdrder = asyncHandler(async (req, res, next) => {
@@ -49,28 +49,28 @@ const updateOdrder = asyncHandler(async (req, res, next) => {
 
 //3.PUT - UPDATE ALL ORDER
 const updateAllByEventId = asyncHandler(async (req, res) => {
-    //LOGIN KIỂM TRA REQUEST USER ID = CREATOR -> CHO PHÉP UPDATE
-    const requestEvent = req.params.id;
-    const { isPaid, isRefund, isJoined } = req.body;
-    try {
-        const orders = await orderService.updateAllByEventId(requestEvent, isPaid, isRefund, isJoined);
-        return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_3 });
-    } catch (error) {
-        return res.status(400).json({ status: 400, message: error.message });
-    }
+  const requestUserId = req.user._id;
+  const requestEventId = req.params.id;
+  const { isPaid, isRefund, isJoined } = req.body;
+  try {
+    const orders = await orderService.updateAllByEventId(requestUserId, requestEventId, isPaid, isRefund, isJoined);
+    return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_3 });
+  } catch (error) {
+    return res.status(400).json({ status: 400, message: error.message });
+  }
 });
 
 //4.PUT - UPDATE REQUEST ORDERS
 const updateRequestOrder = asyncHandler(async (req, res) => {
-    const requestUserId = req.user._id;
-    const requestEventId = req.params.id;
-    const updateData = req.body;
-    try {
-        const orders = await orderService.updateRequestOrder(requestUserId, requestEventId, updateData);
-        return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_3 });
-    } catch (error) {
-        return res.status(400).json({ status: 400, message: error.message });
-    }
+  const requestUserId = req.user._id;
+  const requestEventId = req.params.id;
+  const updateData = req.body;
+  try {
+    const orders = await orderService.updateRequestOrder(requestUserId, requestEventId, updateData);
+    return res.status(200).json({ status: 200, data: orders, message: resMes.orderSucc.SUCC_3 });
+  } catch (error) {
+    return res.status(400).json({ status: 400, message: error.message });
+  }
 });
 
 module.exports = {
