@@ -10,7 +10,15 @@ const getOrderbyId = async ({ id, keyword, sort, page, limit, status }) => {
   });
   return orders;
 };
+const updateOneOrder = async (id, status) => {
+  const orders = await UseCallApi({
+    url: `orders/update/${id}?status=${status}`,
+    method: "PUT",
+  });
+  return orders;
+};
 const orderService = {
   getOrderbyId,
+  updateOneOrder,
 };
 export default orderService;

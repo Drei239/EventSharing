@@ -215,7 +215,7 @@ const updateRequestOrder = asyncHandler(
   }
 );
 
-const updateOrder = async ({ creatorId, orderId, data }) => {
+const updateOrder = async ({ creatorId, orderId, status }) => {
   const findOrder = await orderModel.findById(orderId).populate("event user");
   if (!findOrder) {
     throw Error(resMes.orderError.ERR_3);
@@ -223,11 +223,37 @@ const updateOrder = async ({ creatorId, orderId, data }) => {
   if (findOrder?.event?.creator.toString() !== creatorId.toString()) {
     throw Error("BẠN KHÔNG PHẢI NGƯỜI TỔ CHỨC SỰ KIỆN");
   }
-  findOrder.isPaid = data.isPaid || findOrder.isPaid;
-  findOrder.isRefund = data.isRefund || findOrder.isRefund;
-  findOrder.isJoined = data.isJoined || findOrder.isJoined;
-
-  return findOrder;
+  switch (status) {
+    case "paid": {
+      findOrder.isPaid = true;
+      findOrder.isRefund = false;
+      findOrder.isJoined = false;
+      return findOrder;
+    }
+    case "unpaid": {
+      findOrder.isPaid = false;
+      findOrder.isRefund = false;
+      findOrder.isJoined = false;
+      return findOrder;
+    }
+    case "joined": {
+      findOrder.isPaid = true;
+      findOrder.isRefund = false;
+      findOrder.isJoined = true;
+      return findOrder;
+    }
+    case "refund": {
+      findOrder.isPaid = false;
+      findOrder.isRefund = true;
+      findOrder.isJoined = false;
+      return findOrder;
+    }
+    default:
+      findOrder.isPaid = false;
+      findOrder.isRefund = false;
+      findOrder.isJoined = false;
+      return findOrder;
+  }
 };
 
 module.exports = {
