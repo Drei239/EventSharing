@@ -24,7 +24,6 @@ const Gallery = ({ imageList }) => {
 		} else if (direction === 'next') {
 			newIndex = currentImageIndex === lastIndex ? 0 : currentImageIndex + 1;
 		}
-
 		setCurrentImageIndex(newIndex);
 	};
 
