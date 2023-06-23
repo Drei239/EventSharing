@@ -42,7 +42,7 @@ const Home = () => {
     console.log(countDocument);
   }, [countDocument]);
   useEffect(() => {
-    if (request) {
+    if (request && newEvents) {
       setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
     }
     setRequest(true);
