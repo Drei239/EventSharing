@@ -71,15 +71,17 @@ const Personal = () => {
     formik.setFieldValue("gender", option);
   };
   const handleClearBirthday = async () => {
-    formik.setFieldValue("day", null);
-    formik.setFieldValue("month", null);
-    formik.setFieldValue("year", null);
+    formik.setFieldValue("day", dayjs(userInfo?.birthDay).date() || null);
+    formik.setFieldValue(
+      "month",
+      month[dayjs(userInfo?.birthDay).month()] || null
+    );
+    formik.setFieldValue("year", dayjs(userInfo?.birthDay).year() || null);
   };
   useEffect(() => {
     if (userInfo) {
       formik.setFieldValue("gender", userInfo?.gender || "");
       formik.setFieldValue("day", dayjs(userInfo?.birthDay).date() || null);
-      console.log(month[dayjs(userInfo?.birthDay).month()]);
       formik.setFieldValue(
         "month",
         month[dayjs(userInfo?.birthDay).month()] || null
@@ -87,6 +89,9 @@ const Personal = () => {
       formik.setFieldValue("year", dayjs(userInfo?.birthDay).year() || null);
     }
   }, [userInfo]);
+  useEffect(() => {
+    console.log(formik.values);
+  }, [formik.values]);
   useEffect(() => {
     setVisible(isLoading);
   }, [isLoading]);
@@ -104,15 +109,15 @@ const Personal = () => {
   }, [message]);
   return (
     <div className="personal">
-      <h2>Personal info</h2>
+      <h2>Thông tin cá nhân</h2>
       <p className="personal-info">
-        Completing this imfomation helps with your group recommendations. It
-        will not appear on your public profile
+        Việc hoàn thành thông tin này sẽ giúp ích cho các đề xuất nhóm của bạn.
+        Nó sẽ không xuất hiện trên hồ sơ công khai của bạn
       </p>
       <form onSubmit={formik.handleSubmit}>
         <div>
-          <label className="birthday-label">Birthday</label>
-          <p>Your birthday is not visible to others</p>
+          <label className="birthday-label">Ngày Sinh</label>
+          <p>Ngày sinh của bạn không hiển thị với người khác</p>
           <div className="birthday-select">
             <input
               name="year"
@@ -155,25 +160,25 @@ const Personal = () => {
             className="clear-birthday-btn"
             onClick={handleClearBirthday}
           >
-            Clear
+            Xoá
           </button>
         </div>
         <div className="form-gender-item">
-          <label className="personal-label-gender">Gender</label>
+          <label className="personal-label-gender">Giới tính</label>
           <Radio.Group
             size="sm"
             value={formik.values.gender}
             onChange={handleChangeGender}
             name="gender"
           >
-            <Radio value="female">Female</Radio>
-            <Radio value="male">Male</Radio>
-            <Radio value="non-binary">Non-Binary</Radio>
-            <Radio value="not-answer">I'd prefer not to answer</Radio>
+            <Radio value="female">Nam</Radio>
+            <Radio value="male">Nữ</Radio>
+            <Radio value="non-binary">Giới tính thứ ba</Radio>
+            <Radio value="not-answer">Tôi không muốn trả lời</Radio>
           </Radio.Group>
         </div>
         <button className="personal-submit" type="submit">
-          Save Changes
+          Lưu thay đổi
         </button>
       </form>
       <LoadingLayout loading={bindings} />

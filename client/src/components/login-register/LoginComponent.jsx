@@ -67,39 +67,37 @@ const Login = () => {
   });
 
   const handleLoginByGoogle = async () => {
-    const check = await customFetch.post(
-      '/users/check',
-      JSON.stringify({ email: googleInfo.email })
-    );
-    if (check.data.accountExists) {
-      const resp = await customFetch.post(
-        '/users/login',
-        JSON.stringify({ email: googleInfo.email })
-      );
-      if (resp.data.success) {
-        dispatch(getUserInfo());
-        notify('Đăng nhập thành công', 'success');
-        setTimeout(() => {
-          navigate(-1);
-        }, 2000);
-      }
-    } else {
-      const resp = await customFetch({
+    try {
+      const registerResponse = await customFetch({
         method: 'post',
         url: '/users/register',
         data: JSON.stringify({
           name: googleInfo.name,
           email: googleInfo.email,
-          avatar: googleInfo.picture,
+          avatar: googleInfo.avatar,
         }),
       });
 
-      if (resp.data.success) {
-        const resp = await customFetch.post(
+      if (registerResponse.data.success) {
+        const loginResponse = await customFetch.post(
           '/users/login',
           JSON.stringify({ email: googleInfo.email })
         );
-        if (resp.data.success) {
+        if (loginResponse.data.success) {
+          dispatch(getUserInfo());
+          notify('Đăng nhập thành công', 'success');
+          setTimeout(() => {
+            navigate(-1);
+          }, 2000);
+        }
+      }
+    } catch (error) {
+      if (error.response.status === 400) {
+        const loginResponse = await customFetch.post(
+          '/users/login',
+          JSON.stringify({ email: googleInfo.email })
+        );
+        if (loginResponse.data.success) {
           dispatch(getUserInfo());
           notify('Đăng nhập thành công', 'success');
           setTimeout(() => {

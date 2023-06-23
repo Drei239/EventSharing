@@ -25,31 +25,33 @@ const getPersonalUser = async (id) => {
     .select("birthDay gender name description avatar phone email");
   return user;
 };
-const ratingUser = async ({ id, comments, youId }) => {
+const ratingUser = async ({ organizerId, comments, reviewerId }) => {
   const { star, comment, image } = comments;
-  const checkUser = await orderModel.find({ user: youId }).populate("event");
+  const checkUser = await orderModel
+    .find({ user: reviewerId })
+    .populate("event");
   if (checkUser.length === 0) {
     throw Error("Bạn không có quyền đánh giá");
   } else {
-    const checkAuthor = await checkUser.filter(
-      (item) => item.event.isCreator === id
+    const checkAuthor = await checkUser.find(
+      (item) => item.event.isCreator === organizerId
     );
     if (!checkAuthor) {
       throw Error("Bạn không có quyền đánh giá");
     }
 
-    const findUser = await userModel.findById(id);
-    if (youId === id) {
+    const findUser = await userModel.findById(organizerId);
+    if (reviewerId === organizerId) {
       throw Error("Bạn không thể đánh giá chính bạn");
     }
     const user =
       findUser.userRating.length > 0 &&
       findUser.userRating.find(
-        (rating) => rating?.postedBy == youId.toString()
+        (rating) => rating?.postedBy == reviewerId.toString()
       );
     if (user) {
       await userModel.updateOne(
-        { _id: id, userRating: { $elemMatch: user } },
+        { _id: organizerId, userRating: { $elemMatch: user } },
         {
           $set: {
             "userRating.$.star": star,
@@ -61,18 +63,18 @@ const ratingUser = async ({ id, comments, youId }) => {
         { new: true }
       );
     } else {
-      await userModel.findByIdAndUpdate(id, {
-        $push: { userRating: { star, comment, postedBy: youId } },
+      await userModel.findByIdAndUpdate(organizerId, {
+        $push: { userRating: { star, comment, postedBy: reviewerId } },
       });
     }
-    const getUpdateRating = await userModel.findById(id);
+    const getUpdateRating = await userModel.findById(organizerId);
     const ratingLength = getUpdateRating?.userRating?.length || 0;
     const sumRating =
       getUpdateRating?.userRating?.reduce((total, num) => {
         return total + num.star;
       }, 0) || 0;
     const updateRating2 = await userModel.findByIdAndUpdate(
-      id,
+      organizerId,
       { totalRating: sumRating / ratingLength || 0 },
       { new: true }
     );

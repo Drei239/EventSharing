@@ -1,0 +1,220 @@
+.management-events {
+  height: 120vh;
+  padding: 100px 0;
+  width: 1200px;
+  margin: 0 auto;
+}
+.management-events-filter {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-top: 40px;
+  position: relative;
+}
+.management-events-filter-search {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgb(112, 112, 112);
+  border-radius: 5px;
+  padding: 5px 10px;
+  height: 45px;
+  box-shadow: inset 1px 0px 3px 0px rgb(112, 112, 112);
+}
+.management-events-filter-search-icon {
+  font-size: 20px;
+}
+.management-events-filter-search input {
+  border: none;
+  outline: none;
+}
+.management-events-filter-type {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.management-events-filter-type-item {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  height: 35px;
+  border-radius: 25px;
+  width: 110px;
+  font-size: 15px;
+  padding-left: 6px;
+  border: 1px solid rgb(112, 112, 112);
+  box-shadow: 0px 0px 3px 0px #ccc;
+  cursor: pointer;
+  font-weight: 600;
+}
+.management-events-filter-type-icon {
+  font-size: 20px;
+}
+.management-events-filter-type-item-select {
+  background-color: var(--color-primary);
+  color: white;
+}
+.management-events-filter-type {
+  margin-left: 20px;
+  position: relative;
+}
+.management-events-filter-type::after {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 0;
+  height: 100%;
+  width: 1.5px;
+  background-color: #ccc;
+}
+.management-events-create-btn {
+  width: 150px;
+  height: 40px;
+  border-radius: 5px;
+  color: white;
+  background-color: #d1410c;
+  transition: 0.3s all;
+  border: none;
+  position: absolute;
+  right: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.management-events-create-btn:hover {
+  background-color: #f05537;
+}
+.management-events-list {
+  margin-top: 80px;
+}
+.management-events-list-header {
+  display: flex;
+  background-color: rgb(224, 217, 217);
+  padding: 10px 20px;
+  font-weight: 600;
+}
+.management-events-list-header div:first-child {
+  width: 50%;
+}
+.management-events-list-header div:nth-child(2),
+.management-events-list-header div:nth-child(3),
+.management-events-list-header div:nth-child(4) {
+  width: calc(40% / 2);
+}
+.management-events-list-items {
+}
+.management-events-list-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+.management-events-list-item:hover {
+  box-shadow: -2px 1px 5px 0px #ccc;
+}
+.management-events-list-item-info {
+  display: flex;
+  width: 50%;
+  align-items: center;
+  gap: 20px;
+}
+.management-events-list-item-info-1 {
+  display: flex;
+  flex-direction: column;
+}
+.management-events-list-item-info-1 span:first-child {
+  color: #f05537;
+  font-weight: 600;
+}
+.management-events-list-item-info-1 span:last-child {
+  color: #333;
+  font-weight: 700;
+  font-size: 20px;
+}
+.management-events-list-item-info-2 {
+  width: 100px;
+  height: 80px;
+}
+.management-events-list-item-info-2 img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.management-events-list-item-info3 {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  width: 400px;
+}
+.management-events-list-item-info3 span:first-child {
+  font-size: 16px;
+  font-weight: 600;
+}
+.management-events-list-item-info3 span:nth-child(2),
+.management-events-list-item-info3 span:last-child {
+  color: rgb(112, 112, 112);
+  font-size: 14px;
+}
+.management-events-list-item-sold {
+  width: calc(40% / 2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-right: 20px;
+}
+.management-events-list-item-gross {
+  width: calc(40% / 2);
+  color: #333;
+  font-weight: 600;
+}
+.management-events-list-item-status {
+  font-size: 18px;
+  font-weight: 500;
+  color: #333;
+  width: calc(40% / 2);
+}
+.management-events-list-item-tool {
+  position: absolute;
+  top: 50%;
+  right: 20px;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.management-events-list-item-tool button {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.management-events-list-item-btn-view {
+  background-color: rgb(89, 240, 89);
+}
+.management-events-list-item-btn-delete {
+  background-color: red;
+}
+.management-events-list-item-btn-edit {
+  background-color: #007aff;
+}
+.management-events-list-item-btn-summary {
+  background-color: #f05537;
+}
+.management-events-list-item-tool button:hover {
+  opacity: 0.7;
+}
+.management-events-calendar {
+  margin-top: 100px;
+  z-index: 0;
+}

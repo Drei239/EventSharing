@@ -102,7 +102,9 @@ const Carousel = () => {
                     <div className="carousel-content-info-item">
                       <BiMap className="carousel-content-info-icon" />
                       <span className="carousel-content-info-text">
-                        {item.location}
+                        {item.location?.province
+                          ? item.location?.province?.name
+                          : ""}
                       </span>
                     </div>
                     <div className="carousel-content-info-item">
