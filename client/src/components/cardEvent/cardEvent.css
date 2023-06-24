@@ -4,6 +4,7 @@
   border-radius: 5px;
   text-align: left;
   height: 400px;
+  overflow: hidden;
 }
 .hot-event {
   position: absolute;

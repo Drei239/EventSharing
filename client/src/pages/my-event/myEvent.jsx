@@ -5,18 +5,12 @@ import { getOrderbyId } from "../../features/order/orderSlice";
 import Select from "react-select";
 import { BiSearch } from "react-icons/bi";
 import { Progress } from "@nextui-org/react";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TablePagination from "@mui/material/TablePagination";
 import dayjs from "dayjs";
 import "./myEvent.css";
 import OpenIcon from "../../assets/icon-open.png";
-import { Checkbox } from "@mui/material";
-import { updateOneOrder } from "../../features/order/orderSlice";
+import { Table } from "../../components/my-event";
+import notify from "../../utils/notify";
+
 const orderStatusOption = [
   {
     label: "Tất cả đơn hàng",
@@ -38,57 +32,16 @@ const orderSortOption = [
     value: "createdAt",
   },
 ];
-const columns = [
-  {
-    key: "no1",
-    label: "No1",
-  },
-  {
-    key: "name",
-    label: "Tên",
-  },
-  {
-    key: "email",
-    label: "Email",
-  },
-  {
-    key: "phoneNumber",
-    label: "Điện thoại",
-  },
-  {
-    key: "status",
-    label: "Trạng thái thanh toán",
-  },
-];
-const statusOption = [
-  {
-    label: "Chưa thanh toán",
-    value: "unpaid",
-  },
-  {
-    label: "Đã thanh toán",
-    value: "paid",
-  },
-  {
-    label: "Đã tham gia",
-    value: "joined",
-  },
-  {
-    label: "Hoàn tiền",
-    value: "refund",
-  },
-];
 
 const MyEvent = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
-  const [selected, setSelected] = useState([]);
+
   const [statusSelected, setStatusSelected] = useState(orderStatusOption[0]);
   const [sortSelected, setSortSelected] = useState(orderSortOption[0]);
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowPerPage] = useState(10);
-  const { orders, isLoading, isSuccess, isError, countDocument } = useSelector(
+
+  const { orders, isLoading, isSuccess, isError } = useSelector(
     (state) => state.order
   );
   const rows = [];
@@ -98,42 +51,30 @@ const MyEvent = () => {
       no1: i + 1,
       timeOrder: orders[i]?.createdAt,
       orderId: orders[i]?._id,
+      isPaid: orders[i]?.isPaid,
+      isRefund: orders[i]?.isRefund,
+      isJoined: orders[i]?.isJoined,
       ...orders[i]?.user,
     });
   }
-  const onSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelected = rows.map((row) => row._id);
-      setSelected(newSelected);
-      return;
-    }
-    setSelected([]);
-  };
-  const handleClick = (id) => {
-    const selectIndex = selected.indexOf(id);
-    if (selectIndex === -1) {
-      setSelected((select) => [...select, id]);
-    } else {
-      setSelected(selected.filter((item) => item !== id));
-    }
-  };
+  const openMoreSelect = () => {};
+
   const handleChangeSort = (selectedOption) => {
     setSortSelected(selectedOption);
   };
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowPerPage = (event) => {
-    setRowPerPage(parseInt(event.target.value, 10));
-    setPage(0);
-  };
-
   const hanleChangeStatus = (selectedOption) => {
     setStatusSelected(selectedOption);
   };
-  const handleChangeStatusOrder = (selectedOption, id) => {
-    dispatch(updateOneOrder({ status: selectedOption.value, id: id }));
-  };
+  useEffect(() => {
+    if (isSuccess) {
+      notify("Thay đổi trạng thái của đơn hàng thành công", "success");
+    }
+  }, [isSuccess]);
+  useEffect(() => {
+    if (isError) {
+      notify("Thay đổi trạng thái của đơn hàng thất bại", "error");
+    }
+  }, [isError]);
   useEffect(() => {
     if (id) {
       dispatch(
@@ -149,9 +90,6 @@ const MyEvent = () => {
   useEffect(() => {
     console.log(orders);
   }, [orders]);
-  useEffect(() => {
-    console.log(selected);
-  }, [selected]);
   return (
     <>
       {orders && orders.length > 0 && (
@@ -164,26 +102,31 @@ const MyEvent = () => {
                 <span>{orders[0]?.event.status}</span>
               </div>
               <h3>{orders[0]?.event.title}</h3>
-              <div>
-                <span>
-                  {dayjs(orders[0]?.event.timeBegin).format(
-                    "ddd ,DD/MM/YYYY, hh:mm "
-                  )}
-                </span>
-                <span> - </span>
-                <span>
-                  {dayjs(orders[0]?.event.timeEnd).format(
-                    "ddd ,DD/MM/YYYY, hh:mm "
-                  )}
-                </span>
+              <div className="my-event-header-info-time">
+                <span>Thời gian diễn ra sự kiện: </span>
+                <div>
+                  <span>
+                    {dayjs(orders[0]?.event.timeBegin).format(
+                      "ddd ,DD/MM/YYYY, hh:mm "
+                    )}
+                  </span>
+                  <span> - </span>
+                  <span>
+                    {dayjs(orders[0]?.event.timeEnd).format(
+                      "ddd ,DD/MM/YYYY, hh:mm "
+                    )}
+                  </span>
+                </div>
               </div>
-
-              <p className="my-event-header-address">
-                {orders[0]?.event.location.address}{" "}
-                {orders[0]?.event.location.ward.name}{" "}
-                {orders[0]?.event.location.district.name}{" "}
-                {orders[0]?.event.location.province.name}
-              </p>
+              <div className="my-event-header-address">
+                <span>Address: </span>
+                <p className="my-event-header-address">
+                  {orders[0]?.event.location.address}{" "}
+                  {orders[0]?.event.location.ward.name}{" "}
+                  {orders[0]?.event.location.district.name}{" "}
+                  {orders[0]?.event.location.province.name}
+                </p>
+              </div>
               <div className="my-event-header-info-sold">
                 <span style={{ fontWeight: 700 }}>Sold:</span>
                 <div>
@@ -191,13 +134,36 @@ const MyEvent = () => {
                   <span> / </span>
                   <span>{orders[0]?.event.limitUser}</span>
                 </div>
-                {/* <Progress
-                  value={60}
-                  color="primary"
-                  size="sm"
-                  // style={{ width: "200px" }}
-                /> */}
               </div>
+              <div className="my-event-header-info-fee">
+                <span>Fee: </span>
+                <span>
+                  {orders[0].event.fee > 0 ? `${orders[0].event.fee}đ` : "free"}
+                </span>
+              </div>
+            </div>
+            <div className="my-event-header-status-sale">
+              <span
+                className={`${
+                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
+                  new Date().getTime()
+                    ? "my-event-header-status-sale-on"
+                    : "my-event-header-status-sale-end"
+                } `}
+              ></span>
+              <span
+                className={` ${
+                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
+                  new Date().getTime()
+                    ? "my-event-header-status-sale-on-text"
+                    : "my-event-header-status-sale-end-text"
+                }`}
+              >
+                {new Date(orders[0]?.event?.timeEndSignup).getTime() <
+                new Date().getTime()
+                  ? "On Sale"
+                  : "Sale Ended"}
+              </span>
             </div>
           </div>
           <div className="my-event-filter">
@@ -231,92 +197,8 @@ const MyEvent = () => {
               </button>
             </div>
           </div>
-          <div>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell>
-                    <Checkbox
-                      indeterminate={
-                        selected.length > 0 && selected.length < rows.length
-                      }
-                      checked={
-                        rows.length > 0 && selected.length === rows.length
-                      }
-                      onChange={onSelectAllClick}
-                    />
-                  </TableCell>
-                  <TableCell>No1</TableCell>
-                  <TableCell>Thời gian đặt hàng</TableCell>
-                  <TableCell>Tên</TableCell>
-                  <TableCell>Email</TableCell>
-                  <TableCell width={100}>Phone</TableCell>
-                  <TableCell>Status</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row, index) => (
-                  <>
-                    {row.name && (
-                      <TableRow
-                        key={row._id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                        onClick={() => handleClick(row._id)}
-                      >
-                        <TableCell>
-                          <Checkbox
-                            checked={selected.indexOf(row._id) !== -1}
-                            inputProps={{
-                              "aria-labelledby": `enhanced-table-checkbox-${index}`,
-                            }}
-                          />
-                        </TableCell>
-                        <TableCell component="th" scope="row">
-                          {row.no1}
-                        </TableCell>
-                        <TableCell>
-                          {dayjs(row.timeOrder).format(
-                            "ddd ,DD/MM/YYYY, hh:mm "
-                          )}
-                        </TableCell>
-                        <TableCell>{row.name}</TableCell>
-                        <TableCell>{row.email}</TableCell>
-                        <TableCell>{row.phone}</TableCell>
-                        <TableCell align="left">
-                          <Select
-                            className="my-event-filter-select"
-                            options={statusOption}
-                            styles={{
-                              control: (baseStyles, state) => ({
-                                ...baseStyles,
-                                height: "30px",
-                                width: 150,
-                              }),
-                            }}
-                            onChange={(e) =>
-                              handleChangeStatusOrder(e, row?.orderId)
-                            }
-                          />
-                        </TableCell>
-                      </TableRow>
-                    )}
-                  </>
-                ))}
-              </TableBody>
-            </Table>
 
-            <TablePagination
-              rowsPerPageOptions={[5, 10, 20]}
-              component="div"
-              count={countDocument}
-              page={page}
-              rowsPerPage={rowsPerPage}
-              onPageChange={handleChangePage}
-              onRowsPerPageChange={handleChangeRowPerPage}
-            />
-          </div>
+          <Table rows={rows} idEvent={id} />
         </div>
       )}
     </>

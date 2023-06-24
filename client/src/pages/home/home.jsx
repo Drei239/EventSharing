@@ -47,6 +47,9 @@ const Home = () => {
     }
     setRequest(true);
   }, [newEvents]);
+  useEffect(() => {
+    console.log(registeredEvent);
+  }, [registeredEvent]);
   return (
     <motion.div layout className="home">
       <Carousel />
@@ -110,11 +113,11 @@ const Home = () => {
         {joinedEvent && joinedEvent.length > 0 && (
           <div className="btn-show">
             <span className="strike-left"></span>
-            <button>Xem thêm</button>
+            <button>Xem tất cả</button>
             <span className="strike-right"></span>
           </div>
         )}
-        {isLogin && !joinedEvent && (
+        {isLogin && (!joinedEvent || joinedEvent.length <= 0) && (
           <EmptyEvent
             icon={EmptyIcon}
             message="Bạn chưa tham gia sự kiện nào"
@@ -146,7 +149,7 @@ const Home = () => {
         {registeredEvent && registeredEvent.length > 0 && (
           <div className="btn-show">
             <span className="strike-left"></span>
-            <button>Xem thêm</button>
+            <button>Xem tất cả</button>
             <span className="strike-right"></span>
           </div>
         )}
