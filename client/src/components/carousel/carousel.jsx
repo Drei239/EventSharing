@@ -83,51 +83,55 @@ const Carousel = () => {
         loop={true}
         autoplay={{ delay: 5000 }}
       >
-        {highlightEvent.map((item) => {
-          return (
-            <SwiperSlide key={item._id}>
-              <div className="slide-item">
-                <div className="carousel-content">
-                  <span className="carousel-category">
-                    {item.category.categoryName}
-                  </span>
-                  <h2>{item.title}</h2>
-                  <div className="carousel-content-info">
-                    <div className="carousel-content-info-item">
-                      <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
-                      <span className="carousel-content-info-text">
-                        {dayjs(item?.timeBegin).format("DD/MM/YYYY")}
-                      </span>
+        {highlightEvent &&
+          highlightEvent.length > 0 &&
+          highlightEvent.map((item) => {
+            return (
+              <SwiperSlide key={item._id}>
+                <div className="slide-item">
+                  <div className="carousel-content">
+                    <span className="carousel-category">
+                      {item.category.categoryName}
+                    </span>
+                    <h2>{item?.title}</h2>
+                    <div className="carousel-content-info">
+                      <div className="carousel-content-info-item">
+                        <AiOutlineCalendar className="carousel-icon-calendar carousel-content-info-icon" />
+                        <span className="carousel-content-info-text">
+                          {dayjs(item?.timeBegin).format("DD/MM/YYYY")}
+                        </span>
+                      </div>
+                      <div className="carousel-content-info-item">
+                        <BiMap className="carousel-content-info-icon" />
+                        <span className="carousel-content-info-text">
+                          {item.location?.province
+                            ? item.location?.province?.name
+                            : ""}
+                        </span>
+                      </div>
+                      <div className="carousel-content-info-item">
+                        <MdOutlineAttachMoney className="carousel-content-info-icon" />
+                        <span className="carousel-content-info-text">
+                          {item.fee === 0 ? "free" : item.fee}
+                        </span>
+                      </div>
                     </div>
-                    <div className="carousel-content-info-item">
-                      <BiMap className="carousel-content-info-icon" />
-                      <span className="carousel-content-info-text">
-                        {item.location}
-                      </span>
-                    </div>
-                    <div className="carousel-content-info-item">
-                      <MdOutlineAttachMoney className="carousel-content-info-icon" />
-                      <span className="carousel-content-info-text">
-                        {item.fee === 0 ? "free" : item.fee}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="carousel-content-btn">
-                    <Link to={`/event/${item._id}`}>
+                    <div className="carousel-content-btn">
+                      <Link to={`/event/${item._id}`}>
+                        <button className="carousel-content-btn-item">
+                          Chi tiết
+                        </button>
+                      </Link>
                       <button className="carousel-content-btn-item">
-                        Chi tiết
+                        Mua vé
                       </button>
-                    </Link>
-                    <button className="carousel-content-btn-item">
-                      Mua vé
-                    </button>
+                    </div>
                   </div>
+                  <img className="carousel-img" src={item.banner} alt="" />
                 </div>
-                <img className="carousel-img" src={item.banner} alt="" />
-              </div>
-            </SwiperSlide>
-          );
-        })}
+              </SwiperSlide>
+            );
+          })}
 
         {/* ... */}
       </StyledSwiper>

@@ -3,7 +3,7 @@ import customFetch from "../../utils/axios.config";
 import userService from "./userService";
 
 const initialState = {
-  userInfo: {},
+  userInfo: null,
   userHighlight: [],
   isLoading: true,
   isLogin: false,

@@ -3,6 +3,7 @@ import dayjs from "dayjs";
 import { Pagination } from "@nextui-org/react";
 import { useDispatch, useSelector } from "react-redux";
 import { useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 
 import { Filter, Banner, Loading } from "../../components";
 import { CardEvent } from "../../components";
@@ -55,7 +56,7 @@ const Events = () => {
     console.log(events);
   }, [events]);
   return (
-    <div className="events">
+    <motion.div className="events" layout>
       <div className="banner-event">
         {isLoading ? <LoadingBanner /> : <Banner />}
       </div>
@@ -95,7 +96,7 @@ const Events = () => {
           </div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
 

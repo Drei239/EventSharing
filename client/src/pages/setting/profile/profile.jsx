@@ -43,9 +43,9 @@ const Profile = () => {
   const [requestError, setRequestError] = useState(false);
   const formik = useFormik({
     initialValues: {
-      name: userInfo?.name || "",
-      phoneNumber: userInfo?.phone || "",
-      description: userInfo?.description || "",
+      name: "",
+      phoneNumber: "",
+      description: "",
     },
     validationSchema: validateSchema,
 
@@ -114,9 +114,9 @@ const Profile = () => {
   }, [message]);
   return (
     <motion.div layout className="profile">
-      <h2 className="profile-title">Edit profile</h2>
+      <h2 className="profile-title">Chỉnh sửa hồ sơ</h2>
       <p className="profile-info">
-        This infomation will apperar on your public profile
+        Thông tin này sẽ xuất hiện trên hồ sơ công khai của bạn
       </p>
       <div className="avatar-profile">
         {imgSelect && (
@@ -130,7 +130,7 @@ const Profile = () => {
           className="avatar-img"
         />
         <button className="btn-upload-profile" onClick={openModalFunc}>
-          Upload New
+          Tải lên mới
         </button>
         <UploadImage />
       </div>
@@ -139,7 +139,9 @@ const Profile = () => {
           <label>Tên (bắt buộc)</label>
           <div
             className={`${
-              formik.errors.name ? "input-err input-name" : "input-name"
+              formik.touched.name && formik.errors.name
+                ? "input-err input-name"
+                : "input-name"
             }`}
           >
             <input
@@ -152,7 +154,7 @@ const Profile = () => {
             <span className="number-resignal">{remainingChars}</span>
           </div>
           <span className="err-text">
-            {formik.errors.name && formik.errors.name}
+            {formik.touched.name && formik.errors.name}
           </span>
         </div>
         <div className="form-item">
@@ -176,7 +178,9 @@ const Profile = () => {
           <label>Số điện thoại</label>
           <div
             className={`${
-              formik.errors.name ? "input-err input-name" : "input-name"
+              formik.touched.phoneNumber && formik.errors.phoneNumber
+                ? "input-err input-name"
+                : "input-name"
             }`}
           >
             <input
@@ -188,10 +192,12 @@ const Profile = () => {
             />
           </div>
           <span className="err-text">
-            {formik.errors.phoneNumber && formik.errors.phoneNumber}
+            {formik.touched.phoneNumber &&
+              formik.errors.phoneNumber &&
+              formik.errors.phoneNumber}
           </span>
         </div>
-        <button className="btn-submit">Save Changes</button>
+        <button className="btn-submit">Lưu thay đổi</button>
       </form>
       <LoadingLayout loading={bindings} />
     </motion.div>
