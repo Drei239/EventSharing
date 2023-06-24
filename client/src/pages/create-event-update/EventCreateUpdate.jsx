@@ -13,7 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import covertDatetimeToISO from '../../utils/coverDatetimeToIso';
 import provinces from '../../data/provinces.json';
 import notify from '../../utils/notify.js';
-import './CreateEventPage.css';
+import './EventCreateUpdate.css';
 
 const EventCreateUpdate = () => {
   const [searchParams] = useSearchParams();
@@ -59,7 +59,10 @@ const EventCreateUpdate = () => {
     if (searchParams.get('type') === 'update') {
       customFetch
         .get(`/events/get/${searchParams.get('id')}`)
-        .then((resp) => setEvent(resp.data.event[0]));
+        .then((resp) => {
+          setEvent(resp.data[0]);
+        })
+        .catch((error) => notify('Lỗi kết nối máy chủ', error));
     }
   }, []);
 
@@ -90,8 +93,7 @@ const EventCreateUpdate = () => {
         fee: String(event.fee),
         quantityTicket: String(event.limitUser),
         typeEvent: event.isOnline ? 'online' : 'offline',
-        category: categoryList?.find((item) => item._id === event?.category)
-          .categoryName,
+        category: event?.category.categoryName,
         linkOnline: event.linkOnline,
         description: event.description,
         dateStart: date(timeBegin),
@@ -823,9 +825,19 @@ const EventCreateUpdate = () => {
             </p>
           </div>
         </section>
-        <Button type='submit' className='create-event__button'>
-          {searchParams.get('type') === 'update' ? 'Cập nhật' : 'Tạo mới'}
-        </Button>
+        <section className='create-event__button-wrapper'>
+          <Button type='submit' className='create-event__button'>
+            {searchParams.get('type') === 'update' ? 'Cập nhật' : 'Tạo mới'}
+          </Button>
+          {searchParams.get('type') === 'update' && (
+            <Button
+              className='create-event__button create-event__button--cancel'
+              onClick={() => navigate(-1)}
+            >
+              Hủy
+            </Button>
+          )}
+        </section>
       </form>
       <ToastContainer />
     </div>
