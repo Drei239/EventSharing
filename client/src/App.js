@@ -11,7 +11,7 @@ import { Route, Routes } from 'react-router-dom';
 import { NextUIProvider } from '@nextui-org/react';
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
-import { LoggedInOnly } from './components';
+import { LoggedInOnly, NotLoggedInOnly } from './components';
 import OrganizersPage from './pages/organizers/OrganizersPage';
 function App() {
   const open = useSelector((state) => state.user.open);
@@ -22,6 +22,14 @@ function App() {
         <ToastContainer limit={3} />
         <Routes>
           <Route path='/login-register' element={<LoginRegisterPage />} />
+          <Route
+            path='/login-register'
+            element={
+              <NotLoggedInOnly>
+                <LoginRegisterPage />
+              </NotLoggedInOnly>
+            }
+          />
           <Route
             path='/event-create-update'
             element={
