@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
 
 const {
@@ -7,35 +7,36 @@ const {
   authLogin,
   profileUser,
   updateUserById,
-  checkAccount,
+  getOrganizers,
   logout,
   deleted,
   refreshToken,
   ratingUser,
   highlightUser,
-} = require("../controllers/userController");
+} = require('../controllers/userController');
 const {
   protect,
   isAdmin,
   verifyUser,
-} = require("../middleware/authMiddleware");
+} = require('../middleware/authMiddleware');
 
 const {
   registerValidate,
   loginValidate,
   updateUserValidate,
-} = require("../middleware/validate");
-const { ref } = require("joi");
+} = require('../middleware/validate');
+const { ref } = require('joi');
 
-router.get("/profile", protect, profileUser);
-router.get("/getall", getAllUser);
-router.post("/login", authLogin);
-router.post("/register", registerValidate, register);
-router.get("/logout", logout);
-router.put("/update/:id", protect, verifyUser, updateUserById);
-router.delete("/delete/:id", protect, verifyUser, deleted);
-router.put("/rating/:id", protect, ratingUser);
-router.get("/highlight", highlightUser);
+router.get('/profile', protect, profileUser);
+router.get('/organizers/:id', getOrganizers);
+router.get('/getall', getAllUser);
+router.post('/login', authLogin);
+router.post('/register', registerValidate, register);
+router.get('/logout', logout);
+router.put('/update/:id', protect, verifyUser, updateUserById);
+router.delete('/delete/:id', protect, verifyUser, deleted);
+router.put('/rating/:id', protect, ratingUser);
+router.get('/highlight', highlightUser);
 
 // router.get("update", updateUser);
 module.exports = router;
