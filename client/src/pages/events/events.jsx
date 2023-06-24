@@ -34,7 +34,7 @@ const Events = () => {
             filter.sort !== "" ? `&sort=${filter.sort}` : ""
           }${filter.fee !== "" ? `&${filter.fee}` : ""}${
             filter.type !== "" ? `&${filter.type}` : ""
-          }${\
+          }${
             filter.date
               ? `&timeBegin[gte]=${filter.date.from}&timeEnd[lte]=${
                   filter.date.to
