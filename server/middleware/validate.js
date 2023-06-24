@@ -2,16 +2,12 @@ const Joi = require('joi');
 
 const registerValidate = (req, res, next) => {
   const data = req.body;
-  console.log(body);
   const schema = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
-    password: Joi.string().min(6).max(24).required(),
-    confirmPassword: Joi.string().valid(Joi.ref('password')).required(),
-    phone: Joi.number().required(),
-    birthDay: Joi.date().required(),
+    password: Joi.string().min(6).required(),
   });
-  const schemaGoogle = joi.object({
+  const schemaGoogle = Joi.object({
     name: Joi.string().required(),
     email: Joi.string().email().required(),
     avatar: Joi.string().required(),
@@ -26,7 +22,6 @@ const registerValidate = (req, res, next) => {
     return next();
   }
 };
-
 
 const updateUserValidate = (req, res, next) => {
   const data = req.body;
@@ -44,7 +39,6 @@ const updateUserValidate = (req, res, next) => {
   if (error) return res.status(400).send(error.details[0].message);
   next();
 };
-
 
 const loginValidate = (req, res, next) => {
   const data = req.body;
@@ -67,4 +61,5 @@ const refreshTokenBodyValidation = (req, res, next) => {
   next();
 };
 
-module.exports = { registerValidate, loginValidate, updateUserValidate, refreshTokenBodyValidation };
+module.exports = {  registerValidate,  loginValidate,  updateUserValidate,  refreshTokenBodyValidation,
+};

@@ -1,8 +1,8 @@
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModel");
-const { getPersonalUser } = require("../services/userService");
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/userModel');
+const userService = require('../services/userService');
 
 const createJwt = (value) => {
   try {
@@ -81,85 +81,46 @@ const authLogin = asyncHandler(async (req, res) => {
   if (user.password) {
     if (user && (await bcrypt.compare(password, user.password))) {
       const jwt = createJwt(user._id);
-      if (jwt) {
-        res.cookie("access", jwt.accessToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 2 * 3600000),
-        });
 
-        res.cookie("token", jwt.token, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 2 * 3600000),
-        });
+      res.cookie('access', jwt.token, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 2 * 3600000),
+      });
 
-        res.cookie("refresh", jwt.refreshToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 720 * 3600000),
-        });
-        res.cookie("refresh", jwt.refreshToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 720 * 3600000),
-        });
+      res.cookie('refresh', jwt.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        expires: new Date(Date.now() + 720 * 3600000),
+      });
 
-        res.status(201).json({
-          success: true,
-          data: "Login Success",
-        });
-        res.end();
-      } else {
-        res.status(400);
-        throw new Error("Create token fail");
-      }
       res.status(201).json({
         success: true,
-        data: "Login Success",
+        data: 'Đăng nhập thành công',
       });
     } else {
       return res
         .status(401)
-        .json({ success: false, message: "Email or password is incorrect" });
+        .json({ success: false, message: 'Email or password is incorrect' });
     }
   } else {
     const jwt = createJwt(user._id);
 
-    if (jwt) {
-      res.cookie("access", jwt.accessToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
-      res.cookie("token", jwt.token, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 2 * 3600000),
-      });
+    res.cookie('access', jwt.token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
 
-      res.cookie("refresh", jwt.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 720 * 3600000),
-      });
-      res.cookie("refresh", jwt.refreshToken, {
-        httpOnly: true,
-        secure: true,
-        expires: new Date(Date.now() + 720 * 3600000),
-      });
+    res.cookie('refresh', jwt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 720 * 3600000),
+    });
 
-      res.status(201).json({
-        success: true,
-        data: "Login Success",
-      });
-    } else {
-      res.status(400);
-      throw new Error("Create token fail");
-    }
     res.status(201).json({
       success: true,
-      data: "Login Success",
+      data: 'Đăng nhập thành công',
     });
   }
 });
@@ -167,19 +128,10 @@ const authLogin = asyncHandler(async (req, res) => {
 //4. GET USER PROFILE
 const profileUser = asyncHandler((req, res) => {
   const user = req.user;
-  const token = req.token;
-
-  if (token) {
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
-  }
-
   res.status(200).json(user);
   res.end();
 });
+
 //6. UPDATE USER BY ID
 const updateUserById = asyncHandler(async (req, res, next) => {
   const user = await userModel.findById(req.params.id);
@@ -188,9 +140,9 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   }
 
   const {
-    avatar,
     name,
     email,
+    avatar,
     oldPassword,
     newPassword,
     phone,
@@ -198,14 +150,16 @@ const updateUserById = asyncHandler(async (req, res, next) => {
     description,
     gender,
   } = req.body;
-
   if (oldPassword) {
     const passwordVerify = await bcrypt.compare(oldPassword, user.password);
+    if (!passwordVerify) {
+      res.status(400).json({ status: 400, message: 'Password is not match' });
+    }
     if (passwordVerify && newPassword) {
-      user.password = passwordVerify;
+      user.password = newPassword;
     }
   } else {
-    if (newPassword) {
+    if (newPassword && req.user.isAdmin) {
       user.password = newPassword;
     }
   }
@@ -215,18 +169,9 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   user.phone = phone || user.phone;
   user.birthDay = birthDay || user.birthDay;
   user.description = description || user.description;
-  user.gender = gender || user.gender;
   user.avatar = avatar || user.avatar;
+  user.gender = gender || user.gender;
   const updatedUser = await user.save();
-
-  const token = req.token;
-  if (token) {
-    res.cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-    });
-  }
 
   if (updatedUser) {
     res.status(200).json({
@@ -234,29 +179,71 @@ const updateUserById = asyncHandler(async (req, res, next) => {
       data: updatedUser,
     });
   } else {
-    console.log(err);
-    next(err);
+    res.status(400);
+    throw new Error('Update fail');
   }
 });
 
 //7. DELETE USER
-const deleted = asyncHandler(async (req, res) => {
-  const user = await userModel.findByIdAndDelete(req.params.id);
-  if (!user) {
-    res.status(404).json({ message: "Deletion failed" });
-  }
-  res.status(200).json({ message: "Delete successfully" });
-});
+const deleted = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await userModel.findById(req.params.id);
+    if (!user) {
+      res.status(404).json({ status: 400, message: 'User not found' });
+    }
+    console.log('a');
+    const comparePassword = await bcrypt.compare(
+      req.body.password,
+      user.password
+    );
 
+    if (!comparePassword) {
+      if (!req.user?.isAdmin) {
+        res.status(400).json({ status: 400, message: 'Mật khẩu không đúng' });
+      } else {
+        await userModel.findByIdAndDelete(user._id);
+        res.status(200).json({ message: 'Delete successfully' });
+      }
+    } else {
+      await userModel.findByIdAndDelete(user._id);
+      res.status(200).json({ message: 'Delete successfully' });
+    }
+  } catch (err) {
+    next(err);
+  }
+});
+const ratingUser = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const youId = req.user._id;
+  try {
+    const updateRating = await userService.ratingUser({
+      id: id,
+      comments: req.body,
+      youId: youId,
+    });
+    res
+      .status(200)
+      .json({ status: 200, data: updateRating, message: 'comment thanh cong' });
+  } catch (err) {
+    next(err);
+  }
+});
+const highlightUser = asyncHandler(async (req, res, next) => {
+  try {
+    const user = await userService.highlightUser();
+    res
+      .status(200)
+      .json({ status: 200, data: user, message: 'get User thanh cong' });
+  } catch (err) {
+    next(err);
+  }
+});
 // Log Out
 const logout = (req, res) => {
-  res.clearCookie("access");
-  res.clearCookie("refresh");
-  res.clearCookie("token");
-  res.clearCookie("refresh");
+  res.clearCookie('token');
+  res.clearCookie('refresh');
   res.end();
 };
-
 // check refresh token or not
 const refreshToken = asyncHandler(async (req, res) => {
   const refreshToken = req.cookies.refresh;
@@ -271,7 +258,7 @@ const refreshToken = asyncHandler(async (req, res) => {
       }
     );
     if (newToken) {
-      res.cookie("access", newToken, {
+      res.cookie('access', newToken, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
@@ -279,11 +266,11 @@ const refreshToken = asyncHandler(async (req, res) => {
       res.status(200).end();
     }
   } else {
-    res.clearCookie("access");
-    res.clearCookie("refresh");
+    res.clearCookie('access');
+    res.clearCookie('refresh');
     res.status(401);
   }
 });
 
-module.exports = {getAllUser, register, authLogin, profileUser, updateUserById, deleted, logout, checkAccount, refreshToken, getPersonalUser,
+module.exports = {getAllUser, register, authLogin,  profileUser,  updateUserById,  deleted,  logout,  ratingUser,  highlightUser,  refreshToken,
 };
