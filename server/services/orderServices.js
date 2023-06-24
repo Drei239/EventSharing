@@ -200,7 +200,6 @@ const updateRequestOrder = asyncHandler(
             },
           }))
         );
-        console.log(updateOrder);
         if (updateOrder && updateOrder.matchedCount != 0) {
           return updateOrder;
         } else {
