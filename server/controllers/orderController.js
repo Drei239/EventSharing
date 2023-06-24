@@ -31,7 +31,7 @@ const getOrdersByEventId = asyncHandler(async (req, res) => {
       requestEvent,
       page,
       limit,
-      keyword: req.query.keyword,
+      keyword: keyword,
       sort: sort,
       status: status,
     });

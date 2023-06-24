@@ -23,6 +23,7 @@ const Card = ({
   timeEndSignup,
 }) => {
   const { isLoading } = useSelector((state) => state.event);
+  const categories = useSelector((state) => state.category.categories);
   const checkDate = (startDate, endDate) => {
     if (new Date(startDate).getTime() < new Date().getTime()) {
       return "Sắp tới";
@@ -60,7 +61,9 @@ const Card = ({
                 <div className="cardEvent-info1-categories">
                   {" "}
                   <div className="cardEvent-info1-category">
-                    {category?.categoryName}
+                    {category?.categoryName ||
+                      categories.find((item) => item._id === category)
+                        .categoryName}
                   </div>
                 </div>
               </div>
