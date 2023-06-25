@@ -13,12 +13,10 @@ const getAllEvent = async (search) => {
 const getEventById = async (eventId) => {
   const response = await axios.get(
     `http://localhost:3002/events/get/${eventId}`
-  )
+  );
   return response.data;
-
-  // return response;
 };
-const updateEvent = async ({ }) => {
+const updateEvent = async ({}) => {
   const data = await UseCallApi({
     method: "PUT",
     url: `/events/update`,
@@ -58,7 +56,7 @@ const getJoinedEvent = async () => {
 };
 const getAllEventofUser = async (id, status, keyword) => {
   const data = await UseCallApi({
-    url: `/events/all-ofUser/${id}?status=${status}&keyword=${keyword}`,
+    url: `/events/user/${id}?status=${status}&keyword=${keyword}`,
   });
   return data;
 };

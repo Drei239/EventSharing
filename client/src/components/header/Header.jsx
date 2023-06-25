@@ -103,7 +103,6 @@ const Header = () => {
               </Link>
             </div>
           ) : null}
-
           <div className='header__log'>
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>

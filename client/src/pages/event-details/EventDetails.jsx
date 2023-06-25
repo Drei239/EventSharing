@@ -3,8 +3,8 @@ import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
 import Discussions from '../../components/discussions/Discussions';
 import EventModal from '../../components/ui/eventModal';
-import Gallery from '../../components/gallery/Gallery';
 import dayjs from "dayjs";
+import Gallery from '../../components/gallery/Gallery';
 import { Button, Tooltip, Link } from "@nextui-org/react";
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
@@ -14,42 +14,37 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getEventById } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
 
-
 const EventDetails = () => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
 	const { id } = useParams();
 	const dispatch = useDispatch();
-	const eventDetail = useSelector(state => state.event.events[0] || null);
+	const eventDetail = useSelector(state => state);
 	const allCategories = useSelector(state => state.category.categories || null);
-
+	
 	const isOnline = isOnlineEvent();
+	console.log("####", eventDetail);
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 	useEffect(() => { dispatch(getAllCategory()) }, []);
-
+	
 	const category = allCategories?.find(category => category?._id === eventDetail?.category);
+	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
 
 	if (category == null) {
 		return false;
 	};
-
-	const imageList = eventDetail?.imageList.map((item) => ({ image: item }));
-
-	if (imageList == undefined) {
+	
+	if (imageList === undefined) {
 		return false;
 	};
 
+	if (eventDetail === undefined) {
+		return false;
+	};
+
+
 	function isOnlineEvent() {
 		return eventDetail?.isOnline ? "Online" : "Offline";
-	}
-
-	const captionStyle = {
-		fontSize: '2em',
-		fontWeight: 'bold',
-	}
-	const slideNumberStyle = {
-		fontSize: '20px',
-		fontWeight: 'bold',
 	}
 
 	return (
@@ -67,8 +62,8 @@ const EventDetails = () => {
 							<h3 className='info__title'>Thông tin sự kiện</h3>
 							<div className='event__name'><h4>{eventDetail?.title || 'no information'}</h4></div>
 							<Link href='/'>
-								<Tooltip content={category?.categoryDescription}>
-									<Button className='event__category' size="xs" color="primary" auto ghost>{category?.categoryName || 'no information'}</Button>
+								<Tooltip content={eventDetail?.category?.categoryDescription}>
+									<Button className='event__category' size="xs" color="primary" auto ghost>{eventDetail?.category?.categoryName || 'no information'}</Button>
 								</Tooltip>
 							</Link>
 							<div className='event__adress'>
@@ -104,7 +99,12 @@ const EventDetails = () => {
 					</div>
 					<div className="event__title">
 						<h3 className='event__description'>Giới thiệu</h3>
-						<p className='description__item'>{eventDetail?.description || 'no information'}</p>
+						<p className='description__item'>{eventDetail?.description || 'no information'} 
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
+						Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
+						</p>
 					</div>
 				</div>
 				<div style={{

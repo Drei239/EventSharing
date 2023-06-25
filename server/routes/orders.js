@@ -5,9 +5,9 @@ const {
   getOrdersByEventId,
   updateOdrder,
   updateAllByEventId,
-  updateRequestOrder
+  updateRequestOrder,
 } = require("../controllers/orderController");
-const { protect } = require("../middleware/authMiddleware");
+const { protect, verifyUser } = require("../middleware/authMiddleware");
 
 //1.CREATE NEW ORDER
 router.post("/create", protect, createNewOrder);
@@ -24,4 +24,3 @@ router.put("/event/:id/updateAll", protect, updateAllByEventId);
 router.put("/event/:id/updateRequest", protect, updateRequestOrder);
 
 module.exports = router;
-

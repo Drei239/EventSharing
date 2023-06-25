@@ -1,7 +1,6 @@
 import {
   createSlice,
   createAsyncThunk,
-  PayloadAction,
   createAction,
 } from "@reduxjs/toolkit";
 import eventService from "./eventService";
@@ -149,11 +148,11 @@ const eventSlice = createSlice({
       state.isLoading = false;
       state.message = action.error;
     });
-    builder.addCase(getEventById.pending, (state, action) => {
+    builder.addCase(getEventById.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(getEventById.fulfilled, (state, action) => {
-      state.events = action.payload.event;
+      state.events = action.payload;
       state.isLoading = false;
       state.isSuccess = true;
     });
@@ -179,7 +178,7 @@ const eventSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getNewEvent.fulfilled, (state, action) => {
-      state.newEvents = action.payload?.data || null;
+      state.newEvents = action.payload?.data;
       state.countDocument = action.payload?.totalCount;
       state.isLoading = false;
       state.isSuccess = true;
