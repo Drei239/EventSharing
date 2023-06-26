@@ -33,11 +33,22 @@ h3 {
 	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 }
 
+/* .organizers__container {
+	color: black;
+		display: flex;
+		text-align: center;
+		align-items: center;
+		flex-direction: column;
+} */
+
 .organizers {
 	color: black;
 	display: flex;
 	text-align: center;
+	align-items: center;
 	flex-direction: column;
+	margin-left: 60px;
+	gap: 10px;
 }
 
 .organizers:hover {
@@ -48,7 +59,8 @@ h3 {
 .organizers__image {
 	border-radius: 50%;
 	overflow: hidden;
-	width: 120px;
+	width: 100px;
+	height: 100px;
 }
 
 .organizers__image:hover {

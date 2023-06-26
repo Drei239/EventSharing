@@ -6,7 +6,6 @@ import './Gallery.css'
 const Gallery = ({ imageList }) => {
 	const [images, setImages] = useState(imageList);
 	const [currentImageIndex, setCurrentImageIndex] = useState(null);
-
 	const openImage = (index) => {
 		setCurrentImageIndex(index);
 	};
@@ -26,7 +25,7 @@ const Gallery = ({ imageList }) => {
 		}
 		setCurrentImageIndex(newIndex);
 	};
-
+	
 	return (
 		<div className="gallery__content">
 			<div className="image-list">

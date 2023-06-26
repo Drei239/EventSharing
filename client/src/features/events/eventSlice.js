@@ -2,10 +2,10 @@ import {
   createSlice,
   createAsyncThunk,
   createAction,
-} from "@reduxjs/toolkit";
-import eventService from "./eventService";
+} from '@reduxjs/toolkit';
+import eventService from './eventService';
 export const updateEvent = createAsyncThunk(
-  "event/updateEvent",
+  'event/updateEvent',
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await eventService.updateUser({ id });
@@ -16,7 +16,7 @@ export const updateEvent = createAsyncThunk(
   }
 );
 export const getEvent = createAsyncThunk(
-  "event/getAllEvent",
+  'event/getAllEvent',
   async (search, { rejectWithValue }) => {
     try {
       return await eventService.getAllEvent(search);
@@ -26,17 +26,19 @@ export const getEvent = createAsyncThunk(
   }
 );
 export const getEventById = createAsyncThunk(
-  "event/get/${eventId}",
+  'event/get/:id',
   async (eventId, { rejectWithValue }) => {
     try {
-      return await eventService.getEventById(eventId);
+      const getEvent = await eventService.getEventById(eventId);
+      console.log(getEvent);
+      return getEvent;
     } catch (err) {
       rejectWithValue(err);
-    }
+    } 
   }
 );
 export const getHighlightEvent = createAsyncThunk(
-  "event/getHighlight",
+  'event/getHighlight',
   async (search, { rejectWithValue }) => {
     try {
       return await eventService.getHighlightEvent();
@@ -46,7 +48,7 @@ export const getHighlightEvent = createAsyncThunk(
   }
 );
 export const getNewEvent = createAsyncThunk(
-  "event/getNewEvent",
+  'event/getNewEvent',
   async (page, { rejectWithValue }) => {
     try {
       return await eventService.getNewEvent(page);
@@ -56,7 +58,7 @@ export const getNewEvent = createAsyncThunk(
   }
 );
 export const getRegisterEvent = createAsyncThunk(
-  "event/getRegisterEvent",
+  'event/getRegisterEvent',
   async (_, { rejectWithValue }) => {
     try {
       return await eventService.getRegisteredEvent();
@@ -66,7 +68,7 @@ export const getRegisterEvent = createAsyncThunk(
   }
 );
 export const getJoinedEvent = createAsyncThunk(
-  "event/getJoinedEvent",
+  'event/getJoinedEvent',
   async (_, { rejectWithValue }) => {
     try {
       return await eventService.getJoinedEvent();
@@ -76,7 +78,7 @@ export const getJoinedEvent = createAsyncThunk(
   }
 );
 export const getAllEventofUser = createAsyncThunk(
-  "event/getAllEventOfUser",
+  'event/getAllEventOfUser',
   async (data, { rejectWithValue }) => {
     try {
       return await eventService.getAllEventofUser(
@@ -91,16 +93,17 @@ export const getAllEventofUser = createAsyncThunk(
 );
 const initialState = {
   events: [],
+  getEventById: [],
   newEvents: [],
   highlightEvent: [],
   joinedEvent: [],
   registeredEvent: [],
   filter: {
-    category: "",
-    sort: "",
-    fee: "",
-    type: "",
-    location: "",
+    category: '',
+    sort: '',
+    fee: '',
+    type: '',
+    location: '',
     date: null,
     page: 1,
   },
@@ -108,10 +111,10 @@ const initialState = {
   isLoading: true,
   isError: true,
   isSuccess: true,
-  message: "",
+  message: '',
 };
 export const handleChangeEvents = createAction(
-  "changeEvents",
+  'changeEvents',
   function prepare(filter) {
     return {
       payload: filter,
@@ -120,7 +123,7 @@ export const handleChangeEvents = createAction(
 );
 
 const eventSlice = createSlice({
-  name: "event",
+  name: 'event',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -152,7 +155,7 @@ const eventSlice = createSlice({
       state.isLoading = true;
     });
     builder.addCase(getEventById.fulfilled, (state, action) => {
-      state.events = action.payload;
+      state.getEventById = action.payload;
       state.isLoading = false;
       state.isSuccess = true;
     });

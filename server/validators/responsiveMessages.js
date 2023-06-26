@@ -33,10 +33,26 @@ const userSucc = {
   SUC_2: 'Get Successfully',
 };
 
+const commentError = {
+  ERR_1: 'TẠO COMMENT THẤT BẠI!',
+  ERR_2: 'KHÔNG TÌM THẤY COMMENT!',
+  ERR_3: 'CHỈ NGƯỜI ĐĂNG MỚI CÓ QUYỀN CHỈNH SỬA COMMENT NÀY!',
+  ERR_4: 'CHỈ NGƯỜI ĐĂNG MỚI CÓ QUYỀN XOÁ COMMENT NÀY!'
+};
+
+const commentSucc = {
+  SUC_1: 'TẠO COMMENT THÀNH CÔNG!',
+  SUC_2: 'LẤY DỮ LIỆU COMMENT THÀNH CÔNG!',
+  SUC_3: 'CHỈNH SỬA COMMENT THÀNH CÔNG!',
+  SUC_4: 'XOÁ COMMENT THÀNH CÔNG!'
+};
+
 module.exports = {
   eventError,
   eventSucc,
   orderError,
   orderSucc,
   userSucc,
+  commentError,
+  commentSucc
 };

@@ -96,7 +96,7 @@ const Header = () => {
                 location.pathname === '/event-create-update' ? 'active' : ''
               }`}
             >
-              <Link to='/create-event' alt=''>
+              <Link to='/event-create-update' alt=''>
                 <Button color='primary' size='sm'>
                   Tạo sự kiện
                 </Button>

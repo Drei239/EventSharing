@@ -14,6 +14,7 @@ var eventsRouter = require("./routes/events");
 var categoryRouter = require("./routes/category");
 var uploadRouter = require("./routes/upload");
 var orderRouter = require("./routes/orders");
+var commentRouter = require("./routes/comments");
 var cors = require("cors");
 var app = express();
 
@@ -42,7 +43,7 @@ app.use("/events", eventsRouter);
 app.use("/category", categoryRouter);
 app.use("/upload", uploadRouter);
 app.use("/orders", orderRouter);
-
+app.use("/comments", commentRouter);
 process.env.TZ = "Asia/Jakarta";
 
 // catch 404 and forward to error handler

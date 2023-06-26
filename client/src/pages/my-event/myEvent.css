@@ -12,6 +12,7 @@
   border: 1px solid #ccc;
   border-radius: 5px;
   box-shadow: 0px 0px 4px 0px #ccc;
+  position: relative;
 }
 .my-event-header > img {
   width: 200px;
@@ -72,9 +73,16 @@
   justify-content: center;
 }
 .my-event-header-address {
-  width: 400px;
-  font-size: 14px;
-  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.my-event-header-address > span {
+  font-weight: 700;
+  font-size: 18px;
+}
+.my-event-header-address > p {
+  font-size: 15px;
 }
 .my-event-header-info-sold {
   display: flex;
@@ -86,4 +94,61 @@
   left: 0;
   top: 0;
   z-index: 9;
+}
+.my-event-more-icon {
+  font-size: 25px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.my-event-header-status-sale {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.my-event-header-status-sale-on {
+  width: 7px;
+  height: 7px;
+  background-color: #77c47f;
+  border-radius: 50%;
+}
+.my-event-header-status-sale-end {
+  width: 7px;
+  height: 7px;
+  background-color: gray;
+  border-radius: 50%;
+}
+.my-event-header-status-sale-on-text {
+  font-size: 15px;
+  color: #77c47f;
+  font-weight: 600;
+}
+.my-event-header-status-sale-end-text {
+  font-size: 15px;
+  color: gray;
+  font-weight: 600;
+}
+.my-event-header-info-fee > span:first-child {
+  font-weight: 700;
+  font-size: 18px;
+}
+.my-event-header-info-fee > span:last-child {
+  color: red;
+}
+.my-event-header-info-time {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 5px;
+}
+.my-event-header-info-time > span:first-child {
+  font-weight: 700;
+  font-size: 18px;
 }

@@ -1,8 +1,8 @@
-const asyncHandler = require('express-async-handler');
-const eventModel = require('../models/eventModel');
-const eventValidators = require('../validators/eventValidators');
-const { eventError, eventSucc } = require('../validators/responsiveMessages');
-const orderModel = require('../models/orderModel');
+const asyncHandler = require("express-async-handler");
+const eventModel = require("../models/eventModel");
+const eventValidators = require("../validators/eventValidators");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
+const orderModel = require("../models/orderModel");
 
 //1.CREATE NEW EVENT
 const createNewEvent = asyncHandler(
@@ -57,9 +57,9 @@ const createNewEvent = asyncHandler(
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
 const getPublicEvents = asyncHandler(async (req, res) => {
   const events = await eventModel
-    .find({ status: 'Public' })
-    .populate('category')
-    .populate('creator');
+    .find({ status: "Public" })
+    .populate("category")
+    .populate("creator");
   if (events && events.length > 0) {
     return events;
   } else {
@@ -70,7 +70,7 @@ const getPublicEvents = asyncHandler(async (req, res) => {
 const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
   let queryObj2 = queryObj;
 
-  const excludeField = ['page', 'sort', 'limit', 'keyword'];
+  const excludeField = ["page", "sort", "limit", "keyword"];
   // loc tu khoa
   excludeField.forEach((el) => delete queryObj2[el]);
   let queryStr = JSON.stringify(queryObj2);
@@ -78,17 +78,17 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
 
   queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
   queryStr = JSON.parse(queryStr);
-  if (queryStr.isOnline == 'true' || queryStr.isOnline == 'false') {
-    queryStr.isOnline = queryStr.isOnline === 'true';
+  if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
+    queryStr.isOnline = queryStr.isOnline === "true";
   }
   let query;
   console.log(queryStr);
-  if (queryKey.keyword !== '' && queryKey.keyword) {
-    const queryObj = Object.assign(
+  if (queryKey.keyword !== "" && queryKey.keyword) {
+    const queryObj = await Object.assign(
       {
         $or: [
-          { title: { $regex: queryKey.keyword, $options: 'i' } },
-          { location: { $regex: queryKey.keyword, $options: 'i' } },
+          { title: { $regex: queryKey.keyword, $options: "i" } },
+          { "location.province": { $regex: queryKey.keyword, $options: "i" } },
         ],
       },
       { status: "Public" },
@@ -96,20 +96,20 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
     );
     query = eventModel.find(queryObj);
   } else {
-    query = eventModel.find(queryStr);
+    query = eventModel.find(Object.assign({ status: "Public" }, queryStr));
   }
   if (queryKey.sort) {
-    const sortBy = queryKey.sort.split(',').join(' ');
+    const sortBy = queryKey.sort.split(",").join(" ");
     query = query.sort(sortBy);
   } else {
-    query = query.sort('-createdAt');
+    query = query.sort("-createdAt");
   }
   const countryQuery = query.model.countDocuments(query.getFilter());
   const totalCount = await countryQuery.exec();
   const limit = queryKey.limit || 10;
   const page = queryKey.page || 1;
   const skip = (Number(page) - 1) * limit;
-  query = query.skip(skip).limit(limit).populate('creator category').exec();
+  query = query.skip(skip).limit(limit).populate("creator category").exec();
 
   // const eventCount=await eventModel.countDocuments();
 
@@ -141,7 +141,7 @@ const updateDraftEventInfo = asyncHandler(
     limitUser
   ) => {
     const updateEvent = await eventModel.findOne({ _id: requestId });
-    if (updateEvent.status === 'draft') {
+    if (updateEvent.status === "draft") {
       updateEvent.title = title || updateEvent.title;
       updateEvent.description = description || updateEvent.description;
       updateEvent.banner = banner || updateEvent.banner;
@@ -181,13 +181,13 @@ const updateDraftEventInfo = asyncHandler(
 const attendedEvent = async (id) => {
   const event = await orderModel
     .find({ user: id, isJoined: true })
-    .populate('event user');
+    .populate("event user");
   return event;
 };
 const registeredEvent = async (id) => {
   const event = await orderModel
     .find({ user: id.toString(), isPaid: true })
-    .populate('event user');
+    .populate("event user");
   return event;
 };
 const getAllEventOfUser = async (id, status, keyword) => {

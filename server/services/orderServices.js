@@ -200,7 +200,6 @@ const updateRequestOrder = asyncHandler(
             },
           }))
         );
-        console;
         if (updateOrder && updateOrder.matchedCount != 0) {
           return updateOrder;
         } else {
@@ -228,31 +227,36 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
       findOrder.isPaid = true;
       findOrder.isRefund = false;
       findOrder.isJoined = false;
-      return findOrder;
+      const findOrdered = await findOrder.save();
+      return findOrdered;
     }
     case "unpaid": {
       findOrder.isPaid = false;
       findOrder.isRefund = false;
       findOrder.isJoined = false;
-      return findOrder;
+      const findOrdered = await findOrder.save();
+      return findOrdered;
     }
     case "joined": {
       findOrder.isPaid = true;
       findOrder.isRefund = false;
       findOrder.isJoined = true;
-      return findOrder;
+      const findOrdered = await findOrder.save();
+      return findOrdered;
     }
     case "refund": {
       findOrder.isPaid = false;
       findOrder.isRefund = true;
       findOrder.isJoined = false;
-      return findOrder;
+      const findOrdered = await findOrder.save();
+      return findOrdered;
     }
     default:
       findOrder.isPaid = false;
       findOrder.isRefund = false;
       findOrder.isJoined = false;
-      return findOrder;
+      const findOrdered = findOrder.save();
+      return findOrdered;
   }
 };
 

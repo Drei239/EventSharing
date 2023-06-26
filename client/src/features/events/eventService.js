@@ -1,31 +1,34 @@
-import axios from "axios";
-import { base_url } from "../../utils/base_url";
-import dayjs from "dayjs";
-import UseCallApi from "../../hooks/useCallApi";
+import { base_url } from '../../utils/base_url';
+import dayjs from 'dayjs';
+import UseCallApi from '../../hooks/useCallApi';
 const getAllEvent = async (search) => {
+  console.log(search);
   const data = await UseCallApi({
-    method: "GET",
-    url: `/events/getFilter?${search ? search : ""}`,
+    method: 'GET',
+    url: `/events/getFilter?${search ? search : ''}`,
   });
   return data;
 };
 
 const getEventById = async (eventId) => {
-  const response = await axios.get(
-    `http://localhost:3002/events/get/${eventId}`
-  );
-  return response.data;
+  const response = await UseCallApi({
+    method: 'GET',
+    url: `/events/get/${eventId}`,
+});
+  console.log(response);
+  return response;
 };
+
 const updateEvent = async ({}) => {
   const data = await UseCallApi({
-    method: "PUT",
+    method: 'PUT',
     url: `/events/update`,
   });
   return data;
 };
 const getHighlightEvent = async () => {
   const data = await UseCallApi({
-    method: "GET",
+    method: 'GET',
     url: `/events/highlight`,
   });
 
@@ -33,9 +36,9 @@ const getHighlightEvent = async () => {
 };
 const getNewEvent = async (page) => {
   const data = await UseCallApi({
-    method: "GET",
+    method: 'GET',
     url: `/events/getFilter?sort=timeBegin&timeEndSignup[gte]=${dayjs().format(
-      "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
+      'YYYY-MM-DDTHH:mm:ss.SSS[Z]'
     )}&page=${page ? page : 1}&limit=4`,
   });
 
@@ -43,14 +46,14 @@ const getNewEvent = async (page) => {
 };
 const getRegisteredEvent = async () => {
   const data = await UseCallApi({
-    method: "GET",
-    url: "/events/registered-event",
+    method: 'GET',
+    url: '/events/registered-event',
   });
   return data;
 };
 const getJoinedEvent = async () => {
   const data = await UseCallApi({
-    url: "/events/joined-event",
+    url: '/events/joined-event',
   });
   return data;
 };

@@ -11,6 +11,7 @@ import customFetch from '../../utils/axios.config';
 import notify from '../../utils/notify';
 import './LoginRegisterComponent.css';
 import 'react-toastify/dist/ReactToastify.css';
+import { Link } from 'react-router-dom';
 
 const Register = ({ changeLoginContent }) => {
   const [displayForm, setDisplayForm] = useState(true);
@@ -89,6 +90,9 @@ const Register = ({ changeLoginContent }) => {
 
   return (
     <>
+      <Link className='register__logo' to='/'>
+        <img src={'../images/logo.png'} alt='logo' />
+      </Link>
       {displayForm ? (
         <div className='login'>
           <h2>Tạo tài khoản mới</h2>
