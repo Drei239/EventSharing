@@ -33,11 +33,19 @@ h3 {
 	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 }
 
-.organizers {
+.organizers__container {
 	color: black;
 	display: flex;
 	text-align: center;
+	align-items: center;
 	flex-direction: column;
+	gap: 15px;
+}
+
+.organizers {
+	display: flex;
+	flex-direction: column;
+	margin-left: 60px;
 }
 
 .organizers:hover {
@@ -48,7 +56,8 @@ h3 {
 .organizers__image {
 	border-radius: 50%;
 	overflow: hidden;
-	width: 120px;
+	width: 100px;
+	height: 100px;
 }
 
 .organizers__image:hover {
@@ -67,6 +76,7 @@ h3 {
 
 .event__info {
 	text-align: start;
+	width: 450px;
 }
 
 .event__right-block {
@@ -129,7 +139,7 @@ h3 {
 	grid-area: bottom;
 	width: 100%;
 	padding: 50px 60px;
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 	display: flex;
 	flex-direction: column;
 	border: 1px #00abe1 solid;
@@ -137,6 +147,17 @@ h3 {
 	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 	-moz-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
+}
+
+.gallery__container {
+	width: 1210px;
+	height: 700px;
+	border: 1px #00abe1 solid;
+	border-radius: 10px;
+	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
+	-moz-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
+	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
+
 }
 
 .event__gallery {

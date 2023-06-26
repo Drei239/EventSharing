@@ -1,7 +1,6 @@
 import {
   createSlice,
   createAsyncThunk,
-  PayloadAction,
   createAction,
 } from '@reduxjs/toolkit';
 import eventService from './eventService';
@@ -27,13 +26,15 @@ export const getEvent = createAsyncThunk(
   }
 );
 export const getEventById = createAsyncThunk(
-  'event/getEventById',
+  'event/get/:id',
   async (eventId, { rejectWithValue }) => {
     try {
-      return await eventService.getEventById(eventId);
+      const getEvent = await eventService.getEventById(eventId);
+      console.log(getEvent);
+      return getEvent;
     } catch (err) {
       rejectWithValue(err);
-    }
+    } 
   }
 );
 export const getHighlightEvent = createAsyncThunk(
@@ -92,6 +93,7 @@ export const getAllEventofUser = createAsyncThunk(
 );
 const initialState = {
   events: [],
+  getEventById: [],
   newEvents: [],
   highlightEvent: [],
   joinedEvent: [],
@@ -149,11 +151,11 @@ const eventSlice = createSlice({
       state.isLoading = false;
       state.message = action.error;
     });
-    builder.addCase(getEventById.pending, (state, action) => {
+    builder.addCase(getEventById.pending, (state) => {
       state.isLoading = true;
     });
     builder.addCase(getEventById.fulfilled, (state, action) => {
-      state.events = action.payload;
+      state.getEventById = action.payload;
       state.isLoading = false;
       state.isSuccess = true;
     });
