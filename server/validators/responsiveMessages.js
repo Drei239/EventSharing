@@ -1,9 +1,12 @@
 const eventError = {
   ERR_1: 'TẠO SƯ KIỆN MỚI THẤT BẠI!',
   ERR_2: 'KHÔNG TÌM THẤY SỰ KIỆN THEO YÊU CẦU!',
-  ERR_3: 'CẬP NHẬT THÔNG TIN SỰ KIỆN THẤT BẠI!',
+  ERR_3: 'CHỈ CÓ THỂ CẬP NHẬT SỰ KIỆN NHÁP!',
   ERR_4: 'THỜI GIAN SỰ KIỆN KHÔNG HỢP LỆ!',
   ERR_5: 'TIÊU ĐỀ SỰ KIỆN ĐÃ TỒN TẠI!',
+  ERR_6: 'BẠN ĐÃ REVIEW SỰ KIỆN NÀY RỒI!',
+  ERR_7: 'CHỈ CÓ NGƯỜI ĐÃ THAM GIA MỚI CÓ QUYỀN REVIEW SỰ KIỆN!',
+  ERR_8: 'CHỈ CÓ NGƯỜI TỔ CHỨC SỰ KIỆN MỚI CÓ QUYỀN CẬP NHẬT THÔNG TIN SỰ KIỆN!'
 };
 
 const eventSucc = {
@@ -11,6 +14,8 @@ const eventSucc = {
   SUC_2: 'GET THÀNH CÔNG CÁC SỰ KIỆN PUBLIC!',
   SUC_3: 'GET THÀNH CÔNG SỰ KIỆN!',
   SUC_4: 'TẠO URL LINK THÀNH CÔNG',
+  SUC_5: 'ĐĂNG REVIEW SỰ KIỆN THÀNH CÔNG!',
+  SUC_6: 'CẬP NHẬT THÔNG TIN SỰ KIỆN THÀNH CÔNG!'
 };
 
 const orderError = {

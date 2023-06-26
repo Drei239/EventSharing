@@ -13,6 +13,7 @@ const {
   getJoinedEvent,
   getRegisteredEvent,
   getAllEventOfUser,
+  createNewReview
 } = require("../controllers/eventController");
 const { protect, verifyUser } = require("../middleware/authMiddleware");
 
@@ -36,7 +37,7 @@ router.get("/get/:id", getEventById);
 
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
-router.put("/update/:id", updateDraftEventInfo);
+router.put("/update/:id", protect, updateDraftEventInfo);
 
 //6.FIND EVENT BY TITLE
 
@@ -44,6 +45,9 @@ router.put("/update/:id", updateDraftEventInfo);
 
 //7.GET EVENTS BY QUERY
 // router.get('/dasdas', getQueryEvents);
+
+//9.CREATE NEW REVIEW & UPDATE RATING
+router.put("/createReview/:id", protect, createNewReview);
 
 router.get("/highlight", highlightEvents);
 router.get("/registered-event", protect, getRegisteredEvent);
