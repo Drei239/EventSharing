@@ -125,7 +125,8 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
 //NHẬN OBJECT
 const updateDraftEventInfo = asyncHandler(
   async (
-    requestId,
+    requestEventId,
+    requestUserId,
     title,
     description,
     banner,
@@ -140,42 +141,47 @@ const updateDraftEventInfo = asyncHandler(
     timeEnd,
     limitUser
   ) => {
-    const updateEvent = await eventModel.findOne({ _id: requestId });
-    if (updateEvent.status === "draft") {
-      updateEvent.title = title || updateEvent.title;
-      updateEvent.description = description || updateEvent.description;
-      updateEvent.banner = banner || updateEvent.banner;
-      updateEvent.imageList = imageList || updateEvent.imageList;
-      updateEvent.category = category || updateEvent.category;
-      updateEvent.isOnline = isOnline || updateEvent.isOnline;
-      updateEvent.fee = fee || updateEvent.fee;
-      updateEvent.location = location || updateEvent.location;
-      updateEvent.timeEndSignup = timeEndSignup || updateEvent.timeEndSignup;
-      updateEvent.timeBegin = timeBegin || updateEvent.timeBegin;
-      updateEvent.timeEnd = timeEnd || updateEvent.timeEnd;
-      updateEvent.limitUser = limitUser || updateEvent.limitUser;
-      updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
+    const updateEvent = await eventModel.findOne({ _id: requestEventId });
+    if (updateEvent.creator.toString() === requestUserId.toString()) {
+      if (updateEvent.status === "draft") {
+        updateEvent.title = title || updateEvent.title;
+        updateEvent.description = description || updateEvent.description;
+        updateEvent.banner = banner || updateEvent.banner;
+        updateEvent.imageList = imageList || updateEvent.imageList;
+        updateEvent.category = category || updateEvent.category;
+        updateEvent.isOnline = isOnline || updateEvent.isOnline;
+        updateEvent.fee = fee || updateEvent.fee;
+        updateEvent.location = location || updateEvent.location;
+        updateEvent.timeEndSignup = timeEndSignup || updateEvent.timeEndSignup;
+        updateEvent.timeBegin = timeBegin || updateEvent.timeBegin;
+        updateEvent.timeEnd = timeEnd || updateEvent.timeEnd;
+        updateEvent.limitUser = limitUser || updateEvent.limitUser;
+        updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
 
-      const existEvent = await eventModel.findOne({ title: updateEvent.title });
-      if (eventValidators.inputTitleValidation(existEvent, requestId)) {
-        if (
-          eventValidators.inputTimeValidation(
-            updateEvent.timeEndSignup,
-            updateEvent.timeBegin,
-            updateEvent.timeEnd
-          )
-        ) {
-          const updatedEvent = await updateEvent.save();
-          return updatedEvent;
+        const existEvent = await eventModel.findOne({ title: updateEvent.title });
+        if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
+          if (
+            eventValidators.inputTimeValidation(
+              updateEvent.timeEndSignup,
+              updateEvent.timeBegin,
+              updateEvent.timeEnd
+            )
+          ) {
+            const updatedEvent = await updateEvent.save();
+            return updatedEvent;
+          } else {
+            throw Error(eventError.ERR_4);
+          }
         } else {
-          throw Error(eventError.ERR_4);
+          throw Error(eventError.ERR_5);
         }
       } else {
-        throw Error(eventError.ERR_5);
+        throw Error(eventError.ERR_3);
       }
     } else {
-      throw Error(eventError.ERR_3);
+      throw Error(eventError.ERR_8);
     }
+
   }
 );
 const attendedEvent = async (id) => {
@@ -236,6 +242,37 @@ const getAllEventOfUser = async (id, status, keyword) => {
       return await eventModel.find({ creator: id });
   }
 };
+
+//9.CREATE NEW REVIEW FOR EVENT & UPDATE TOTAL RATING
+const createNewReview = asyncHandler(async (
+  requestUserId, requestEventId, title, image, comment, rating) => {
+  const orderedEvent = await orderModel.findOne({ event: requestEventId, user: requestUserId });
+  const reviewdEvent = await eventModel.findOne({ _id: requestEventId, "reviews.user": requestUserId });
+  //KIỂM TRA ĐÃ ĐĂNG KÝ SỰ KIỆN VÀ ĐÃ THAM GIA
+  if (orderedEvent && orderedEvent.isJoined === true) {
+    //KIỂM TRA ĐÃ REVIEW SỰ KIỆN?
+    if (!reviewdEvent) {
+      const eventReview = await eventModel.findOne({ _id: requestEventId });
+      eventReview.reviews.push({
+        "title": title,
+        "image": image,
+        "comment": comment,
+        "rating": rating,
+        "user": requestUserId.toString()
+      });
+      const eventRatingNum = eventReview.reviews.reduce((accumulator, object) => {
+        return (accumulator + object.rating);
+      }, 0);
+      eventReview.eventRating = eventRatingNum / (eventReview.reviews.length);
+      await eventReview.save();
+      return eventReview;
+    } else {
+      throw Error(eventError.ERR_6);
+    }
+  } else {
+    throw Error(eventError.ERR_7);
+  }
+});
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -244,4 +281,5 @@ module.exports = {
   attendedEvent,
   registeredEvent,
   getAllEventOfUser,
+  createNewReview
 };
