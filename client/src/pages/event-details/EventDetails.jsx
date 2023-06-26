@@ -20,7 +20,7 @@ const EventDetails = () => {
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
 
 	const isOnline = isOnlineEvent();
-	console.log("####", eventDetail?.imageList);
+	console.log("####", eventDetail);
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 
@@ -54,11 +54,11 @@ const EventDetails = () => {
 							to={`/origanizers/${eventDetail?.creator?._id}`}
 							className='organizers'
 						>
-							{/* <div className='organizers__container'> */}
+							<div className='organizers__container'>
 								<h3 className='organizers__title'>Nhà tổ chức</h3>
 								<div className='organizers__image'><img src={eventDetail?.creator?.avatar} alt="" /></div>
 								<h5>{eventDetail?.creator?.name || 'no information'}</h5>
-							{/* </div> */}
+							</div>
 						</Link>
 						<div className='event__info'>
 							<h3 className='info__title'>Thông tin sự kiện</h3>
@@ -70,7 +70,11 @@ const EventDetails = () => {
 							</Link>
 							<div className='event__adress'>
 								<BiMap className="cardEvent-info2-item-icon" />
-								{/* {eventDetail?.location || 'no information'} */}
+								{eventDetail?.location?.district?.name || 'no information'},
+								{eventDetail?.location?.province?.name || 'no information'},
+								{eventDetail?.location?.ward?.name || 'no information'},
+								{eventDetail?.location?.address || 'no information'}
+
 							</div>
 							<div className='event__time'>
 								<GiSandsOfTime className="cardEvent-info2-item-icon" />
@@ -90,7 +94,7 @@ const EventDetails = () => {
 						</div>
 						<div className='event__price'>
 							<MdOutlineAttachMoney className="carousel-content-info-icon" />
-							{eventDetail?.fee === 0 ? "Free" : eventDetail?.fee + "$" || 'no information'}
+							{eventDetail?.fee === 0 ? "Free" : eventDetail?.fee || 'no information'}
 						</div>
 						<div className='event__status'>
 							"{eventDetail?.status || 'no information'}"
@@ -133,94 +137,3 @@ const EventDetails = () => {
 export default EventDetails;
 
 
-// [
-// 	{
-// 		"_id": "6493c9140a35f9b2380c40bd",
-// 		"title": "[Sài Gòn] Những Thành Phố Mơ Màng – Autumn 2023",
-// 		"description": "Sài Gòn không có mùa thu nhưng tháng 9 này, Những Thành Phố Mơ Màng sẽ biến điều đó thành hiện thực. Cư dân Sài Gòn sẽ có cơ hội được trải nghiệm sự kiện âm nhạc với không khí mát mẻ cùng âm thanh và ánh sáng sống động !!!",
-// 		"banner": "https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/06/19/30614B.jpg",
-// 		"imageList": [
-// 			"https://images.tkbcdn.com/1/780/300/Upload/eventcover/2023/06/19/30614B.jpg"
-// 		],
-// 		"category": {
-// 			"_id": "648173ae0144d4be07f9194f",
-// 			"categoryName": "Thể thao",
-// 			"categoryDescription": "Event about sport activities.",
-// 			"__v": 0
-// 		},
-// 		"isOnline": true,
-// 		"fee": 699,
-// 		"location": {
-// 			"province": {
-// 				"name": "Đồng Nai",
-// 				"code": 75,
-// 				"division_type": "tỉnh"
-// 			},
-// 			"district": {
-// 				"name": "Thành Phố Long Khánh",
-// 				"code": 26071,
-// 				"division_type": "thành phố"
-// 			},
-// 			"ward": {
-// 				"name": "Phường Bảo Vinh",
-// 				"code": 26098,
-// 				"division_type": "phường"
-// 			},
-// 			"address": "191/18/9/2 Tổ 6c Ấp Ruộng Hời ",
-// 			"_id": "6493c9140a35f9b2380c40be"
-// 		},
-// 		"timeEndSignup": "2023-06-24T00:00:00.000Z",
-// 		"timeBegin": "2023-06-28T00:00:00.000Z",
-// 		"timeEnd": "2023-07-01T00:00:00.000Z",
-// 		"status": "draft",
-// 		"creator": {
-// 			"_id": "649023b9158d957d37a76cd2",
-// 			"name": "aeqwưeqqwsd",
-// 			"avatar": "http://res.cloudinary.com/dz5rciyqg/image/upload/v1687531365/user/k4jjedlblsx8wdi2pw8m.jpg",
-// 			"totalRating": 4.647058823529412
-// 		},
-// 		"limitUser": 30,
-// 		"reviews": [],
-// 		"eventRating": 0,
-// 		"createdAt": "2023-06-22T04:07:48.571Z",
-// 		"__v": 0
-// 	}
-// ]
-
-
-// [
-// 	{
-// 		"_id": "64702a9b5396cbcee46d239b",
-// 		"title": "Event02",
-// 		"description": "Event 02 Description",
-// 		"banner": "https://billetto.co.uk/blog/wp-content/uploads/2019/04/festival_1554307185-e1554307203469.jpg",
-// 		"imageList": [
-// 			"https://billetto.co.uk/blog/wp-content/uploads/2020/02/qmfsp1xyvtq-1024x680.jpg",
-// 			"https://billetto.co.uk/blog/wp-content/uploads/2020/03/bee-balogun-KGyzk-EvTwQ-unsplash-768x512.jpg",
-// 			"https://billetto.co.uk/blog/wp-content/uploads/2020/03/How-to-plan-concert-scanning-tickets-768x512.jpg"
-// 		],
-// 		"category": {
-// 			"_id": "648173bd0144d4be07f91951",
-// 			"categoryName": "Âm nhạc",
-// 			"categoryDescription": "Event about music activities.",
-// 			"__v": 0
-// 		},
-// 		"fee": 0,
-// 		"timeEndSignup": "2023-06-08T17:30:00.000Z",
-// 		"timeBegin": "2023-06-08T18:30:00.000Z",
-// 		"timeEnd": "2023-06-09T03:00:00.000Z",
-// 		"status": "Public",
-// 		"creator": {
-// 			"_id": "64945daf3f76532369faf225",
-// 			"name": "Toan",
-// 			"avatar": "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
-// 			"totalRating": 0
-// 		},
-// 		"limitUser": 0,
-// 		"reviews": [],
-// 		"eventRating": 5,
-// 		"createdAt": "2023-05-26T03:42:19.267Z",
-// 		"__v": 0,
-// 		"isOnline": false
-// 	}
-// ]

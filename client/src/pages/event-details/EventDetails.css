@@ -33,22 +33,19 @@ h3 {
 	box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
 }
 
-/* .organizers__container {
-	color: black;
-		display: flex;
-		text-align: center;
-		align-items: center;
-		flex-direction: column;
-} */
-
-.organizers {
+.organizers__container {
 	color: black;
 	display: flex;
 	text-align: center;
 	align-items: center;
 	flex-direction: column;
+	gap: 15px;
+}
+
+.organizers {
+	display: flex;
+	flex-direction: column;
 	margin-left: 60px;
-	gap: 10px;
 }
 
 .organizers:hover {
@@ -79,6 +76,7 @@ h3 {
 
 .event__info {
 	text-align: start;
+	width: 450px;
 }
 
 .event__right-block {
