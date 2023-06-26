@@ -5,7 +5,6 @@ const resMes = require("../validators/responsiveMessages");
 
 //1.CREATE NEW ORDER
 const createNewOrder = asyncHandler(async (req, res) => {
-  //SAU KHI LOGIN USER = REQUEST USER ID
   const { event } = req.body;
   const user = req.user._id;
   try {
