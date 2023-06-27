@@ -1,4 +1,4 @@
-let express = require("express");
+let express = require('express');
 let router = express.Router();
 const {
   createNewEvent,
@@ -13,20 +13,21 @@ const {
   getJoinedEvent,
   getRegisteredEvent,
   getAllEventOfUser,
-  createNewReview
-} = require("../controllers/eventController");
-const { protect, verifyUser } = require("../middleware/authMiddleware");
+  createNewReview,
+  getEventsOrganizers,
+} = require('../controllers/eventController');
+const { protect, verifyUser } = require('../middleware/authMiddleware');
 
 //1.CREATE NEW EVENT
-router.post("/create", protect, createNewEvent);
+router.post('/create', protect, createNewEvent);
 
 //2.GET ALL EVENT STAUS = "PUBLIC"
-router.get("/all", getPublicEvents);
+router.get('/all', getPublicEvents);
 //search + filter +getAll
-router.get("/getFilter", getFilterEvents);
+router.get('/getFilter', getFilterEvents);
 //3.GET EVENT BY ID
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM CHI TIẾT CÁC THÔNG TIN VỀ 1 SỰ KIỆN
-router.get("/get/:id", getEventById);
+router.get('/get/:id', getEventById);
 
 //4.GET EVENT BY CREATOR
 //PUBLIC CHO NGƯỜI SỬ DỤNG XEM THÔNG TIN VỀ CÁC SỰ KIỆN CỦA 1 NGƯỜI TCSK
@@ -37,7 +38,7 @@ router.get("/get/:id", getEventById);
 
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
-router.put("/update/:id", protect, updateDraftEventInfo);
+router.put('/update/:id', protect, updateDraftEventInfo);
 
 //6.FIND EVENT BY TITLE
 
@@ -47,10 +48,11 @@ router.put("/update/:id", protect, updateDraftEventInfo);
 // router.get('/dasdas', getQueryEvents);
 
 //9.CREATE NEW REVIEW & UPDATE RATING
-router.put("/createReview/:id", protect, createNewReview);
+router.put('/createReview/:id', protect, createNewReview);
 
-router.get("/highlight", highlightEvents);
-router.get("/registered-event", protect, getRegisteredEvent);
-router.get("/joined-event", protect, getJoinedEvent);
-router.get("/user/:id", protect, verifyUser, getAllEventOfUser);
+router.get('/highlight', highlightEvents);
+router.get('/registered-event', protect, getRegisteredEvent);
+router.get('/joined-event', protect, getJoinedEvent);
+router.get('/organizers/:id', getEventsOrganizers);
+router.get('/user/:id', protect, verifyUser, getAllEventOfUser);
 module.exports = router;

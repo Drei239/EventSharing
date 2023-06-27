@@ -1,37 +1,37 @@
-const asyncHandler = require("express-async-handler");
-const eventModel = require("../models/eventModel");
-const eventService = require("../services/eventServices");
-const { eventError, eventSucc } = require("../validators/responsiveMessages");
-const orderModel = require("../models/orderModel");
+const asyncHandler = require('express-async-handler');
+const eventModel = require('../models/eventModel');
+const eventService = require('../services/eventServices');
+const { eventError, eventSucc } = require('../validators/responsiveMessages');
+const orderModel = require('../models/orderModel');
 //UPDATE CREATE REVIEW EVENT - UPDATE EVENT RATING - PROTECT UPDATE DRAFT EVENT
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
 function changeTimeZone(date, timeZone) {
-  if (typeof date === "string") {
+  if (typeof date === 'string') {
     return new Date(
-      new Date(date).toLocaleString("en-US", {
+      new Date(date).toLocaleString('en-US', {
         timeZone,
       })
     );
   }
 
   return new Date(
-    date.toLocaleString("en-US", {
+    date.toLocaleString('en-US', {
       timeZone,
     })
   );
 }
 
 const date = new Date();
-console.log("new Date", date);
+console.log('new Date', date);
 
-const hcmDate = changeTimeZone(date, "Asia/Saigon");
-console.log("Asia/Saigon Date", hcmDate);
+const hcmDate = changeTimeZone(date, 'Asia/Saigon');
+console.log('Asia/Saigon Date', hcmDate);
 
 console.log(
-  "toLocaleString Date",
-  date.toLocaleString("en-US", {
-    timeZone: "Asia/Saigon",
+  'toLocaleString Date',
+  date.toLocaleString('en-US', {
+    timeZone: 'Asia/Saigon',
   })
 );
 
@@ -100,7 +100,7 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
     }
   } else {
     res.status(401);
-    throw new Error("CREATE NEW EVENT FAILED!");
+    throw new Error('CREATE NEW EVENT FAILED!');
   }
 });
 
@@ -155,13 +155,13 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 //HOT EVENTS
 const highlightEvents = asyncHandler(async (req, res) => {
   try {
-    console.log("a");
+    console.log('a');
     const events = await eventModel
       .find({
         timeEndSignup: { $gte: Date.now() },
       })
-      .populate({ path: "creator", options: { sort: { userRating: -1 } } })
-      .populate("category")
+      .populate({ path: 'creator', options: { sort: { userRating: -1 } } })
+      .populate('category')
       .limit(5);
 
     return res
@@ -176,13 +176,13 @@ const highlightEvents = asyncHandler(async (req, res) => {
 const getEventById = asyncHandler(async (req, res) => {
   const event = await eventModel
     .find({ _id: req.params.id })
-    .populate("category")
-    .populate("creator", "_id name avatar totalRating");
+    .populate('category')
+    .populate('creator', '_id name avatar totalRating');
   if (event) {
     res.status(200).json(event);
   } else {
     res.status(401);
-    throw new Error("KHÔNG TÌM THẤY EVENT!");
+    throw new Error('KHÔNG TÌM THẤY EVENT!');
   }
 });
 
@@ -195,7 +195,7 @@ const getEventByCreator = asyncHandler(async (req, res) => {
     res.status(200).json(event);
   } else {
     res.status(401);
-    throw new Error("KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!");
+    throw new Error('KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!');
   }
 });
 
@@ -243,9 +243,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: updateEvent, message: eventSucc.SUC_6 });
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, message: error.message });
+    res.status(400).json({ status: 400, message: error.message });
   }
 });
 
@@ -258,7 +256,7 @@ const getEventByTitle = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
   }
 });
 
@@ -271,7 +269,7 @@ const getQueryEvents = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
+    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
   }
 });
 
@@ -318,14 +316,29 @@ const createNewReview = asyncHandler(async (req, res) => {
   const { title, image, comment, rating } = req.body;
   try {
     const review = await eventService.createNewReview(
-      requestUserId, requestEventId, title, image, comment, rating);
+      requestUserId,
+      requestEventId,
+      title,
+      image,
+      comment,
+      rating
+    );
     res
       .status(200)
       .json({ status: 200, data: review, message: eventSucc.SUC_5 });
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, message: error.message });
+    res.status(400).json({ status: 400, message: error.message });
+  }
+});
+
+const getEventsOrganizers = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const result = await eventModel.find({ creator: id });
+  if (result) {
+    res.status(200).json(result);
+  } else {
+    res.status(400);
+    throw new Error('Not found');
   }
 });
 
@@ -342,5 +355,6 @@ module.exports = {
   getJoinedEvent,
   getRegisteredEvent,
   getAllEventOfUser,
-  createNewReview
+  createNewReview,
+  getEventsOrganizers,
 };

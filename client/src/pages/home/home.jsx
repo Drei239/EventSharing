@@ -93,7 +93,9 @@ const Home = () => {
           {userHighlight &&
             userHighlight.length > 0 &&
             userHighlight.map((item) => {
-              return <CardOrg title={item.name} img={item.avatar} />;
+              return (
+                <CardOrg title={item.name} img={item.avatar} id={item._id} />
+              );
             })}
         </div>
 
