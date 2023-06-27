@@ -103,10 +103,40 @@ const updateRequestOrder = asyncHandler(async (req, res) => {
   }
 });
 
+const sendEmailtoId = asyncHandler(async (req, res, next) => {
+  const { content, subject, ordersId } = req.body;
+  try {
+    await orderService.sendEmailtoId({
+      subject,
+      content,
+      ordersId: ordersId,
+      creatorId: req.user._id,
+    });
+    res.status(200).json({ status: 200, message: "send email success" });
+  } catch (err) {
+    next(err);
+  }
+});
+const sendEmailAllOrder = asyncHandler(async (req, res, next) => {
+  const { content, subject, eventId } = req.body;
+  try {
+    await orderService.sendEmailAllOrder({
+      content,
+      subject,
+      eventId,
+      creatorId: req.user._id,
+    });
+    res.status(200).json({ status: 200, message: "send email success" });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
   updateOdrder,
   updateAllByEventId,
   updateRequestOrder,
+  sendEmailtoId,
+  sendEmailAllOrder,
 };

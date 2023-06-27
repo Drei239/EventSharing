@@ -1,12 +1,11 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 const LoggedInOnly = ({ children }) => {
-  const isLogin = useSelector((state) => state.user.isLogin);
-  if (!isLogin) {
-    return <Navigate to="/login-register" replace={true} />;
+  const userInfo = useSelector((state) => state.user.userInfo);
+  if (!userInfo) {
+    return <Navigate to="/login-register" />;
   }
-
   return <>{children}</>;
 };
 

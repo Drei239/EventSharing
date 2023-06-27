@@ -1,4 +1,3 @@
-import { base_url } from "../../utils/base_url";
 import axios from "axios";
 import UseCallApi from "../../hooks/useCallApi";
 const getAllCategory = async () => {

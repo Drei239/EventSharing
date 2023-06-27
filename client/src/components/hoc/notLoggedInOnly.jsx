@@ -2,9 +2,9 @@ import React from "react";
 import { Navigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 const NotLoggedInOnly = ({ children }) => {
-  const isLogin = useSelector((state) => state.user.isLogin);
-  if (isLogin) {
-    return <Navigate to="/account/profile" replace={true} />;
+  const userInfo = useSelector((state) => state.user.userInfo);
+  if (userInfo) {
+    return <Navigate to="/account/profile" />;
   }
 
   return <>{children}</>;

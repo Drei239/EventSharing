@@ -14,8 +14,9 @@ import { ToastContainer } from "react-toastify";
 import { NotLoggedInOnly, LoggedInOnly } from "./components";
 function App() {
   const open = useSelector((state) => state.user.open);
+  const openSendEmail = useSelector((state) => state.order.open);
   return (
-    <div className={open ? "hidden-scroll" : ""}>
+    <div className={open || openSendEmail ? "hidden-scroll" : ""}>
       <NextUIProvider>
         <Header />
         <ToastContainer limit={3} />

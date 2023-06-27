@@ -4,13 +4,14 @@ import { useSelector, useDispatch } from "react-redux";
 import { getOrderbyId } from "../../features/order/orderSlice";
 import Select from "react-select";
 import { BiSearch } from "react-icons/bi";
-import { Progress } from "@nextui-org/react";
+import { useModal } from "@nextui-org/react";
+import { RiMailFill } from "react-icons/ri";
 import dayjs from "dayjs";
 import "./myEvent.css";
 import OpenIcon from "../../assets/icon-open.png";
-import { Table } from "../../components/my-event";
+import { Table, SendEmail } from "../../components/my-event";
 import notify from "../../utils/notify";
-
+import { openModalSendEmail } from "../../features/order/orderSlice";
 const orderStatusOption = [
   {
     label: "Tất cả đơn hàng",
@@ -40,6 +41,7 @@ const MyEvent = () => {
   const [statusSelected, setStatusSelected] = useState(orderStatusOption[0]);
   const [sortSelected, setSortSelected] = useState(orderSortOption[0]);
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [selected, setSelected] = useState([]);
 
   const { orders, isLoading, isSuccess, isError } = useSelector(
     (state) => state.order
@@ -54,6 +56,7 @@ const MyEvent = () => {
       isPaid: orders[i]?.isPaid,
       isRefund: orders[i]?.isRefund,
       isJoined: orders[i]?.isJoined,
+      status: orders[i]?.event.status,
       ...orders[i]?.user,
     });
   }
@@ -65,11 +68,17 @@ const MyEvent = () => {
   const hanleChangeStatus = (selectedOption) => {
     setStatusSelected(selectedOption);
   };
+  const handleClickSendMailAll = () => {
+    dispatch(openModalSendEmail("all"));
+  };
   useEffect(() => {
     if (isSuccess) {
       notify("Thay đổi trạng thái của đơn hàng thành công", "success");
     }
   }, [isSuccess]);
+  const handleClickSendEmailSelect = () => {
+    dispatch(openModalSendEmail("select"));
+  };
   useEffect(() => {
     if (isError) {
       notify("Thay đổi trạng thái của đơn hàng thất bại", "error");
@@ -198,7 +207,31 @@ const MyEvent = () => {
             </div>
           </div>
 
-          <Table rows={rows} idEvent={id} />
+          <Table
+            rows={rows}
+            idEvent={id}
+            selected={selected}
+            setSelected={setSelected}
+          />
+          <div className="my-event-send-email">
+            <RiMailFill className="my-event-send-email-icon" />
+            <span>Gửi mail đến</span>
+            <span
+              className="my-event-send-email-all"
+              onClick={handleClickSendMailAll}
+            >
+              Tất cả
+            </span>
+            {selected && selected.length > 0 && (
+              <span
+                className="my-event-send-email-selected"
+                onClick={handleClickSendEmailSelect}
+              >
+                Email đã chọn
+              </span>
+            )}
+          </div>
+          <SendEmail selected={selected} />
         </div>
       )}
     </>

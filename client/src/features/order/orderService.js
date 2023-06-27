@@ -25,9 +25,27 @@ const updateRequest = async (id, data) => {
   });
   return orders;
 };
+const sendEmail = async (data) => {
+  const orders = await UseCallApi({
+    url: `/orders/send-email`,
+    method: "POST",
+    data: data,
+  });
+  return orders;
+};
+const sendEmailAllOrder = async (data) => {
+  const orders = await UseCallApi({
+    url: `/orders/send-allOrder`,
+    method: "POST",
+    data: data,
+  });
+  return orders;
+};
 const orderService = {
   getOrderbyId,
   updateOneOrder,
   updateRequest,
+  sendEmail,
+  sendEmailAllOrder,
 };
 export default orderService;

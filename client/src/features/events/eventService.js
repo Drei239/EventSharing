@@ -1,5 +1,4 @@
 import axios from "axios";
-import { base_url } from "../../utils/base_url";
 import dayjs from "dayjs";
 import UseCallApi from "../../hooks/useCallApi";
 const getAllEvent = async (search) => {
