@@ -19,7 +19,7 @@ const Header = () => {
 
   useEffect(() => {
     dispatch(getUserInfo());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -67,13 +67,13 @@ const Header = () => {
             />
           </div>
 
-          <div className='header__category'>
-            <div className='dropdown'>
-                <div className='dropdown__catergory'>Sự kiện 
+          <div className="header__category">
+            <div className="dropdown">
+              <div className="dropdown__catergory">
+                Sự kiện
                 <AiFillCaretDown className="header-item-icon" />
-                </div>
-              <div className='dropdown__content'>
-
+              </div>
+              <div className="dropdown__content">
                 {category?.map((item) => {
                   return (
                     <div
@@ -98,14 +98,14 @@ const Header = () => {
                 location.pathname === "/event-create-update" ? "active" : ""
               }`}
             >
-              <Link to='/event-create-update' alt=''>
-                <Button color='primary' size='sm'>
+              <Link to="/event-create-update" alt="">
+                <Button color="primary" size="sm">
                   Tạo sự kiện
                 </Button>
               </Link>
             </div>
           ) : null}
-          <div className='header__log'>
+          <div className="header__log">
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>
             ) : (
