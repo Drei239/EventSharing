@@ -118,14 +118,31 @@ const EventDetails = () => {
             </div>
           </div>
           <div className='event__right-block'>
-            <Button
-              size='lg'
-              className='btn__buy'
-              color='primary'
-              bordered='false'
-            >
-              mua vé
-            </Button>
+            {eventDetail.status?.toLowerCase() === 'draft' ? (
+              <Button
+                size='lg'
+                className='btn__buy'
+                color='primary'
+                bordered='false'
+                onClick={() =>
+                  navigate(
+                    `/event-create-update?type=update&${eventDetail._id}`
+                  )
+                }
+              >
+                Cập nhật
+              </Button>
+            ) : (
+              <Button
+                size='lg'
+                className='btn__buy'
+                color='primary'
+                bordered='false'
+              >
+                Mua vé
+              </Button>
+            )}
+
             <div className='event__share'>
               <Button bordered color='primary' size='xs'>
                 <div className='btn__share'>Chia sẻ</div>
