@@ -205,7 +205,6 @@ const updateRequestOrder = asyncHandler(
             },
           }))
         );
-
         if (updateOrder && updateOrder.matchedCount != 0) {
           if (
             updateData[0].isPaid === true &&

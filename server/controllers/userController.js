@@ -229,7 +229,7 @@ const highlightUser = asyncHandler(async (req, res, next) => {
 
 // Logout
 const logout = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('access');
   res.clearCookie('refresh');
   res.end();
 };
@@ -262,6 +262,15 @@ const refreshToken = asyncHandler(async (req, res) => {
   }
 });
 
+const getOrganizers = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const result = await userModel.findById(id).select('-password');
+  console.log(result);
+  if (result) {
+    res.status(200).json(result);
+  }
+});
+
 module.exports = {
   getAllUser,
   register,
@@ -273,4 +282,5 @@ module.exports = {
   ratingUser,
   highlightUser,
   refreshToken,
+  getOrganizers,
 };

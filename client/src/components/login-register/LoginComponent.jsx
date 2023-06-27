@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Input } from '@nextui-org/react';
 import { ToastContainer } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useGoogleLogin } from '@react-oauth/google';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
@@ -136,6 +136,9 @@ const Login = () => {
 
   return (
     <>
+      <Link className='login__logo' to='/'>
+        <img src={'../images/logo.png'} alt='logo' />
+      </Link>
       {displayForm ? (
         <div className='login'>
           <h2>Xin chào</h2>

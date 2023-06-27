@@ -1,41 +1,41 @@
-import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
-import customFetch from "../../utils/axios.config";
-import userService from "./userService";
+import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
+import customFetch from '../../utils/axios.config';
+import userService from './userService';
 
 const initialState = {
-  userInfo: null,
+  userInfo: {},
   userHighlight: [],
   isLoading: true,
   isLogin: false,
-  message: "",
+  message: '',
   isSuccess: false,
   isSuccess2: false,
   open: false,
   imgSelect: null,
   isError: false,
 };
-export const openModal = createAction("openModal");
-export const closeModal = createAction("closeModal");
-export const saveImg = createAction("selectImg", function prepare(img) {
+export const openModal = createAction('openModal');
+export const closeModal = createAction('closeModal');
+export const saveImg = createAction('selectImg', function prepare(img) {
   return { payload: img };
 });
-export const removeImg = createAction("remove-Img");
+export const removeImg = createAction('remove-Img');
 export const getUserInfo = createAsyncThunk(
-  "user/getUserInfo",
+  'user/getUserInfo',
   async (_, thunkAPI) => {
     try {
       const resp = await customFetch({
-        method: "get",
-        url: "/users/profile",
+        method: 'get',
+        url: '/users/profile',
       });
       return resp.data;
     } catch (error) {
-      return thunkAPI.rejectWithValue("Lỗi kết nối với máy chủ");
+      return thunkAPI.rejectWithValue('Lỗi kết nối với máy chủ');
     }
   }
 );
 export const updateInfo = createAsyncThunk(
-  "user/updateUser",
+  'user/updateUser',
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await userService.updateUser({ id, data });
@@ -46,7 +46,7 @@ export const updateInfo = createAsyncThunk(
   }
 );
 export const deleteUser = createAsyncThunk(
-  "user/deleteUser",
+  'user/deleteUser',
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await userService.deleteUser(id, data);
@@ -57,7 +57,7 @@ export const deleteUser = createAsyncThunk(
   }
 );
 export const getHighlightUser = createAsyncThunk(
-  "user/getHighlight",
+  'user/getHighlight',
   async (_, { rejectWithValue }) => {
     try {
       const res = await userService.getHighlightUser();
@@ -68,10 +68,11 @@ export const getHighlightUser = createAsyncThunk(
   }
 );
 const userSlice = createSlice({
-  name: "user",
+  name: 'user',
   initialState,
   reducers: {
     logout: (state) => {
+      state.userInfo = {};
       state.isLogin = false;
       state.userInfo = null;
     },
@@ -80,7 +81,6 @@ const userSlice = createSlice({
     builder
       .addCase(getUserInfo.pending, (state) => {
         state.isLoading = true;
-        state.isLogin = false;
       })
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
@@ -94,7 +94,7 @@ const userSlice = createSlice({
     builder
       .addCase(updateInfo.pending, (state) => {
         state.isLoading = true;
-        state.message = "";
+        state.message = '';
         state.isSuccess = false;
       })
       .addCase(updateInfo.fulfilled, (state, action) => {
@@ -110,7 +110,7 @@ const userSlice = createSlice({
     builder
       .addCase(deleteUser.pending, (state) => {
         state.isLoading = true;
-        state.message = "";
+        state.message = '';
         state.isSuccess2 = false;
         state.isError = false;
       })

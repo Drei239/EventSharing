@@ -66,13 +66,14 @@ const Header = () => {
               onKeyDown={handleSubmit}
             />
           </div>
-          <div className="header__category">
-            <div className="dropdown">
-              <div className="dropdown__catergory">
-                Sự kiện
-                <AiFillCaretDown className="cardEvent-info2-item-icon" />
-              </div>
-              <div className="dropdown__content">
+
+          <div className='header__category'>
+            <div className='dropdown'>
+                <div className='dropdown__catergory'>Sự kiện 
+                <AiFillCaretDown className="header-item-icon" />
+                </div>
+              <div className='dropdown__content'>
+
                 {category?.map((item) => {
                   return (
                     <div
@@ -97,15 +98,14 @@ const Header = () => {
                 location.pathname === "/event-create-update" ? "active" : ""
               }`}
             >
-              <Link to="/create-event" alt="">
-                <Button color="primary" size="sm">
+              <Link to='/event-create-update' alt=''>
+                <Button color='primary' size='sm'>
                   Tạo sự kiện
                 </Button>
               </Link>
             </div>
           ) : null}
-
-          <div className="header__log">
+          <div className='header__log'>
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>
             ) : (

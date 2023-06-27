@@ -1,3 +1,17 @@
+.login__logo {
+  width: 40px;
+  position: relative;
+  top: -340px;
+  left: -80px;
+}
+
+.register__logo {
+  width: 40px;
+  position: relative;
+  top: -340px;
+  left: -80px;
+}
+
 .login {
   width: 60%;
   opacity: 1;
