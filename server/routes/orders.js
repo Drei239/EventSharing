@@ -6,6 +6,8 @@ const {
   updateOdrder,
   updateAllByEventId,
   updateRequestOrder,
+  sendEmailtoId,
+  sendEmailAllOrder,
 } = require("../controllers/orderController");
 const { protect, verifyUser } = require("../middleware/authMiddleware");
 
@@ -23,4 +25,7 @@ router.put("/event/:id/updateAll", protect, updateAllByEventId);
 //4.UPDATE "REQUEST ORDERS"
 router.put("/event/:id/updateRequest", protect, updateRequestOrder);
 
+router.post("/send-email", protect, sendEmailtoId);
+
+router.post("/send-allOrder", protect, sendEmailAllOrder);
 module.exports = router;

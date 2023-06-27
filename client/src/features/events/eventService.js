@@ -1,6 +1,6 @@
-import { base_url } from '../../utils/base_url';
-import dayjs from 'dayjs';
-import UseCallApi from '../../hooks/useCallApi';
+import axios from "axios";
+import dayjs from "dayjs";
+import UseCallApi from "../../hooks/useCallApi";
 const getAllEvent = async (search) => {
   console.log(search);
   const data = await UseCallApi({

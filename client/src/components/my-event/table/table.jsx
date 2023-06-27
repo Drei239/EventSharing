@@ -147,13 +147,13 @@ const statusOption = [
   },
 ];
 
-const TableMyEvent = ({ rows, idEvent }) => {
+const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
   const { countDocument } = useSelector((state) => state.order);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
   const [rowsPerPage, setRowPerPage] = useState(10);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selected, setSelected] = useState([]);
+
   const [rowSelect, setRowSelect] = useState([]);
   const open = Boolean(anchorEl);
   const handleCloseMenu = () => {
@@ -165,28 +165,57 @@ const TableMyEvent = ({ rows, idEvent }) => {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: false, isJoined: false, isRefund: false },
+          {
+            orderId: item,
+            isPaid: false,
+            isJoined: false,
+            isRefund: false,
+            email: rows?.find((item) => item.orderId == item.toString())?.email,
+          },
         ];
       }, []);
     } else if (index === 1) {
       data = selected.reduce((arr, item) => {
+        console.log(
+          rows?.find((row) => row.orderId.toString() == item.toString())
+        );
         return [
           ...arr,
-          { orderId: item, isPaid: true, isJoined: false, isRefund: false },
+          {
+            orderId: item,
+            isPaid: true,
+            isJoined: false,
+            isRefund: false,
+            email: rows?.find(
+              (row) => row.orderId.toString() == item.toString()
+            )?.email,
+          },
         ];
       }, []);
     } else if (index === 2) {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: true, isJoined: true, isRefund: false },
+          {
+            orderId: item,
+            isPaid: true,
+            isJoined: true,
+            isRefund: false,
+            email: rows?.find((item) => item.orderId === item)?.email,
+          },
         ];
       }, []);
     } else {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: false, isJoined: false, isRefund: true },
+          {
+            orderId: item,
+            isPaid: false,
+            isJoined: false,
+            isRefund: true,
+            email: rows?.find((item) => item.orderId === item)?.email,
+          },
         ];
       }, []);
     }

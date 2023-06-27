@@ -1,5 +1,5 @@
 .my-event {
-  height: 100vh;
+  height: 120vh;
   width: 80%;
   margin: 100px auto;
 }
@@ -151,4 +151,28 @@
 .my-event-header-info-time > span:first-child {
   font-weight: 700;
   font-size: 18px;
+}
+.my-event-send-email {
+  display: flex;
+  background-color: #ccc;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+.my-event-send-email-icon {
+  font-size: 20px;
+}
+.my-event-send-email-all,
+.my-event-send-email-selected {
+  background-color: var(--color-primary);
+  color: var(--color-primary2);
+  height: 35px;
+  padding: 0 15px;
+  border-bottom: 1px solid var(--color-primary2);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }

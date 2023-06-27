@@ -15,8 +15,10 @@ import { LoggedInOnly, NotLoggedInOnly } from './components';
 import OrganizersPage from './pages/organizers/OrganizersPage';
 function App() {
   const open = useSelector((state) => state.user.open);
+  const openSendEmail = useSelector((state) => state.order.open);
   return (
-    <div className={open ? 'hidden-scroll' : ''}>
+    <div className={open || openSendEmail ? "hidden-scroll" : ""}>
+
       <NextUIProvider>
         <Header />
         <ToastContainer limit={3} />

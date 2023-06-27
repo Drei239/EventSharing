@@ -39,17 +39,11 @@ const Home = () => {
     dispatch(getNewEvent(page));
   }, [page]);
   useEffect(() => {
-    console.log(countDocument);
-  }, [countDocument]);
-  useEffect(() => {
     if (request && newEvents) {
       setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
     }
     setRequest(true);
   }, [newEvents]);
-  useEffect(() => {
-    console.log(registeredEvent);
-  }, [registeredEvent]);
   return (
     <motion.div layout className='home'>
       <Carousel />
