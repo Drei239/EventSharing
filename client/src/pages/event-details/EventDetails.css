@@ -161,12 +161,12 @@ h3 {
 }
 
 .event__gallery {
-	padding: 50px 60px 10px;
+	padding: 50px 60px 0 ;
 }
 
 .comment__container {
 	width: 900px;
-	margin: 200px auto;
+	margin: 100px auto;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;

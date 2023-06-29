@@ -154,28 +154,3 @@ input[type="range"]::-webkit-slider-thumb {
   cursor: pointer;
 }
 
-.participants {
-  display: flex;
-  gap: 5px;
-  text-align: center;
-  align-items: center;
-  border: 1px black solid;
-  border-radius: 10px;
-  padding: 10px 20px;
-  width: 350px;
-}
-
-.user__info {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-}
-
-.user__avatar {
-  width: 100px;
-  border-radius: 50%;
-}
-
-.user__name {
-  text-decoration: underline;
-}

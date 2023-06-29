@@ -2,36 +2,45 @@ import React, { useState, useEffect } from 'react';
 import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
 import Discussions from '../../components/discussions/Discussions';
-import EventModal from '../../components/ui/eventModal';
+import EventModal from '../../components/eventModal/eventModal';
 import Gallery from '../../components/gallery/Gallery';
 import dayjs from "dayjs";
 import { Button, Tooltip, Link } from "@nextui-org/react";
+// import { FacebookShareButton, FacebookIcon } from 'react-share';
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { GiSandsOfTime, } from "react-icons/gi";
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEventById } from "../../features/events/eventSlice";
+import { getUserInfo } from '../../features/user/userSlice';
 
 const EventDetails = () => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
+	const userId = useSelector(state => state?.user?.userInfo?._id);
+
+	console.log(userId);
+
 
 	const isOnline = isOnlineEvent();
-	console.log("####", eventDetail);
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 
 	const imageList = eventDetail?.imageList?.map((item) => (item));
 
-	console.log(imageList);
-	const images = [
-		'https://billetto.co.uk/blog/wp-content/uploads/2020/02/qmfsp1xyvtq-1024x680.jpg',
-		'https://billetto.co.uk/blog/wp-content/uploads/2020/02/qmfsp1xyvtq-1024x680.jpg',
-		'https://billetto.co.uk/blog/wp-content/uploads/2020/02/qmfsp1xyvtq-1024x680.jpg',
-	];
+	const [isCreator, setIsCreator] = useState(false);
+
+	const creator = eventDetail?.creator?._id;
+	// if (userId == creator) {
+	// 	setIsCreator(true)
+	// }
+
+	console.log("###", isCreator);
+
+
 	if (imageList == undefined) {
 		return false;
 	};
@@ -74,7 +83,6 @@ const EventDetails = () => {
 								{eventDetail?.location?.province?.name || 'no information'},
 								{eventDetail?.location?.ward?.name || 'no information'},
 								{eventDetail?.location?.address || 'no information'}
-
 							</div>
 							<div className='event__time'>
 								<GiSandsOfTime className="cardEvent-info2-item-icon" />
@@ -87,9 +95,23 @@ const EventDetails = () => {
 						</div>
 					</div>
 					<div className='event__right-block'>
-						<Button size="lg" className='btn__buy' color="primary" bordered='false'>mua vé</Button>
+						{isCreator
+							? false 	
+							: <Button size="lg" className='btn__buy' color="primary" bordered='false'>mua vé</Button>
+						}		
 						<div className='event__share'>
-							<Button bordered color="primary" size="xs"><div className='btn__share'>Chia sẻ</div></Button>
+							<Button bordered color="primary" size="xs">
+								<div className='btn__share'>
+									{/* <FacebookShareButton
+										url={'https://www.example.com'}
+										quote={'Dummy text!'}
+										hashtag="#muo"
+									>
+										<FacebookIcon size={32} round />
+									</FacebookShareButton> */}
+									Chia sẻ
+								</div>
+							</Button>
 							<Button bordered color="primary" size="xs"><div className='btn__share'>Chia sẻ</div></Button>
 						</div>
 						<div className='event__price'>
@@ -106,10 +128,6 @@ const EventDetails = () => {
 					<div className="event__title">
 						<h3 className='event__description'>Giới thiệu</h3>
 						<p className='description__item'>{eventDetail?.description || 'no information'}
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
-							Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita debitis, asperiores doloremque quisquam, eius quasi amet consequatur rem velit exercitationem aliquam quidem, eum omnis blanditiis tempore architecto totam optio quis!
 						</p>
 					</div>
 				</div>
