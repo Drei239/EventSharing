@@ -22,6 +22,7 @@
     "dayjs": "^1.11.8",
     "formik": "^2.4.1",
     "framer-motion": "^10.12.16",
+    "html-react-parser": "^4.0.0",
     "libphonenumber-js": "^1.10.34",
     "query-string": "^8.1.0",
     "react": "^18.2.0",

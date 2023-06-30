@@ -4,6 +4,7 @@ const eventModel = require("../models/eventModel");
 const notifyModel = require("../models/notifyModel");
 const userModel = require("../models/userModel");
 const orderValidator = require("../validators/orderValidators");
+const eventValidator = require("../validators/eventValidators");
 const resMes = require("../validators/responsiveMessages");
 const sendEmail = require("../utils/sendEmail");
 
@@ -256,6 +257,52 @@ const updateRequestOrder = asyncHandler(
   }
 );
 
+//5.EXPORT ORDERS TO EXCEL
+const exportData = asyncHandler(async (requestUserId, requestEventId, workbook) => {
+  const requestEvent = await eventModel.findOne({ _id: requestEventId });
+  //EVENT TỒN TẠI?
+  if (requestEvent) {
+    const requestOrder = await orderModel.find({ event: requestEventId })
+      .populate("event", "title")
+      .populate("user", "name");
+    //EVENT TỒN TẠI DANH SÁCH EVENT?
+    if (orderValidator.eventExistOrderValidation(requestOrder)) {
+      //NGƯỜI REQUEST LÀ CREATOR
+      if (eventValidator.requestIsCreatorValidation(requestEvent, requestUserId)) {
+        const worksheet = workbook.addWorksheet("Orders");
+        worksheet.columns = [
+          { header: "Id No.", key: "id_No", width: 10 },
+          { header: "Event", key: "event_Title", width: 40 },
+          { header: "User", key: "user_Name", width: 40 },
+          { header: "Paid", key: "isPaid", width: 10 },
+          { header: "Refund", key: "isRefund", width: 10 },
+          { header: "Joined", key: "isJoined", width: 10 },
+          { header: "CreatedAt", key: "createdAt", width: 20 },
+        ];
+
+        let counter = 1;
+        requestOrder.forEach((order) => {
+          order.id_No = counter;
+          order.event_Title = order.event.title;
+          order.user_Name = order.user.name;
+          worksheet.addRow(order);
+          counter++;
+        });
+
+        worksheet.getRow(1).eachCell((cell) => {
+          cell.font = { bold: true };
+        });
+      } else {
+        throw Error(resMes.orderError.ERR_7);
+      }
+    } else {
+      throw Error(resMes.orderError.ERR_3);
+    }
+  } else {
+    throw Error(resMes.eventError.ERR_2);
+  }
+});
+
 const updateOrder = async ({ creatorId, orderId, status }) => {
   const findOrder = await orderModel.findById(orderId).populate("event user");
   if (!findOrder) {
@@ -333,13 +380,11 @@ const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
     <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
     <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
     <div>
-    <h4 style="text-tranform:underline;color:blue;font-size:20px">${
-      order.event.title
-    }</h4>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
+        }</h4>
     <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
-    <p>${order.event.location.address} ${order.event.location.ward.name} ${
-        order.event.location.district.name
-      } ${order.event.location.province.name}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
+        } ${order.event.location.province.name}</p>
     </div>
     </div>
    <div>${content}</div>
@@ -384,4 +429,5 @@ module.exports = {
   updateRequestOrder,
   sendEmailtoId,
   sendEmailAllOrder,
+  exportData
 };

@@ -12,13 +12,16 @@ import { GiSandsOfTime } from "react-icons/gi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
-import { sendNotifyNewOrder } from "../../features/action";
+import parse from "html-react-parser";
+
 const EventDetails = () => {
   const navigate = useNavigate();
   const [commentsTabs, setCommentsTabs] = useState("comments");
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById[0]);
+  const { userInfo } = useSelector((state) => state.user);
+
   const isOnline = isOnlineEvent();
   console.log("####", eventDetail);
 
@@ -50,6 +53,7 @@ const EventDetails = () => {
     return eventDetail?.isOnline ? "Online" : "Offline";
   }
 
+  console.log(eventDetail);
   return (
     <div>
       <img
@@ -121,7 +125,8 @@ const EventDetails = () => {
             </div>
           </div>
           <div className="event__right-block">
-            {eventDetail.status?.toLowerCase() === "draft" ? (
+            {eventDetail.status?.toLowerCase() === "draft" &&
+            eventDetail.creator?._id === userInfo._id ? (
               <Button
                 size="lg"
                 className="btn__buy"
@@ -129,7 +134,7 @@ const EventDetails = () => {
                 bordered="false"
                 onClick={() =>
                   navigate(
-                    `/event-create-update?type=update&${eventDetail._id}`
+                    `/event-create-update?type=update&id=${eventDetail._id}`
                   )
                 }
               >
@@ -170,23 +175,7 @@ const EventDetails = () => {
           <div className="event__title">
             <h3 className="event__description">Giới thiệu</h3>
             <p className="description__item">
-              {eventDetail?.description || "no information"}
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. Expedita
-              debitis, asperiores doloremque quisquam, eius quasi amet
-              consequatur rem velit exercitationem aliquam quidem, eum omnis
-              blanditiis tempore architecto totam optio quis! Lorem ipsum dolor
-              sit amet, consectetur adipisicing elit. Expedita debitis,
-              asperiores doloremque quisquam, eius quasi amet consequatur rem
-              velit exercitationem aliquam quidem, eum omnis blanditiis tempore
-              architecto totam optio quis! Lorem ipsum dolor sit amet,
-              consectetur adipisicing elit. Expedita debitis, asperiores
-              doloremque quisquam, eius quasi amet consequatur rem velit
-              exercitationem aliquam quidem, eum omnis blanditiis tempore
-              architecto totam optio quis! Lorem ipsum dolor sit amet,
-              consectetur adipisicing elit. Expedita debitis, asperiores
-              doloremque quisquam, eius quasi amet consequatur rem velit
-              exercitationem aliquam quidem, eum omnis blanditiis tempore
-              architecto totam optio quis!
+              {parse(eventDetail?.description) || "no information"}
             </p>
           </div>
         </div>

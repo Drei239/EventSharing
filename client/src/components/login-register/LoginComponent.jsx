@@ -196,7 +196,6 @@ const Login = () => {
       ) : (
         <Register />
       )}
-      <ToastContainer />
     </>
   );
 };

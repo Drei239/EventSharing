@@ -10,8 +10,7 @@ import {
   Setting,
   EventManagement,
   MyEvent,
-  ForgotPassword,
-  ResetPassword,
+  Organizers,
 } from "./pages";
 import { RULES } from "./constants/rules";
 import eventService from "./features/events/eventService";
@@ -20,6 +19,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { useSelector } from "react-redux";
 import { ToastContainer } from "react-toastify";
 import { NotLoggedInOnly, LoggedInOnly } from "./components";
+
 function App() {
   const open = useSelector((state) => state.user.open);
   const openSendEmail = useSelector((state) => state.order.open);
@@ -37,14 +37,7 @@ function App() {
               </LoggedInOnly>
             }
           />
-          <Route
-            path="/login-register"
-            element={
-              <NotLoggedInOnly>
-                <LoginRegisterPage />
-              </NotLoggedInOnly>
-            }
-          />
+          <Route path="/login-register" element={<LoginRegisterPage />} />
           {/* <Route
             path="/create-event"
             element={
@@ -84,8 +77,7 @@ function App() {
             path="/event/:id"
             element={<EventDetails eventService={eventService} rules={RULES} />}
           />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/newPass/:userId/:token" element={<ResetPassword />} />
+          <Route path="/organizers/:id" element={<Organizers />} />
         </Routes>
         <Footer />
       </NextUIProvider>

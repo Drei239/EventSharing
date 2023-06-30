@@ -37,9 +37,9 @@ console.log(
 
 function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
   if (
-    Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
-    Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
-    Date.parse(timeBegin) < Date.parse(timeEnd)
+    timeBegin < timeEnd &&
+    timeEndSignup < timeEnd &&
+    timeEndSignup > timeBegin
   ) {
     return true;
   } else {
@@ -70,7 +70,6 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
   // Sau khi gán userInfo = req.user
   // const creator = req.user.id;
   // loại bỏ giá trị creator ở req.body
-  console.log(inputTimeValidation(timeEndSignup, timeBegin, timeEnd));
   if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
     try {
       const newEvent = await eventService.createNewEvent(
