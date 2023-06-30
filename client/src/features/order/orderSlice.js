@@ -10,6 +10,7 @@ const initialState = {
   isSuccess: false,
   countDocument: 0,
   isSuccessEmail: false,
+  isErrorEmail: false,
 };
 export const getOrderbyId = createAsyncThunk(
   "order/getOrder",
@@ -82,7 +83,7 @@ export const openModalSendEmail = createAction(
     };
   }
 );
-
+export const updateCancelEvent = createAction("updateCancelEventSuccesfully");
 export const closeModalSendEmail = createAction("closeModalSendEmail");
 const orderSlice = createSlice({
   name: "order",
@@ -149,11 +150,12 @@ const orderSlice = createSlice({
         state.message = action.payload?.message;
       });
     builder
-      .addCase(sendEmailSelect.pending, (state, action) => {
+      .addCase(sendEmailSelect.pending, (state) => {
         state.isLoading = true;
         state.isSuccessEmail = false;
+        state.isErrorEmail = false;
       })
-      .addCase(sendEmailSelect.fulfilled, (state, action) => {
+      .addCase(sendEmailSelect.fulfilled, (state) => {
         state.isLoading = false;
         state.isSuccessEmail = true;
       })
@@ -161,27 +163,39 @@ const orderSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload?.message;
+        state.isErrorEmail = true;
       });
     builder
-      .addCase(sendEmailAllOrder.pending, (state, action) => {
+      .addCase(sendEmailAllOrder.pending, (state) => {
         state.isLoading = true;
         state.isSuccessEmail = false;
+        state.isErrorEmail = false;
       })
-      .addCase(sendEmailAllOrder.fulfilled, (state, action) => {
+      .addCase(sendEmailAllOrder.fulfilled, (state) => {
         state.isLoading = false;
         state.isSuccessEmail = true;
       })
       .addCase(sendEmailAllOrder.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = true;
+        state.isErrorEmail = true;
         state.message = action.payload?.message;
       });
     builder.addCase(openModalSendEmail, (state, action) => {
       state.open = true;
       state.typeSend = action.payload;
     });
-    builder.addCase(closeModalSendEmail, (state, action) => {
+    builder.addCase(closeModalSendEmail, (state) => {
       state.open = false;
+    });
+    builder.addCase(updateCancelEvent, (state) => {
+      state.orders =
+        state.orders.length > 0 &&
+        state.orders.reduce((arr, order) => {
+          return [
+            ...arr,
+            { ...order, event: { ...order.event, status: "Canceled" } },
+          ];
+        }, []);
     });
   },
 });

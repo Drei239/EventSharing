@@ -90,9 +90,6 @@ const Personal = () => {
     }
   }, [userInfo]);
   useEffect(() => {
-    console.log(formik.values);
-  }, [formik.values]);
-  useEffect(() => {
     setVisible(isLoading);
   }, [isLoading]);
   useEffect(() => {

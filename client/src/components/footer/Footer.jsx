@@ -8,7 +8,13 @@ const Footer = () => {
   return (
     <>
       <footer
-        className={location.pathname === "/login-register" ? "active" : ""}
+        className={
+          location.pathname === "/login-register" ||
+          location.pathname === "/forgot-password" ||
+          location.pathname.indexOf("newPass")
+            ? "active"
+            : ""
+        }
       >
         <div className="wrapper">
           <div className="footer__top">

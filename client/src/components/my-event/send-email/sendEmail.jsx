@@ -4,7 +4,9 @@ import { Editor } from "@tinymce/tinymce-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { IoIosSend } from "react-icons/io";
+import { motion } from "framer-motion";
 
+import notify from "../../../utils/notify";
 import {
   closeModalSendEmail,
   sendEmailSelect,
@@ -13,7 +15,9 @@ import {
 import "./sendEmail.css";
 const SendEmail = ({ selected }) => {
   const dispatch = useDispatch();
-  const { open, typeSend, orders } = useSelector((state) => state.order);
+  const { open, typeSend, orders, isSuccessEmail, isErrorEmail } = useSelector(
+    (state) => state.order
+  );
   const editorRef = useRef(null);
 
   const [subjectEmail, setSubjectEmail] = useState("");
@@ -46,10 +50,29 @@ const SendEmail = ({ selected }) => {
   const closeModal = () => {
     dispatch(closeModalSendEmail());
   };
+  useEffect(() => {
+    if (isSuccessEmail) {
+      dispatch(closeModalSendEmail());
+      notify("Gửi mail thành công", "success");
+    }
+  }, [isSuccessEmail]);
+  useEffect(() => {
+    if (isErrorEmail) {
+      notify("Gửi mail thất bại", "error");
+    }
+  }, [isErrorEmail]);
   return (
     <>
       {open && (
-        <div className="send-email-bg">
+        <motion.div
+          key={open}
+          initial={{ y: -200, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: -200, opacity: 0 }}
+          transition={{ duration: 0.3 }}
+          className="send-email"
+        >
+          <div className="send-email-bg" onClick={closeModal}></div>
           <div className="send-email-modal">
             <div className="send-email-left">
               <div className="send-email-left-dear">
@@ -127,7 +150,7 @@ const SendEmail = ({ selected }) => {
               <AiFillCloseCircle />
             </button>
           </div>
-        </div>
+        </motion.div>
       )}
     </>
   );

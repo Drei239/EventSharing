@@ -7,20 +7,31 @@ import { useLocation, Link } from "react-router-dom";
 import AvatarComponent from "../avatar/AvatarComponent";
 import { getUserInfo } from "../../features/user/userSlice";
 import { AiFillCaretDown } from "react-icons/ai";
-
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { newConnetion } from "../../features/action";
+import { Notify } from "..";
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const message = useSelector((state) => state.notify.notify);
   const category = useSelector((state) => state.category.categories);
   const { isLogin, userInfo } = useSelector((state) => state.user);
   const location = useLocation();
   const [scrollTop, setScrollTop] = useState(0);
   const [isHideHeader, setIsHideHeader] = useState(false);
+  const [isOpenNotify, setIsOpenNotify] = useState(false);
 
+  const handleCloseNotify = () => {
+    setIsOpenNotify(false);
+  };
   useEffect(() => {
     dispatch(getUserInfo());
-  }, [dispatch]);
-
+  }, []);
+  useEffect(() => {
+    if (isLogin) {
+      dispatch(newConnetion(userInfo._id));
+    }
+  }, [isLogin]);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > scrollTop) {
@@ -46,9 +57,13 @@ const Header = () => {
   };
   return (
     <header
-      className={`${location.pathname === "/login-register" ? "active" : ""} ${
-        isHideHeader ? "hide-header" : ""
-      }`}
+      className={`${
+        location.pathname === "/login-register" ||
+        location.pathname === "/forgot-password" ||
+        location.pathname.indexOf("newPass") !== -1
+          ? "active"
+          : ""
+      } ${isHideHeader ? "hide-header" : ""}`}
     >
       <div className="wrapper">
         <div className="header__left-block">
@@ -105,6 +120,24 @@ const Header = () => {
               </Link>
             </div>
           ) : null}
+          {isLogin && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                position: "relative",
+              }}
+              onClick={() => setIsOpenNotify(!isOpenNotify)}
+            >
+              <IoIosNotificationsOutline
+                style={{ fontSize: "30px", color: "white" }}
+              />
+              {isOpenNotify && <Notify closeNotify={handleCloseNotify} />}
+            </div>
+          )}
+
           <div className="header__log">
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>

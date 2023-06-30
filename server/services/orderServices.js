@@ -1,22 +1,26 @@
 const asyncHandler = require("express-async-handler");
 const orderModel = require("../models/orderModel");
 const eventModel = require("../models/eventModel");
+const notifyModel = require("../models/notifyModel");
+const userModel = require("../models/userModel");
 const orderValidator = require("../validators/orderValidators");
 const resMes = require("../validators/responsiveMessages");
 const sendEmail = require("../utils/sendEmail");
+
 const dayjs = require("dayjs");
 const ejs = require("ejs");
 const fs = require("fs");
 
 const emailTemplate = fs.readFileSync("./views/index.ejs", "utf-8");
 //1.CREATE NEW ORDER
-const createNewOrder = asyncHandler(async (event, user, creator) => {
+const createNewOrder = asyncHandler(async (event, user) => {
   const existOrder = await orderModel.findOne({
     event: event,
     user: user,
-    creator,
   });
-  const eventOrder = await eventModel.findOne({ _id: event });
+  const eventOrder = await eventModel
+    .findOne({ _id: event })
+    .populate("creator");
   const listOrder = await orderModel.find({ event: event });
 
   if (orderValidator.existOrderValidation(existOrder)) {
@@ -24,9 +28,15 @@ const createNewOrder = asyncHandler(async (event, user, creator) => {
       const newOrder = await orderModel.create({
         event,
         user,
-        creator,
       });
       if (newOrder) {
+        await notifyModel.create({
+          notifyFrom: user,
+          notifyTo: eventOrder.creator,
+          notifyType: "new-order",
+          content: `${eventOrder.creator.name} đã đăng kí sự kiện của bạn`,
+          orderId: newOrder._id,
+        });
         return newOrder;
       } else {
         throw Error("NEW ORDER FAILED!");
@@ -294,25 +304,9 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
       return findOrdered;
     }
     case "refund": {
-      if (findOrder.event.status !== "canceled") {
+      if (findOrder.event.status !== "Canceled") {
         throw Error("Không thể chuyển status của đơn hàng này");
       }
-      const renderedTemplate = await ejs.render(emailTemplate, {
-        title: findOrder.event.title,
-        img: findOrder.event.banner,
-        time: `${dayjs(findOrder.event.timeBegin).format(
-          "ddd,DD MM YYYY hh:mm "
-        )}-${dayjs(findOrder.event.timeEnd).format("ddd,DD MM YYYY hh:mm ")}`,
-        location: `${findOrder.event.location.address} ${findOrder.event.location.ward.name} ${findOrder.event.location.district.name} ${findOrder.event.location.province.name}`,
-        content: "Đơn hàng của bạn đã được hoàn tiền",
-        isOnline: findOrder.event.isOnline,
-        linkOnline: "das",
-      });
-      await sendEmail({
-        to: findOrder.user.email,
-        subject: `Vé của bạn cho ${findOrder.event.title} đã được hoàn tiền`,
-        content: renderedTemplate,
-      });
       findOrder.isPaid = false;
       findOrder.isRefund = true;
       findOrder.isJoined = false;

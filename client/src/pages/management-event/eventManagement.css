@@ -39,7 +39,7 @@
   align-items: center;
   height: 35px;
   border-radius: 25px;
-  width: 110px;
+  width: 120px;
   font-size: 15px;
   padding-left: 6px;
   border: 1px solid rgb(112, 112, 112);
@@ -53,6 +53,7 @@
 .management-events-filter-type-item-select {
   background-color: var(--color-primary);
   color: white;
+  border: none;
 }
 .management-events-filter-type {
   margin-left: 20px;
@@ -101,8 +102,6 @@
 .management-events-list-header div:nth-child(3),
 .management-events-list-header div:nth-child(4) {
   width: calc(40% / 2);
-}
-.management-events-list-items {
 }
 .management-events-list-item {
   display: flex;
@@ -217,4 +216,10 @@
 .management-events-calendar {
   margin-top: 100px;
   z-index: 0;
+}
+.management-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
 }

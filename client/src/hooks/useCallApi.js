@@ -17,8 +17,9 @@ const UseCallApi = async ({ method, url, data }) => {
       const { status, message } = err.response;
       console.error(`Mã trạng thái lỗi:${status}`);
       console.error("Thông điệp lỗi", message);
+      throw new Error(err.response.data);
     } else {
-      console.error("Lỗi gọi API:", err.message);
+      throw new Error(err);
     }
   }
 };

@@ -4,7 +4,15 @@ import EventDetails from "./pages/event-details/EventDetails";
 import Header from "./components/header/Header";
 import LoginRegisterPage from "./pages/login-register/LoginRegisterPage";
 import EventCreateUpdate from "./pages/create-event-update/EventCreateUpdate";
-import { Home, Events, Setting, EventManagement, MyEvent } from "./pages";
+import {
+  Home,
+  Events,
+  Setting,
+  EventManagement,
+  MyEvent,
+  ForgotPassword,
+  ResetPassword,
+} from "./pages";
 import { RULES } from "./constants/rules";
 import eventService from "./features/events/eventService";
 import { Route, Routes } from "react-router-dom";
@@ -71,10 +79,13 @@ function App() {
               </LoggedInOnly>
             }
           />
+
           <Route
             path="/event/:id"
             element={<EventDetails eventService={eventService} rules={RULES} />}
           />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/newPass/:userId/:token" element={<ResetPassword />} />
         </Routes>
         <Footer />
       </NextUIProvider>

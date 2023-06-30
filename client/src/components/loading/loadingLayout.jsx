@@ -4,7 +4,6 @@ import "./loading.css";
 const LoadingLayout = ({ loading }) => {
   return (
     <Modal {...loading} className="loading-layout">
-      {" "}
       <Loading color="primary" type="default" size="xl" />
     </Modal>
   );

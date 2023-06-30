@@ -1,7 +1,14 @@
 const User = require("../models/userModel");
 const userModel = require("../models/userModel");
 const orderModel = require("../models/orderModel");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
+const resMes = require("../validators/responsiveMessages");
+const tokenModel = require("../models/tokenModel");
+const fs = require("fs");
+const ejs = require("ejs");
 
+const emailTemplate = fs.readFileSync("./views/forgotPassword.ejs", "utf-8");
 const updateUserService = async (id, data) => {
   const newUser = await userModel
     .findByIdAndUpdate(
@@ -85,9 +92,56 @@ const highlightUser = async () => {
   const user = userModel.find().sort("-totalRating").limit(5);
   return user;
 };
+//
+const forgotPassword = async (email) => {
+  const checkEmail = await userModel.findOne({ email: email });
+  if (!checkEmail) {
+    throw Error(resMes.userError.ERR_1);
+  }
+  let token = await tokenModel.findOne({ userId: checkEmail?._id });
+  if (!token) {
+    token = await new tokenModel({
+      userId: checkEmail._id,
+      token: crypto.randomBytes(20).toString("hex"),
+    }).save();
+  } else {
+    token.token = crypto.randomBytes(20).toString("hex");
+    token.createdAt = new Date();
+    await token.save();
+  }
+  const link = `${process.env.FRONTEND_HOST}/newPass/${checkEmail._id}/${token.token}`;
+  const renderedTemplate = await ejs.render(emailTemplate, {
+    link: link,
+  });
+  await sendEmail({
+    to: email,
+    content: renderedTemplate,
+    subject: "Yêu cầu thay đổi mật khẩu",
+  });
+  return token;
+};
+const resetPassword = async (userId, token, newPassword) => {
+  const userRequest = await userModel.findById(userId);
+  if (!userRequest) {
+    throw Error(resMes.userError.ERR_2);
+  }
+  const checkToken = await tokenModel.findOne({
+    userId: userId,
+    token: token.toString(),
+  });
+  if (!checkToken) {
+    throw Error(resMes.userError.ERR_2);
+  }
+  userRequest.password = newPassword;
+  await userRequest.save();
+  await tokenModel.findByIdAndDelete(checkToken._id);
+  return userRequest;
+};
 module.exports = {
   updateUserService,
   getPersonalUser,
   ratingUser,
   highlightUser,
+  forgotPassword,
+  resetPassword,
 };
