@@ -8,6 +8,7 @@ const {
   updateRequestOrder,
   sendEmailtoId,
   sendEmailAllOrder,
+  exportData
 } = require("../controllers/orderController");
 const { protect, verifyUser } = require("../middleware/authMiddleware");
 
@@ -24,6 +25,9 @@ router.put("/event/:id/updateAll", protect, updateAllByEventId);
 
 //4.UPDATE "REQUEST ORDERS"
 router.put("/event/:id/updateRequest", protect, updateRequestOrder);
+
+//5.EXPORT ORDER DATA TO EXCEL BY EVENT ID
+router.get("/export/event/:id", protect, exportData);
 
 router.post("/send-email", protect, sendEmailtoId);
 
