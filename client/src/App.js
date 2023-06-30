@@ -11,6 +11,8 @@ import {
   EventManagement,
   MyEvent,
   Organizers,
+  ForgotPassword,
+  ResetPassword,
 } from "./pages";
 import { RULES } from "./constants/rules";
 import eventService from "./features/events/eventService";
@@ -78,6 +80,8 @@ function App() {
             element={<EventDetails eventService={eventService} rules={RULES} />}
           />
           <Route path="/organizers/:id" element={<Organizers />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/newPass/:userId/:token" element={<ResetPassword />} />
         </Routes>
         <Footer />
       </NextUIProvider>

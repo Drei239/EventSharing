@@ -28,11 +28,11 @@ const EventDetails = () => {
   useEffect(() => {
     dispatch(getEventById(id));
   }, []);
-  useEffect(() => {
-    if (eventDetail) {
-      dispatch(sendNotifyNewOrder({ creatorId: eventDetail?.creator?._id }));
-    }
-  }, [eventDetail]);
+  // useEffect(() => {
+  //   if (eventDetail) {
+  //     dispatch(sendNotifyNewOrder({ creatorId: eventDetail?.creator?._id }));
+  //   }
+  // }, [eventDetail]);
   const imageList = eventDetail?.imageList?.map((item) => item);
 
   console.log(imageList);
