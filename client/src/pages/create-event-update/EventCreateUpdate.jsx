@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import covertDatetimeToISO from '../../utils/coverDatetimeToIso';
 import provinces from '../../data/provinces.json';
 import notify from '../../utils/notify.js';
@@ -17,6 +18,7 @@ import './EventCreateUpdate.css';
 
 const EventCreateUpdate = () => {
   const [searchParams] = useSearchParams();
+  const { userInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     title: '',
@@ -53,13 +55,16 @@ const EventCreateUpdate = () => {
         setCategoryList(response.data.data);
       })
       .catch((error) => {
-        console.log(error.response);
+        notify('Lỗi không lấy được danh sách danh mục');
       });
 
     if (searchParams.get('type') === 'update') {
       customFetch
         .get(`/events/get/${searchParams.get('id')}`)
         .then((resp) => {
+          if (!(resp.data[0].creator._id === userInfo._id)) {
+            navigate('/');
+          }
           setEvent(resp.data[0]);
         })
         .catch((error) => notify('Lỗi kết nối máy chủ', error));
