@@ -121,48 +121,6 @@ const exportData = asyncHandler(async (req, res) => {
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
-  // try {
-  //   const workbook = new excelJs.Workbook();
-  //   const worksheet = workbook.addWorksheet("Orders");
-
-  //   worksheet.columns = [
-  //     { header: "Id No.", key: "id_No", width: 10 },
-  //     { header: "Event", key: "event_Title", width: 40 },
-  //     { header: "User", key: "user_Name", width: 40 },
-  //     { header: "Paid", key: "isPaid", width: 10 },
-  //     { header: "Refund", key: "isRefund", width: 10 },
-  //     { header: "Joined", key: "isJoined", width: 10 },
-  //     { header: "CreatedAt", key: "createdAt", width: 20 },
-  //   ];
-
-  //   const orderData = await orderModel.find({ event: requestEventId })
-  //     .populate("event", "title")
-  //     .populate("user", "name");
-
-  //   let counter = 1;
-  //   orderData.forEach((order) => {
-  //     order.id_No = counter;
-  //     order.event_Title = order.event.title;
-  //     order.user_Name = order.user.name;
-  //     worksheet.addRow(order);
-  //     counter++;
-  //   });
-
-  //   worksheet.getRow(1).eachCell((cell) => {
-  //     cell.font = { bold: true };
-  //   });
-
-  //   res.setHeader(
-  //     "Content-Type",
-  //     "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet");
-  //   res.setHeader(
-  //     "Content-Disposition", `attachment; filename=orders.xlsx`);
-  //   return workbook.xlsx.write(res).then(() => {
-  //     res.status(200);
-  //   })
-  // } catch (error) {
-  //   console.log(error.message);
-  // }
 });
 
 const sendEmailtoId = asyncHandler(async (req, res, next) => {
