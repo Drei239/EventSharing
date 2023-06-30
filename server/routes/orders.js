@@ -27,7 +27,7 @@ router.put("/event/:id/updateAll", protect, updateAllByEventId);
 router.put("/event/:id/updateRequest", protect, updateRequestOrder);
 
 //5.EXPORT ORDER DATA TO EXCEL BY EVENT ID
-router.get("/export/event/:id", exportData);
+router.get("/export/event/:id", protect, exportData);
 
 router.post("/send-email", protect, sendEmailtoId);
 

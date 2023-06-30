@@ -6,7 +6,7 @@ function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
     } else {
         return false;
     }
-}
+};
 
 function inputTitleValidation(existEvent, requestId) {
     if (existEvent && existEvent._id == requestId || existEvent === null) {
@@ -14,6 +14,14 @@ function inputTitleValidation(existEvent, requestId) {
     } else {
         return false;
     }
+};
+
+function requestIsCreatorValidation(requestEvent, requestUserId) {
+    if (requestEvent.creator.toString() === requestUserId.toString()) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-module.exports = { inputTimeValidation, inputTitleValidation };
+module.exports = { inputTimeValidation, inputTitleValidation, requestIsCreatorValidation };
