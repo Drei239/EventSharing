@@ -15,7 +15,6 @@ const getEventById = async (eventId) => {
     method: 'GET',
     url: `/events/get/${eventId}`,
 });
-  console.log(response);
   return response;
 };
 

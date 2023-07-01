@@ -13,42 +13,29 @@ import { GiSandsOfTime, } from "react-icons/gi";
 import { useParams } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { getEventById } from "../../features/events/eventSlice";
-import { getUserInfo } from '../../features/user/userSlice';
+import { isNullOrUndefined } from '../../utils/isNullOrUndefined';
 
 const EventDetails = () => {
 	const [commentsTabs, setCommentsTabs] = useState("comments");
 	const { id } = useParams();
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
-	const userId = useSelector(state => state?.user?.userInfo?._id);
-
-	console.log(userId);
-
-
+	const userId = useSelector(state => state?.user?.userInfo?._id);	
 	const isOnline = isOnlineEvent();
+	const creator = eventDetail?.creator?._id;
 
 	useEffect(() => { dispatch(getEventById(id)) }, []);
 
 	const imageList = eventDetail?.imageList?.map((item) => (item));
 
-	const [isCreator, setIsCreator] = useState(false);
-
-	const creator = eventDetail?.creator?._id;
-	// if (userId == creator) {
-	// 	setIsCreator(true)
-	// }
-
-	console.log("###", isCreator);
-
-
-	if (imageList == undefined) {
+	isNullOrUndefined(creator); 
+	isNullOrUndefined(userId); 
+	isNullOrUndefined(eventDetail); 
+	
+	if (imageList === undefined) {
 		return false;
 	};
-
-	if (eventDetail == undefined) {
-		return false;
-	};
-
+	
 	function isOnlineEvent() {
 		return eventDetail?.isOnline ? "Online" : "Offline";
 	}
@@ -95,8 +82,8 @@ const EventDetails = () => {
 						</div>
 					</div>
 					<div className='event__right-block'>
-						{isCreator
-							? false 	
+						{userId == creator
+							? <div></div>	
 							: <Button size="lg" className='btn__buy' color="primary" bordered='false'>mua vé</Button>
 						}		
 						<div className='event__share'>

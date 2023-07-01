@@ -30,7 +30,6 @@ export const getEventById = createAsyncThunk(
   async (eventId, { rejectWithValue }) => {
     try {
       const getEvent = await eventService.getEventById(eventId);
-      console.log(getEvent);
       return getEvent;
     } catch (err) {
       rejectWithValue(err);
