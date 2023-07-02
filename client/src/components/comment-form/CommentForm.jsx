@@ -1,6 +1,6 @@
 import { useState } from "react";
 import './CommentForm.css';
-import { newCreateComment } from '../../features/comment/commentSlice';
+import { createComment } from '../../features/comment/commentSlice';
 import { useDispatch, useSelector } from "react-redux";
 
 const CommentForm = ({
@@ -20,9 +20,9 @@ const CommentForm = ({
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
 	const dispatch = useDispatch();
 
-	const handleComment = () => {
-		dispatch(newCreateComment(eventDetail?._id));
-	};
+	// const handleComment = () => {
+	// 	dispatch(createComment(eventDetail?._id));
+	// };
 	return (
 		<form onSubmit={onSubmit}>
 			<textarea

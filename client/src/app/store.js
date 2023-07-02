@@ -5,6 +5,7 @@ import CategorySlice from "../features/category/categorySlice";
 import userReducer from "../features/user/userSlice";
 import orderReducer from "../features/order/orderSlice";
 import notifySlice from "../features/notification/notifySlice";
+import commentSlice from "../features/comment/commentSlice";
 import socketMiddleware from "../middleware/socketMiddleware";
 
 const store = configureStore({
@@ -14,6 +15,7 @@ const store = configureStore({
     user: userReducer,
     order: orderReducer.reducer,
     notify: notifySlice.reducer,
+    comment: commentSlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware()
