@@ -1,8 +1,9 @@
 import React, { useEffect } from 'react';
-import { Button, Modal, Text } from '@nextui-org/react';
+import { Button, Link, Modal, Text } from '@nextui-org/react';
 import { newCreateOrder } from "../../features/order/orderSlice";
 import { sendNotifyNewOrder } from "../../features/action";
 import { useDispatch, useSelector } from "react-redux";
+import { newConnetion } from '../../features/action';
 import notify from '../../utils/notify';
 
 const OrderEvent = () => {
@@ -10,12 +11,19 @@ const OrderEvent = () => {
 	const { isSuccessCreate } = useSelector((state) => state.order);
 	const dispatch = useDispatch();
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
-	const { userInfo } = useSelector((state) => state.user);
+	const { isLogin, userInfo } = useSelector((state) => state.user);
+
 	const handler = () => setVisible(true);
 
 	const handleBuyTicket = () => {
 		dispatch(newCreateOrder(eventDetail?._id));
 	};
+
+	useEffect(() => {
+		if (isLogin) {
+			dispatch(newConnetion(userInfo?._id));
+		}
+	}, [isLogin]);
 
 	useEffect(() => {
 		if (isSuccessCreate) {

@@ -24,6 +24,7 @@ const EventModal = () => {
 			<button className='members__list' onClick={() => setVisible(true)}>
 				So nguoi tham gia: {orders?.length}
 			</button>
+			
 			<Modal
 				scroll
 				width="600px"
