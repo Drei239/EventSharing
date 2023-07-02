@@ -17,6 +17,8 @@ var orderRouter = require("./routes/orders");
 var commentRouter = require("./routes/comments");
 var notifyRouter = require("./routes/notify");
 
+var job = require("./utils/cronJob");
+job.start();
 var cors = require("cors");
 var app = express();
 

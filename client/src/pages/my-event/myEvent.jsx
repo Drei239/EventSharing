@@ -75,7 +75,7 @@ const MyEvent = () => {
       timeOrder: dayjs(orders[i]?.createdAt).format("ddd ,DD/MM/YYYY, hh:mm "),
       orderId: orders[i]?._id,
       status: status,
-      eventStatus: orders[i]?.event.status,
+      eventStatus: orders[i]?.event?.status,
       name: orders[i]?.user?.name,
       email: orders[i]?.user?.email,
     });
@@ -138,7 +138,7 @@ const MyEvent = () => {
       {orders && orders.length > 0 && (
         <div className="my-event" key={orders._id}>
           <div className="my-event-header">
-            <img src={orders[0]?.event.banner} alt="" />
+            <img src={orders[0]?.event?.banner} alt="" />
             <div className="my-event-header-info">
               <div className="my-event-header-status">
                 {orders[0]?.event.status === "Public" && (

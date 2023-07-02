@@ -14,6 +14,7 @@ const createNewOrder = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: newOrder, message: resMes.orderSucc.SUCC_1 });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
@@ -109,15 +110,19 @@ const exportData = asyncHandler(async (req, res) => {
   const requestEventId = req.params.id;
   const workbook = new excelJs.Workbook();
   try {
-    const exportData = await orderService.exportData(requestUserId, requestEventId, workbook);
+    const exportData = await orderService.exportData(
+      requestUserId,
+      requestEventId,
+      workbook
+    );
     res.setHeader(
       "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet");
-    res.setHeader(
-      "Content-Disposition", `attachment; filename=orders.xlsx`);
+      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+    );
+    res.setHeader("Content-Disposition", `attachment; filename=orders.xlsx`);
     return workbook.xlsx.write(res).then(() => {
       res.status(200);
-    })
+    });
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
@@ -159,5 +164,5 @@ module.exports = {
   updateRequestOrder,
   sendEmailtoId,
   sendEmailAllOrder,
-  exportData
+  exportData,
 };

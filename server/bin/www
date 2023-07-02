@@ -12,7 +12,7 @@ var http = require("http");
 /**
  * Get port from environment and store in Express.
  */
-require("../config/socketio");
+const initializeSocket = require("../config/socketio");
 var port = normalizePort(process.env.PORT || "3002");
 app.set("port", port);
 
@@ -21,7 +21,7 @@ app.set("port", port);
  */
 
 var server = http.createServer(app);
-
+initializeSocket(server);
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -85,4 +85,3 @@ function onListening() {
   var bind = typeof addr === "string" ? "pipe " + addr : "port " + addr.port;
   debug("Listening on " + bind);
 }
-module.exports = server;

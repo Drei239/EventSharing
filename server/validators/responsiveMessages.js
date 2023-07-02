@@ -66,6 +66,10 @@ const userError = {
 // };
 const notifySucc = {
   SUC_1: "GET DANH DANH SÁCH THÔNG BÁO THÀNH CÔNG",
+  SUC_2: "CẬP NHẬT THÔNG BÁO THÀNH CÔNG",
+};
+const notifyErr = {
+  ERR_1: "CẬP NHẬT THÔNG BÁO THẤT BẠI",
 };
 module.exports = {
   eventError,
@@ -78,4 +82,5 @@ module.exports = {
   commentSucc,
   userError,
   userSucc,
+  notifyErr,
 };

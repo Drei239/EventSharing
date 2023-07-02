@@ -5,10 +5,10 @@ import "./notificationToast.css";
 export const notificationToast = (noti) => {
   return toast(
     <div className="notification-toast">
-      <img src={noti.avatar} alt="" />
+      <img src={noti?.notifyFrom?.avatar} alt="" />
       <div>
         <p className="notification-toast-content">
-          {noti.name} <span>{noti.content}</span>
+          {noti?.notifyFrom?.name} <span>{noti?.content}</span>
         </p>
         <span className="notification-toast-time">Vài giây trước</span>
       </div>

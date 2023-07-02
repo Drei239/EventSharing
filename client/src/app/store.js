@@ -16,6 +16,8 @@ const store = configureStore({
     notify: notifySlice.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(socketMiddleware("http://localhost:3003")),
+    getDefaultMiddleware()
+      .concat(thunkMiddleware)
+      .concat(socketMiddleware("http://localhost:3002")),
 });
 export default store;

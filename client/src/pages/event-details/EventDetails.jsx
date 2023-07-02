@@ -12,6 +12,8 @@ import { GiSandsOfTime } from "react-icons/gi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
+import { newCreateOrder } from "../../features/order/orderSlice";
+import { sendNotifyNewOrder } from "../../features/action";
 import parse from "html-react-parser";
 
 const EventDetails = () => {
@@ -20,6 +22,7 @@ const EventDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById[0]);
+  const { isSuccessCreate } = useSelector((state) => state.order);
   const { userInfo } = useSelector((state) => state.user);
 
   const isOnline = isOnlineEvent();
@@ -28,13 +31,20 @@ const EventDetails = () => {
   useEffect(() => {
     dispatch(getEventById(id));
   }, []);
-  // useEffect(() => {
-  //   if (eventDetail) {
-  //     dispatch(sendNotifyNewOrder({ creatorId: eventDetail?.creator?._id }));
-  //   }
-  // }, [eventDetail]);
+  useEffect(() => {
+    if (isSuccessCreate) {
+      dispatch(
+        sendNotifyNewOrder({
+          notifyTo: eventDetail.creator._id,
+          notifyFrom: userInfo,
+          eventId: eventDetail._id,
+          notifyType: "new-order",
+          content: "đã đăng kí sự kiện của bạn",
+        })
+      );
+    }
+  }, [isSuccessCreate]);
   const imageList = eventDetail?.imageList?.map((item) => item);
-
   console.log(imageList);
   const images = [
     "https://billetto.co.uk/blog/wp-content/uploads/2020/02/qmfsp1xyvtq-1024x680.jpg",
@@ -52,8 +62,10 @@ const EventDetails = () => {
   function isOnlineEvent() {
     return eventDetail?.isOnline ? "Online" : "Offline";
   }
+  const handleBuyTicket = () => {
+    dispatch(newCreateOrder(eventDetail?._id));
+  };
 
-  console.log(eventDetail);
   return (
     <div>
       <img
@@ -142,6 +154,7 @@ const EventDetails = () => {
               </Button>
             ) : (
               <Button
+                onClick={handleBuyTicket}
                 size="lg"
                 className="btn__buy"
                 color="primary"

@@ -11,7 +11,7 @@ const Footer = () => {
         className={
           location.pathname === "/login-register" ||
           location.pathname === "/forgot-password" ||
-          location.pathname.indexOf("newPass")
+          location.pathname.indexOf("newPass") !== -1
             ? "active"
             : ""
         }

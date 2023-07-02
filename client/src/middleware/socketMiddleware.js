@@ -19,7 +19,7 @@ const socketMiddleware = (url) => {
     }
 
     socket.on("new_order", (response) => {
-      store.dispatch({ type: "RECEIVE_ORDER", payload: response });
+      store.dispatch({ type: "receive_notify", payload: response });
     });
   };
 };
