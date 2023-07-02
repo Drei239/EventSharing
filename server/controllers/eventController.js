@@ -37,9 +37,9 @@ console.log(
 
 function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
   if (
-    Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
-    Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
-    Date.parse(timeBegin) < Date.parse(timeEnd)
+    timeBegin < timeEnd &&
+    timeEndSignup < timeEnd &&
+    timeEndSignup > timeBegin
   ) {
     return true;
   } else {
@@ -70,7 +70,6 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
   // Sau khi gán userInfo = req.user
   // const creator = req.user.id;
   // loại bỏ giá trị creator ở req.body
-  console.log(inputTimeValidation(timeEndSignup, timeBegin, timeEnd));
   if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
     try {
       const newEvent = await eventService.createNewEvent(
@@ -243,9 +242,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: updateEvent, message: eventSucc.SUC_6 });
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, message: error.message });
+    res.status(400).json({ status: 400, message: error.message });
   }
 });
 
@@ -318,17 +315,64 @@ const createNewReview = asyncHandler(async (req, res) => {
   const { title, image, comment, rating } = req.body;
   try {
     const review = await eventService.createNewReview(
-      requestUserId, requestEventId, title, image, comment, rating);
+      requestUserId,
+      requestEventId,
+      title,
+      image,
+      comment,
+      rating
+    );
     res
       .status(200)
       .json({ status: 200, data: review, message: eventSucc.SUC_5 });
   } catch (error) {
-    res
-      .status(400)
-      .json({ status: 400, message: error.message });
+    res.status(400).json({ status: 400, message: error.message });
   }
 });
 
+const getEventsOrganizers = asyncHandler(async (req, res) => {
+  const id = req.params.id;
+  const result = await eventModel.find({ creator: id });
+  if (result) {
+    res.status(200).json(result);
+  } else {
+    res.status(400);
+    throw new Error("Not found");
+  }
+});
+
+const removeEventDraft = asyncHandler(async (req, res, next) => {
+  const eventId = req.params.id;
+  const userId = req.user?._id;
+  try {
+    const event = await eventService.removeEventDraft(eventId, userId);
+    res
+      .status(200)
+      .json({ status: 200, message: eventSucc.SUC_6, data: event });
+  } catch (err) {
+    next(err);
+  }
+});
+const cancelEvent = asyncHandler(async (req, res, next) => {
+  const eventId = req.params.id;
+  const userId = req.user._id;
+  try {
+    await eventService.cancelEvent(eventId, userId);
+    res.status(200).json({ status: 200, message: eventSucc.SUC_7 });
+  } catch (err) {
+    next(err);
+  }
+});
+const confirmEventCompleted = asyncHandler(async (req, res, next) => {
+  const eventId = req.params.id;
+  const userId = req.user._id;
+  try {
+    await eventService.confirmEventCompleted(eventId, userId);
+    res.status(200).json({ status: 200, message: eventSucc.SUC_7 });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -342,5 +386,9 @@ module.exports = {
   getJoinedEvent,
   getRegisteredEvent,
   getAllEventOfUser,
-  createNewReview
+  createNewReview,
+  getEventsOrganizers,
+  cancelEvent,
+  removeEventDraft,
+  confirmEventCompleted,
 };

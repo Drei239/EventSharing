@@ -10,6 +10,7 @@ import { ToastContainer } from 'react-toastify';
 import { Editor } from '@tinymce/tinymce-react';
 import { useSearchParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import covertDatetimeToISO from '../../utils/coverDatetimeToIso';
 import provinces from '../../data/provinces.json';
 import notify from '../../utils/notify.js';
@@ -17,6 +18,7 @@ import './EventCreateUpdate.css';
 
 const EventCreateUpdate = () => {
   const [searchParams] = useSearchParams();
+  const { userInfo } = useSelector((state) => state.user);
   const navigate = useNavigate();
   const [inputValue, setInputValue] = useState({
     title: '',
@@ -53,13 +55,16 @@ const EventCreateUpdate = () => {
         setCategoryList(response.data.data);
       })
       .catch((error) => {
-        console.log(error.response);
+        notify('Lỗi không lấy được danh sách danh mục');
       });
 
     if (searchParams.get('type') === 'update') {
       customFetch
         .get(`/events/get/${searchParams.get('id')}`)
         .then((resp) => {
+          if (!(resp.data[0].creator._id === userInfo._id)) {
+            navigate('/');
+          }
           setEvent(resp.data[0]);
         })
         .catch((error) => notify('Lỗi kết nối máy chủ', error));
@@ -94,6 +99,7 @@ const EventCreateUpdate = () => {
         quantityTicket: String(event.limitUser),
         typeEvent: event.isOnline ? 'online' : 'offline',
         category: event?.category.categoryName,
+        address: event.location?.address,
         linkOnline: event.linkOnline,
         description: event.description,
         dateStart: date(timeBegin),
@@ -105,6 +111,9 @@ const EventCreateUpdate = () => {
       });
       setBanner(event.banner);
       setImageEvent(event.imageList);
+      setCity(event.location?.province?.name);
+      setDistrict(event.location?.district?.name);
+      setWard(event.location?.ward?.name);
       tiny = setTimeout(() => {
         if (editorRef.current) {
           editorRef.current.setContent(event.description);
@@ -192,7 +201,7 @@ const EventCreateUpdate = () => {
 
   // Kiểm tra ngày ngưng đăng ký phải trước ngày bắt đầu
   const checkDateRegisterStart = useValidateDatetime(
-    inputValue.dateStart,
+    inputValue.dateEnd,
     inputValue.dateRegisterEnd,
     true,
     'Thời gian dừng đăng ký phải trước thời gian bắt đầu'
@@ -200,11 +209,11 @@ const EventCreateUpdate = () => {
 
   // Kiểm tra giờ ngưng đăng ký phải trước giờ bắt đầu
   const checkTimeRegisterStart = useValidateDatetime(
-    inputValue.timeStart,
+    inputValue.timeEnd,
     inputValue.timeRegisterEnd,
     false,
     'Thời gian dừng đăng ký phải trước thời gian bắt đầu',
-    inputValue.dateStart,
+    inputValue.dateEnd,
     inputValue.dateRegisterEnd
   );
 
@@ -220,7 +229,6 @@ const EventCreateUpdate = () => {
 
   // Xứ lý các trường nhập dữ liệu thay đổi lưu vào state
   const handleOnchange = (e) => {
-    console.log(e.target.value);
     setInputValue({ ...inputValue, [e.target.name]: e.target.value });
   };
 

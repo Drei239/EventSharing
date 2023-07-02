@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import Table from "@mui/material/Table";
-import { alpha } from "@mui/material/styles";
+import { alpha, useTheme } from "@mui/material/styles";
 import TableBody from "@mui/material/TableBody";
 import Tooltip from "@mui/material/Tooltip";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
+import TablePagination from "@mui/material/TablePagination";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import TablePagination from "@mui/material/Pagination";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import { Checkbox } from "@mui/material";
@@ -23,12 +23,13 @@ import { IoMdMore } from "react-icons/io";
 import Select from "react-select";
 import "./table.css";
 import EmptyIcon from "../../../assets/empty-icon.svg";
+// import { TablePagination } from "../../ui";
 
 const options = [
-  "Chuyển tất cả order đã chọn thành trạng thái đang xử lí",
-  "Chuyển tất cả order đã chọn thành trạng thái đã thanh toán",
-  "Chuyển tất cả order đã chọn thành trạng thái đã tham gia",
-  "Chuyển tất cả order đã chọn thành trạng thái đã hoàn tiền",
+  "Chuyển thành phần đã chọn thành đang xử lí",
+  "Chuyển thành phần đã chọn thành đã thanh toán",
+  "Chuyển thành phần đã chọn thành đã tham gia",
+  "Chuyển thành phần đã chọn thành đã hoàn tiền",
 ];
 function EnhancedTableToolbar(props) {
   const {
@@ -38,6 +39,7 @@ function EnhancedTableToolbar(props) {
     onOpenMenu,
     onCloseMenu,
     handleSelectMenu,
+    rows,
   } = props;
   return (
     <Toolbar
@@ -87,8 +89,22 @@ function EnhancedTableToolbar(props) {
             anchorEl={anchorEl}
           >
             {options.map((item, index) => {
+              let requestDisable;
+              if (
+                rows[0].eventStatus === "Canceled" &&
+                (index == 1 || index == 2)
+              ) {
+                requestDisable = true;
+              } else {
+                requestDisable = false;
+              }
               return (
-                <MenuItem onClick={() => handleSelectMenu(index)} key={index}>
+                <MenuItem
+                  sx={{ fontSize: "12px" }}
+                  disabled={requestDisable}
+                  onClick={() => handleSelectMenu(index)}
+                  key={index}
+                >
                   {item}
                 </MenuItem>
               );
@@ -106,28 +122,6 @@ function EnhancedTableToolbar(props) {
     </Toolbar>
   );
 }
-const columns = [
-  {
-    key: "no1",
-    label: "No1",
-  },
-  {
-    key: "name",
-    label: "Tên",
-  },
-  {
-    key: "email",
-    label: "Email",
-  },
-  {
-    key: "phoneNumber",
-    label: "Điện thoại",
-  },
-  {
-    key: "status",
-    label: "Trạng thái thanh toán",
-  },
-];
 const statusOption = [
   {
     label: "Đang xử lí",
@@ -142,22 +136,33 @@ const statusOption = [
     value: "joined",
   },
   {
-    label: "Hoàn tiền",
+    label: "Đã hoàn tiền",
     value: "refund",
   },
 ];
 
-const TableMyEvent = ({ rows, idEvent }) => {
+const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
   const { countDocument } = useSelector((state) => state.order);
   const dispatch = useDispatch();
   const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowPerPage] = useState(10);
+  const [rowsPerPage, setRowPerPage] = useState(50);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [selected, setSelected] = useState([]);
+
   const [rowSelect, setRowSelect] = useState([]);
   const open = Boolean(anchorEl);
   const handleCloseMenu = () => {
     setAnchorEl(null);
+  };
+
+  const isOptionDisabled = (option, status) => {
+    console.log(status);
+    if (status === "Canceled") {
+      const disableOptions = ["paid", "joined"];
+      return disableOptions.includes(option.value);
+    } else {
+      const disableOptions = ["refund"];
+      return disableOptions.includes(option.value);
+    }
   };
   const handleSelectMenu = (index) => {
     let data;
@@ -165,28 +170,57 @@ const TableMyEvent = ({ rows, idEvent }) => {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: false, isJoined: false, isRefund: false },
+          {
+            orderId: item,
+            isPaid: false,
+            isJoined: false,
+            isRefund: false,
+            email: rows?.find((item) => item.orderId == item.toString())?.email,
+          },
         ];
       }, []);
     } else if (index === 1) {
       data = selected.reduce((arr, item) => {
+        console.log(
+          rows?.find((row) => row.orderId.toString() == item.toString())
+        );
         return [
           ...arr,
-          { orderId: item, isPaid: true, isJoined: false, isRefund: false },
+          {
+            orderId: item,
+            isPaid: true,
+            isJoined: false,
+            isRefund: false,
+            email: rows?.find(
+              (row) => row.orderId.toString() == item.toString()
+            )?.email,
+          },
         ];
       }, []);
     } else if (index === 2) {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: true, isJoined: true, isRefund: false },
+          {
+            orderId: item,
+            isPaid: true,
+            isJoined: true,
+            isRefund: false,
+            email: rows?.find((item) => item.orderId === item)?.email,
+          },
         ];
       }, []);
     } else {
       data = selected.reduce((arr, item) => {
         return [
           ...arr,
-          { orderId: item, isPaid: false, isJoined: false, isRefund: true },
+          {
+            orderId: item,
+            isPaid: false,
+            isJoined: false,
+            isRefund: true,
+            email: rows?.find((item) => item.orderId === item)?.email,
+          },
         ];
       }, []);
     }
@@ -218,9 +252,9 @@ const TableMyEvent = ({ rows, idEvent }) => {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  const handleChangeRowPerPage = (event) => {
-    setRowPerPage(parseInt(event.target.value, 10));
-    setPage(0);
+  const handleChangeRowPerPage = (option) => {
+    setRowPerPage(option.target.value);
+    setPage(1);
   };
   const handleChangeStatusOrder = (selectedOption, id, index) => {
     const updateItems = [...rowSelect];
@@ -231,27 +265,11 @@ const TableMyEvent = ({ rows, idEvent }) => {
   useEffect(() => {
     console.log(selected);
   }, [selected]);
-  useEffect(() => {
-    if (rows) {
-      const row =
-        rows &&
-        rows.reduce((arr, row) => {
-          if (row.isRefund) {
-            return [...arr, statusOption[3]];
-          } else if (row.isJoined) {
-            return [...arr, statusOption[2]];
-          } else if (row.isPaid) {
-            return [...arr, statusOption[1]];
-          } else {
-            return [...arr, statusOption[0]];
-          }
-        }, []);
-      setRowSelect(row);
-    }
-  }, [rows]);
+
   return (
     <div className="my-event-table">
       <EnhancedTableToolbar
+        rows={rows}
         open={open}
         anchorEl={anchorEl}
         numSelected={selected.length}
@@ -275,7 +293,6 @@ const TableMyEvent = ({ rows, idEvent }) => {
             <TableCell>Thời gian đặt hàng</TableCell>
             <TableCell>Tên</TableCell>
             <TableCell>Email</TableCell>
-            <TableCell width={100}>Phone</TableCell>
             <TableCell>Status</TableCell>
           </TableRow>
         </TableHead>
@@ -303,17 +320,16 @@ const TableMyEvent = ({ rows, idEvent }) => {
                       <TableCell component="th" scope="row">
                         {row.no1}
                       </TableCell>
-                      <TableCell>
-                        {dayjs(row.timeOrder).format("ddd ,DD/MM/YYYY, hh:mm ")}
-                      </TableCell>
+                      <TableCell>{row.timeOrder}</TableCell>
                       <TableCell>{row.name}</TableCell>
                       <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.phone}</TableCell>
                       <TableCell align="left">
                         <Select
                           className="my-event-filter-select"
                           options={statusOption}
-                          value={rowSelect[index]}
+                          value={statusOption.find(
+                            (item) => item.label === row.status
+                          )}
                           styles={{
                             control: (baseStyles, state) => ({
                               ...baseStyles,
@@ -323,6 +339,9 @@ const TableMyEvent = ({ rows, idEvent }) => {
                           }}
                           onChange={(e) =>
                             handleChangeStatusOrder(e, row?.orderId, index)
+                          }
+                          isOptionDisabled={(option) =>
+                            isOptionDisabled(option, row.eventStatus)
                           }
                         />
                       </TableCell>
@@ -339,14 +358,13 @@ const TableMyEvent = ({ rows, idEvent }) => {
           </div>
         )}
       </Table>
-
       {countDocument > 0 ? (
         <TablePagination
-          rowsPerPageOptions={[5, 10, 20]}
+          rowsPerPageOptions={[50, 100, 200]}
           component="div"
           count={countDocument}
-          page={page}
           rowsPerPage={rowsPerPage}
+          page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowPerPage}
         />

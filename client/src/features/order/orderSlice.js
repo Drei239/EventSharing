@@ -2,11 +2,15 @@ import { createAsyncThunk, createAction, createSlice } from "@reduxjs/toolkit";
 import orderService from "./orderService";
 const initialState = {
   orders: [],
+  open: false,
+  typeSend: "",
   isLoading: false,
   isError: false,
   message: "",
   isSuccess: false,
   countDocument: 0,
+  isSuccessEmail: false,
+  isErrorEmail: false,
 };
 export const getOrderbyId = createAsyncThunk(
   "order/getOrder",
@@ -47,6 +51,40 @@ export const updateRequest = createAsyncThunk(
     }
   }
 );
+export const sendEmailSelect = createAsyncThunk(
+  "order/sendEmailSelect",
+  async ({ content, subject, ordersId }, { rejectWithValue }) => {
+    try {
+      return await orderService.sendEmail({ content, subject, ordersId });
+    } catch (err) {
+      rejectWithValue(err);
+    }
+  }
+);
+export const sendEmailAllOrder = createAsyncThunk(
+  "order/sendEmailAllOrder",
+  async ({ content, subject, eventId }, { rejectWithValue }) => {
+    try {
+      return await orderService.sendEmailAllOrder({
+        content,
+        subject,
+        eventId,
+      });
+    } catch (err) {
+      rejectWithValue(err);
+    }
+  }
+);
+export const openModalSendEmail = createAction(
+  "openModalSendEmail",
+  function frepare(type) {
+    return {
+      payload: type,
+    };
+  }
+);
+export const updateCancelEvent = createAction("updateCancelEventSuccesfully");
+export const closeModalSendEmail = createAction("closeModalSendEmail");
 const orderSlice = createSlice({
   name: "order",
   initialState,
@@ -60,7 +98,7 @@ const orderSlice = createSlice({
       })
       .addCase(getOrderbyId.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.orders = action.payload.data;
+        state.orders = action.payload?.data;
         state.countDocument = action.payload?.countDocument;
       })
       .addCase(getOrderbyId.rejected, (state, action) => {
@@ -111,6 +149,54 @@ const orderSlice = createSlice({
         state.isError = false;
         state.message = action.payload?.message;
       });
+    builder
+      .addCase(sendEmailSelect.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccessEmail = false;
+        state.isErrorEmail = false;
+      })
+      .addCase(sendEmailSelect.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccessEmail = true;
+      })
+      .addCase(sendEmailSelect.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message;
+        state.isErrorEmail = true;
+      });
+    builder
+      .addCase(sendEmailAllOrder.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccessEmail = false;
+        state.isErrorEmail = false;
+      })
+      .addCase(sendEmailAllOrder.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccessEmail = true;
+      })
+      .addCase(sendEmailAllOrder.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isErrorEmail = true;
+        state.message = action.payload?.message;
+      });
+    builder.addCase(openModalSendEmail, (state, action) => {
+      state.open = true;
+      state.typeSend = action.payload;
+    });
+    builder.addCase(closeModalSendEmail, (state) => {
+      state.open = false;
+    });
+    builder.addCase(updateCancelEvent, (state) => {
+      state.orders =
+        state.orders.length > 0 &&
+        state.orders.reduce((arr, order) => {
+          return [
+            ...arr,
+            { ...order, event: { ...order.event, status: "Canceled" } },
+          ];
+        }, []);
+    });
   },
 });
 export default orderSlice;

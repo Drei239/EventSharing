@@ -1,41 +1,41 @@
-import { createSlice, createAsyncThunk, createAction } from '@reduxjs/toolkit';
-import customFetch from '../../utils/axios.config';
-import userService from './userService';
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
+import customFetch from "../../utils/axios.config";
+import userService from "./userService";
 
 const initialState = {
   userInfo: {},
   userHighlight: [],
   isLoading: true,
   isLogin: false,
-  message: '',
+  message: "",
   isSuccess: false,
   isSuccess2: false,
   open: false,
   imgSelect: null,
   isError: false,
 };
-export const openModal = createAction('openModal');
-export const closeModal = createAction('closeModal');
-export const saveImg = createAction('selectImg', function prepare(img) {
+export const openModal = createAction("openModal");
+export const closeModal = createAction("closeModal");
+export const saveImg = createAction("selectImg", function prepare(img) {
   return { payload: img };
 });
-export const removeImg = createAction('remove-Img');
+export const removeImg = createAction("remove-Img");
 export const getUserInfo = createAsyncThunk(
-  'user/getUserInfo',
+  "user/getUserInfo",
   async (_, thunkAPI) => {
     try {
       const resp = await customFetch({
-        method: 'get',
-        url: '/users/profile',
+        method: "get",
+        url: "/users/profile",
       });
-      return resp.data;
+      return resp;
     } catch (error) {
-      return thunkAPI.rejectWithValue('Lỗi kết nối với máy chủ');
+      return thunkAPI.rejectWithValue("Lỗi kết nối với máy chủ");
     }
   }
 );
 export const updateInfo = createAsyncThunk(
-  'user/updateUser',
+  "user/updateUser",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await userService.updateUser({ id, data });
@@ -46,7 +46,7 @@ export const updateInfo = createAsyncThunk(
   }
 );
 export const deleteUser = createAsyncThunk(
-  'user/deleteUser',
+  "user/deleteUser",
   async ({ id, data }, { rejectWithValue }) => {
     try {
       const res = await userService.deleteUser(id, data);
@@ -57,7 +57,7 @@ export const deleteUser = createAsyncThunk(
   }
 );
 export const getHighlightUser = createAsyncThunk(
-  'user/getHighlight',
+  "user/getHighlight",
   async (_, { rejectWithValue }) => {
     try {
       const res = await userService.getHighlightUser();
@@ -67,13 +67,37 @@ export const getHighlightUser = createAsyncThunk(
     }
   }
 );
+export const forgotPassword = createAsyncThunk(
+  "user/forgot-password",
+  async (email, { rejectWithValue }) => {
+    try {
+      const res = await userService.forgotPasswordUser(email);
+      return res;
+    } catch (err) {
+      console.log(err);
+      return rejectWithValue(err);
+    }
+  }
+);
+export const resetPassword = createAsyncThunk(
+  "user/reset-password",
+  async ({ userId, token, newPassword }, { rejectWithValue }) => {
+    try {
+      const res = await userService.resetPassword(userId, token, newPassword);
+      return res;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 const userSlice = createSlice({
-  name: 'user',
+  name: "user",
   initialState,
   reducers: {
     logout: (state) => {
       state.userInfo = {};
       state.isLogin = false;
+      state.userInfo = null;
     },
   },
   extraReducers: (builder) => {
@@ -84,7 +108,8 @@ const userSlice = createSlice({
       .addCase(getUserInfo.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isLogin = true;
-        state.userInfo = action.payload;
+        console.log(action.payload);
+        state.userInfo = action.payload.data;
       })
       .addCase(getUserInfo.rejected, (state, action) => {
         state.isLoading = false;
@@ -93,7 +118,7 @@ const userSlice = createSlice({
     builder
       .addCase(updateInfo.pending, (state) => {
         state.isLoading = true;
-        state.message = '';
+        state.message = "";
         state.isSuccess = false;
       })
       .addCase(updateInfo.fulfilled, (state, action) => {
@@ -109,7 +134,7 @@ const userSlice = createSlice({
     builder
       .addCase(deleteUser.pending, (state) => {
         state.isLoading = true;
-        state.message = '';
+        state.message = "";
         state.isSuccess2 = false;
         state.isError = false;
       })
@@ -135,6 +160,36 @@ const userSlice = createSlice({
       .addCase(getHighlightUser.rejected, (state, action) => {
         state.isLoading = false;
         state.message = action.payload.message;
+      });
+    builder
+      .addCase(forgotPassword.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(forgotPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(forgotPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message;
+      });
+    builder
+      .addCase(resetPassword.pending, (state) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccess = false;
+      })
+      .addCase(resetPassword.fulfilled, (state) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(resetPassword.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message;
       });
     builder.addCase(openModal, (state) => {
       state.open = true;

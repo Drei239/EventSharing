@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const orderModel = require("../models/orderModel");
 const orderService = require("../services/orderServices");
 const resMes = require("../validators/responsiveMessages");
+const excelJs = require("exceljs");
 
 //1.CREATE NEW ORDER
 const createNewOrder = asyncHandler(async (req, res) => {
@@ -102,10 +103,61 @@ const updateRequestOrder = asyncHandler(async (req, res) => {
   }
 });
 
+//5.EXPORT ORDERS TO EXCEL
+const exportData = asyncHandler(async (req, res) => {
+  const requestUserId = req.user._id;
+  const requestEventId = req.params.id;
+  const workbook = new excelJs.Workbook();
+  try {
+    const exportData = await orderService.exportData(requestUserId, requestEventId, workbook);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet");
+    res.setHeader(
+      "Content-Disposition", `attachment; filename=orders.xlsx`);
+    return workbook.xlsx.write(res).then(() => {
+      res.status(200);
+    })
+  } catch (error) {
+    return res.status(400).json({ status: 400, message: error.message });
+  }
+});
+
+const sendEmailtoId = asyncHandler(async (req, res, next) => {
+  const { content, subject, ordersId } = req.body;
+  try {
+    await orderService.sendEmailtoId({
+      subject,
+      content,
+      ordersId: ordersId,
+      creatorId: req.user._id,
+    });
+    res.status(200).json({ status: 200, message: "send email success" });
+  } catch (err) {
+    next(err);
+  }
+});
+const sendEmailAllOrder = asyncHandler(async (req, res, next) => {
+  const { content, subject, eventId } = req.body;
+  try {
+    await orderService.sendEmailAllOrder({
+      content,
+      subject,
+      eventId,
+      creatorId: req.user._id,
+    });
+    res.status(200).json({ status: 200, message: "send email success" });
+  } catch (err) {
+    next(err);
+  }
+});
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
   updateOdrder,
   updateAllByEventId,
   updateRequestOrder,
+  sendEmailtoId,
+  sendEmailAllOrder,
+  exportData
 };

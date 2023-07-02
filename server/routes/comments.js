@@ -4,7 +4,8 @@ const {
     createNewComment,
     getCommentByEventId,
     updateCommentById,
-    deleteCommentById
+    deleteCommentById,
+    replyCommentById
 } = require('../controllers/commentController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -19,6 +20,9 @@ router.put("/update/:id", protect, updateCommentById);
 
 //4.DELETE COMMENT BY COMMENT ID
 router.delete("/delete/:id", protect, deleteCommentById);
+
+//5.CREATE NEW REPLY COMMENT BY COMMENT ID
+router.put("/update/:id/reply", protect, replyCommentById);
 
 module.exports = router;
 

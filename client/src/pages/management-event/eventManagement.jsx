@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import "./eventManagement.css";
 import {
   AiOutlineSearch,
@@ -8,19 +9,27 @@ import {
   AiFillDelete,
   AiFillEye,
   AiOutlineBarChart,
+  AiOutlineCloseCircle,
 } from "react-icons/ai";
+import { Modal, useModal, Button, Loading } from "@nextui-org/react";
 import locale from "dayjs/locale/vi";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
 import dayjs from "dayjs";
 import { useSelector, useDispatch } from "react-redux";
 import Select from "react-select";
-import { getAllEventofUser } from "../../features/events/eventSlice";
-import en from "dayjs/locale/en";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+
+import notify from "../../utils/notify";
+import EmptyIcon from "../../assets/empty.svg";
+
+import { EmptyEvent, LoadingLayout } from "../../components";
+import {
+  getAllEventofUser,
+  removeEventDraft,
+} from "../../features/events/eventSlice";
 dayjs.locale(locale);
 const eventTypeOption = [
   {
@@ -33,7 +42,7 @@ const eventTypeOption = [
   },
   {
     label: "Đã Huỷ",
-    value: "cancel",
+    value: "canceled",
   },
   {
     label: "Hoàn tất",
@@ -48,11 +57,17 @@ const eventTypeOption = [
 const EventManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { events } = useSelector((state) => state.event);
+  const { isSuccessRemove, isError, events, isLoading } = useSelector(
+    (state) => state.event
+  );
   const userInfo = useSelector((state) => state.user.userInfo);
+
+  const { setVisible, bindings } = useModal();
   const [selectType, setSelectType] = useState("list");
   const [status, setStatus] = useState("draft");
   const [search, setSearch] = useState("");
+  const [idEventDelete, setIdEventDelete] = useState(null);
+
   const handleChangeSelect = (selectedOption) => {
     setStatus(selectedOption.value);
   };
@@ -81,6 +96,16 @@ const EventManagement = () => {
   const handleClickSummary = (id) => {
     navigate(`/my-events/${id}`);
   };
+  const handleDeleteEventDraft = () => {
+    if (idEventDelete) {
+      dispatch(removeEventDraft(idEventDelete));
+      setVisible(false);
+    }
+  };
+  const openModalDeleteEvent = (id) => {
+    setIdEventDelete(id);
+    setVisible(true);
+  };
   useEffect(() => {
     if (userInfo) {
       dispatch(
@@ -93,24 +118,25 @@ const EventManagement = () => {
     }
   }, [userInfo, status, search, dispatch]);
   useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
+    if (isSuccessRemove) {
+      notify("Xoá sự kiện thành công", "success");
+    }
+  }, [isSuccessRemove]);
   useEffect(() => {
-    console.log(events);
-  }, [events]);
-  // const handleSelectEvent = (event) => {
-  //   console.log(event);
-  // };
-
+    if (isError) {
+      console.log(isError);
+      notify("Xoá sự kiện thất bại", "error");
+    }
+  }, [isError]);
   return (
     <div className="management-events">
-      <h2>Management Events</h2>
+      <h2>Quản lý sự kiện</h2>
       <div className="management-events-filter">
         <div className="management-events-filter-search">
           <AiOutlineSearch className="management-events-filter-search-icon" />
           <input
             type="text"
-            placeholder="Search events"
+            placeholder="Tìm sự kiện"
             value={search}
             onChange={handleChangeSearch}
           />
@@ -124,7 +150,7 @@ const EventManagement = () => {
             onClick={() => setSelectType("list")}
           >
             <AiOutlineUnorderedList className="management-events-filter-type-icon" />
-            <span>List</span>
+            <span>Danh sách</span>
           </div>
           <div
             className={`management-events-filter-type-calendar management-events-filter-type-item ${
@@ -134,7 +160,7 @@ const EventManagement = () => {
             onClick={() => setSelectType("calendar")}
           >
             <AiOutlineCalendar className="management-events-filter-type-icon" />
-            <span>Calendar</span>
+            <span>Lịch</span>
           </div>
         </div>
         <div className="management-events-filter-type">
@@ -157,85 +183,102 @@ const EventManagement = () => {
             defaultValue={eventTypeOption[0]}
           />
         </div>
-        <Link to="/create-event" className="management-events-create-btn">
-          Create Event
-        </Link>
       </div>
       {selectType === "list" ? (
         <div className="management-events-list">
           <div className="management-events-list-header">
-            <div>Event</div>
-            <div>Gross</div>
-            <div>Status</div>
+            <div>Sự kiện</div>
+            <div>Phí</div>
+            <div>Trạng thái</div>
           </div>
           <div className="management-events-list-items">
-            {events &&
-              events.length > 0 &&
-              events.map((item, index) => {
-                return (
-                  <div className="management-events-list-item " key={index}>
-                    <div className="management-events-list-item-info">
-                      {/* <div className="management-events-list-item-info-1">
-                        <span>
-                          {dayjs(item.timeBegin).locale(en).format("MMM")}
-                        </span>
-                        <span>{dayjs(item.timeBegin).format("DD")}</span>
-                      </div> */}
-                      {/* <div className="management-events-list-item-info-2">
-                        <img src={item.banner} alt="" />
-                      </div> */}
-                      <div className="management-events-list-item-info3">
-                        <span>{item.title}</span>
-                        <span>
-                          {item?.location?.province
-                            ? item.location.province.name
-                            : ""}
-                        </span>
-                        <span>
-                          {dayjs(item.timeBegin).format(
-                            "[Thứ] d, Ngày DD [tháng] MM [năm] YYYY"
-                          )}
-                        </span>
+            {!isLoading ? (
+              events && events.length > 0 ? (
+                events.map((item, index) => {
+                  return (
+                    <div className="management-events-list-item " key={index}>
+                      <div className="management-events-list-item-info">
+                        <div className="management-events-list-item-info3">
+                          <span>{item.title}</span>
+                          <span>
+                            {item?.location?.province
+                              ? item.location.province.name
+                              : ""}
+                          </span>
+                          <span>
+                            {dayjs(item.timeBegin).format(
+                              "[Thứ] d, Ngày DD [tháng] MM [năm] YYYY"
+                            )}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div className="management-events-list-item-gross">
+                        {item.fee > 0 ? `${item.fee}.000 đ` : "free"}
+                      </div>
+                      <div className="management-events-list-item-status">
+                        {item.status === "draft"
+                          ? "Nháp"
+                          : item.status === "Public"
+                          ? "Công khai"
+                          : item.status === "Canceled"
+                          ? "Đã huỷ"
+                          : "Đã hoàn thành"}
+                      </div>
+                      <div className="management-events-list-item-tool">
+                        {" "}
+                        {(item.status === "Public" ||
+                          item.status === "Canceled" ||
+                          item.status === "completed") && (
+                          <Link to={`/event/${item._id}`}>
+                            <button className="management-events-list-item-btn-view">
+                              <AiFillEye />
+                            </button>
+                          </Link>
+                        )}
+                        {(item.status === "Public" ||
+                          item.status === "completed" ||
+                          item.status === "Canceled") && (
+                          <button
+                            className="management-events-list-item-btn-summary"
+                            onClick={() => handleClickSummary(item._id)}
+                          >
+                            <AiOutlineBarChart />
+                          </button>
+                        )}
+                        {item.status === "draft" && (
+                          <button className="management-events-list-item-btn-edit">
+                            <AiFillEdit />
+                          </button>
+                        )}
+                        {(item.status === "draft" ||
+                          item.status === "completed") && (
+                          <button
+                            onClick={() => openModalDeleteEvent(item._id)}
+                            className="management-events-list-item-btn-delete"
+                          >
+                            <AiFillDelete />
+                          </button>
+                        )}
                       </div>
                     </div>
-
-                    <div className="management-events-list-item-gross">
-                      {item.fee > 0 ? `${item.fee}.000 đ` : "free"}
-                    </div>
-                    <div className="management-events-list-item-status">
-                      {item.status}
-                    </div>
-                    <div className="management-events-list-item-tool">
-                      {" "}
-                      {item.status === "Public" && (
-                        <button className="management-events-list-item-btn-view">
-                          <AiFillEye />
-                        </button>
-                      )}
-                      {(item.status === "Public" ||
-                        item.status === "completed") && (
-                        <button
-                          className="management-events-list-item-btn-summary"
-                          onClick={() => handleClickSummary(item._id)}
-                        >
-                          <AiOutlineBarChart />
-                        </button>
-                      )}
-                      {item.status === "draft" && (
-                        <button className="management-events-list-item-btn-edit">
-                          <AiFillEdit />
-                        </button>
-                      )}
-                      {(item.status === "draft" ||
-                        item.status === "completed") && (
-                        <button className="management-events-list-item-btn-delete">
-                          <AiFillDelete />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })
+              ) : (
+                <div style={{ marginTop: "50px" }}>
+                  <EmptyEvent
+                    icon={EmptyIcon}
+                    message="Không có sự kiện nào "
+                    link="/event-create-update"
+                    messageLink="Tạo sự kiện"
+                  />
+                </div>
+              )
+            ) : (
+              <div className="management-loading">
+                <Loading size="md" />
+              </div>
+            )}
           </div>
         </div>
       ) : (
@@ -257,6 +300,24 @@ const EventManagement = () => {
           />
         </div>
       )}
+
+      <Modal {...bindings} closeButton width={500}>
+        <div className="modal-cancel-event">
+          <AiOutlineCloseCircle className="close-circle-icon" />
+          <h3>Bạn có chắc chắn ?</h3>
+          <p>
+            Bạn có thực sự chắc chắn muốn xoá sự kiện này không ? Quá trình này
+            không thể hoàn tác.
+          </p>
+          <div className="modal-cancel-event-btns">
+            <Button onClick={() => setVisible(false)}>Không</Button>
+            <Button color="error" onClick={handleDeleteEventDraft}>
+              Chắc chắn
+            </Button>
+          </div>
+        </div>
+      </Modal>
+      {isLoading && <LoadingLayout />}
     </div>
   );
 };

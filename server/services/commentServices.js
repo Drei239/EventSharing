@@ -21,7 +21,10 @@ const createNewComment = asyncHandler(async (title, comment, requestEventId, req
 
 //2.GET COMMENT BY EVENT ID
 const getCommentByEventId = asyncHandler(async (requestEventId) => {
-    const comments = await commentModel.find({ event: requestEventId });
+    const comments = await commentModel.find({ event: requestEventId })
+        .populate("event", "title")
+        .populate("creator", "name avatar")
+        .populate("reply.creator", "name avatar");
     if (comments && comments.length != 0) {
         return comments;
     } else {
@@ -61,9 +64,27 @@ const deleteCommentById = asyncHandler(async (requestCommentId, requestUserId) =
     }
 });
 
+//5.CREATE NEW REPLY COMMENT BY COMMENT ID
+const replyCommentById = asyncHandler(async (
+    requestUserId, requestCommentId, title, comment) => {
+    const requestComment = await commentModel.findOne({ _id: requestCommentId });
+    if (requestComment) {
+        requestComment.reply.push({
+            title: title,
+            comment: comment,
+            creator: requestUserId.toString()
+        });
+        await requestComment.save();
+        return requestComment;
+    } else {
+        throw Error("KHÔNG TÌM THẤY COMMENT!");
+    }
+});
+
 module.exports = {
     createNewComment,
     getCommentByEventId,
     updateCommentById,
-    deleteCommentById
+    deleteCommentById,
+    replyCommentById
 };

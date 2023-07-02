@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Input, Button, Modal, Text } from "@nextui-org/react";
 import { updateInfo, deleteUser } from "../../../features/user/userSlice";
 import notify from "../../../utils/notify";
+import { Link } from "react-router-dom";
 const validateSchema = object().shape({
   currentPassword: string().required("Password is required"),
   newPassword: string().required("New Password is required"),
@@ -189,7 +190,7 @@ const Management = () => {
           <div className="deactivate-password">
             <div className="deactive-password-info">
               <span>Mật Khẩu</span>
-              <button>Quên mật khẩu?</button>
+              <Link to="/forgot-password">Quên mật khẩu?</Link>
             </div>
             <form onSubmit={formik2.handleSubmit}>
               <div className="password-input-item">

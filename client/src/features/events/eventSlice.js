@@ -1,11 +1,7 @@
-import {
-  createSlice,
-  createAsyncThunk,
-  createAction,
-} from '@reduxjs/toolkit';
-import eventService from './eventService';
+import { createSlice, createAsyncThunk, createAction } from "@reduxjs/toolkit";
+import eventService from "./eventService";
 export const updateEvent = createAsyncThunk(
-  'event/updateEvent',
+  "event/updateEvent",
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await eventService.updateUser({ id });
@@ -16,7 +12,7 @@ export const updateEvent = createAsyncThunk(
   }
 );
 export const getEvent = createAsyncThunk(
-  'event/getAllEvent',
+  "event/getAllEvent",
   async (search, { rejectWithValue }) => {
     try {
       return await eventService.getAllEvent(search);
@@ -26,18 +22,18 @@ export const getEvent = createAsyncThunk(
   }
 );
 export const getEventById = createAsyncThunk(
-  'event/get/:id',
+  "event/get/:id",
   async (eventId, { rejectWithValue }) => {
     try {
       const getEvent = await eventService.getEventById(eventId);
       return getEvent;
     } catch (err) {
       rejectWithValue(err);
-    } 
+    }
   }
 );
 export const getHighlightEvent = createAsyncThunk(
-  'event/getHighlight',
+  "event/getHighlight",
   async (search, { rejectWithValue }) => {
     try {
       return await eventService.getHighlightEvent();
@@ -47,7 +43,7 @@ export const getHighlightEvent = createAsyncThunk(
   }
 );
 export const getNewEvent = createAsyncThunk(
-  'event/getNewEvent',
+  "event/getNewEvent",
   async (page, { rejectWithValue }) => {
     try {
       return await eventService.getNewEvent(page);
@@ -57,7 +53,7 @@ export const getNewEvent = createAsyncThunk(
   }
 );
 export const getRegisterEvent = createAsyncThunk(
-  'event/getRegisterEvent',
+  "event/getRegisterEvent",
   async (_, { rejectWithValue }) => {
     try {
       return await eventService.getRegisteredEvent();
@@ -67,7 +63,7 @@ export const getRegisterEvent = createAsyncThunk(
   }
 );
 export const getJoinedEvent = createAsyncThunk(
-  'event/getJoinedEvent',
+  "event/getJoinedEvent",
   async (_, { rejectWithValue }) => {
     try {
       return await eventService.getJoinedEvent();
@@ -77,7 +73,7 @@ export const getJoinedEvent = createAsyncThunk(
   }
 );
 export const getAllEventofUser = createAsyncThunk(
-  'event/getAllEventOfUser',
+  "event/getAllEventOfUser",
   async (data, { rejectWithValue }) => {
     try {
       return await eventService.getAllEventofUser(
@@ -85,6 +81,39 @@ export const getAllEventofUser = createAsyncThunk(
         data?.status,
         data?.keyword
       );
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const removeEventDraft = createAsyncThunk(
+  "event/removeEventDraft",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      await eventService.removeEventDraft(eventId);
+      return eventId;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const cancelEvent = createAsyncThunk(
+  "event/cancelEvent",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      await eventService.cancelEvent(eventId);
+      return eventId;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
+export const confirmEventCompeleted = createAsyncThunk(
+  "event/confirmEventCompleted",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      await eventService.confirmCompletedEvent(eventId);
+      return eventId;
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -98,22 +127,23 @@ const initialState = {
   joinedEvent: [],
   registeredEvent: [],
   filter: {
-    category: '',
-    sort: '',
-    fee: '',
-    type: '',
-    location: '',
+    category: "",
+    sort: "",
+    fee: "",
+    type: "",
+    location: "",
     date: null,
     page: 1,
   },
   countDocument: 1,
-  isLoading: true,
-  isError: true,
-  isSuccess: true,
-  message: '',
+  isLoading: false,
+  isError: false,
+  isSuccess: false,
+  isSuccessRemove: false,
+  message: "",
 };
 export const handleChangeEvents = createAction(
-  'changeEvents',
+  "changeEvents",
   function prepare(filter) {
     return {
       payload: filter,
@@ -122,7 +152,7 @@ export const handleChangeEvents = createAction(
 );
 
 const eventSlice = createSlice({
-  name: 'event',
+  name: "event",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
@@ -210,6 +240,7 @@ const eventSlice = createSlice({
     builder.addCase(getRegisterEvent.fulfilled, (state, action) => {
       state.isLoading = false;
       state.isSuccess = true;
+      state.isError = false;
       state.registeredEvent = action.payload?.data;
     });
     builder.addCase(getRegisterEvent.rejected, (state, action) => {
@@ -219,6 +250,7 @@ const eventSlice = createSlice({
     });
     builder.addCase(getAllEventofUser.pending, (state) => {
       state.isLoading = true;
+      state.isError = false;
     });
     builder.addCase(getAllEventofUser.fulfilled, (state, action) => {
       state.events = action.payload?.data;
@@ -230,6 +262,54 @@ const eventSlice = createSlice({
       state.message = action.payload?.message;
       state.isError = true;
     });
+    builder
+      .addCase(removeEventDraft.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccessRemove = false;
+        state.isError = false;
+      })
+      .addCase(removeEventDraft.fulfilled, (state, action) => {
+        state.isSuccessRemove = true;
+        state.events = state.events.filter(
+          (item) => item?._id.toString() !== action.payload.toString()
+        );
+        state.isLoading = false;
+      })
+      .addCase(removeEventDraft.rejected, (state, action) => {
+        state.isError = true;
+        state.message = action.payload.message;
+        state.isLoading = false;
+      });
+    builder
+      .addCase(cancelEvent.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccess = false;
+        state.isError = false;
+      })
+      .addCase(cancelEvent.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(cancelEvent.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message;
+      });
+    builder
+      .addCase(confirmEventCompeleted.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccess = false;
+        state.isError = false;
+      })
+      .addCase(confirmEventCompeleted.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccess = true;
+      })
+      .addCase(confirmEventCompeleted.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload?.message;
+      });
     builder.addCase(handleChangeEvents, (state, action) => {
       state.filter = { ...state.filter, ...action.payload };
     });

@@ -1,26 +1,37 @@
-import './Header.css';
-import { Input, Button } from '@nextui-org/react';
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { useLocation, Link } from 'react-router-dom';
-import AvatarComponent from '../avatar/AvatarComponent';
-import { getUserInfo } from '../../features/user/userSlice';
-import { AiFillCaretDown } from 'react-icons/ai';
-
+import "./Header.css";
+import { Input, Button } from "@nextui-org/react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { useLocation, Link } from "react-router-dom";
+import AvatarComponent from "../avatar/AvatarComponent";
+import { getUserInfo } from "../../features/user/userSlice";
+import { AiFillCaretDown } from "react-icons/ai";
+import { IoIosNotificationsOutline } from "react-icons/io";
+import { newConnetion } from "../../features/action";
+import { Notify } from "..";
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const message = useSelector((state) => state.notify.notify);
   const category = useSelector((state) => state.category.categories);
   const { isLogin, userInfo } = useSelector((state) => state.user);
   const location = useLocation();
   const [scrollTop, setScrollTop] = useState(0);
   const [isHideHeader, setIsHideHeader] = useState(false);
+  const [isOpenNotify, setIsOpenNotify] = useState(false);
 
+  const handleCloseNotify = () => {
+    setIsOpenNotify(false);
+  };
   useEffect(() => {
     dispatch(getUserInfo());
   }, []);
-
+  useEffect(() => {
+    if (isLogin) {
+      dispatch(newConnetion(userInfo._id));
+    }
+  }, [isLogin]);
   useEffect(() => {
     const handleScroll = () => {
       if (window.scrollY > scrollTop) {
@@ -31,10 +42,10 @@ const Header = () => {
       setScrollTop(window.scrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, [scrollTop]);
   const handleSubmit = (e) => {
@@ -46,32 +57,38 @@ const Header = () => {
   };
   return (
     <header
-      className={`${location.pathname === '/login-register' ? 'active' : ''} ${
-        isHideHeader ? 'hide-header' : ''
-      }`}
+      className={`${
+        location.pathname === "/login-register" ||
+        location.pathname === "/forgot-password" ||
+        location.pathname.indexOf("newPass") !== -1
+          ? "active"
+          : ""
+      } ${isHideHeader ? "hide-header" : ""}`}
     >
-      <div className='wrapper'>
-        <div className='header__left-block'>
-          <Link className='logo' to='/' alt=''>
-            <img src={'../images/logo.png'} />
+      <div className="wrapper">
+        <div className="header__left-block">
+          <Link className="logo" to="/" alt="">
+            <img src={"../images/logo.png"} />
           </Link>
           <div
             className={`header__search ${
-              location.pathname === '/event-create-update' ? 'active' : ''
+              location.pathname === "/event-create-update" ? "active" : ""
             }`}
           >
             <Input
-              width='290px'
-              placeholder='Search'
+              width="290px"
+              placeholder="Search"
               onKeyDown={handleSubmit}
             />
           </div>
-          <div className='header__category'>
-            <div className='dropdown'>
-                <div className='dropdown__catergory'>Sự kiện 
+
+          <div className="header__category">
+            <div className="dropdown">
+              <div className="dropdown__catergory">
+                Sự kiện
                 <AiFillCaretDown className="header-item-icon" />
-                </div>
-              <div className='dropdown__content'>
+              </div>
+              <div className="dropdown__content">
                 {category?.map((item) => {
                   return (
                     <div
@@ -79,7 +96,7 @@ const Header = () => {
                       onClick={() =>
                         navigate(`/events?category=${item.categoryName}`)
                       }
-                      className='category__item'
+                      className="category__item"
                     >
                       {item.categoryName}
                     </div>
@@ -89,25 +106,43 @@ const Header = () => {
             </div>
           </div>
         </div>
-        <div className='header__right-block'>
+        <div className="header__right-block">
           {userInfo?._id ? (
             <div
               className={`create__event ${
-                location.pathname === '/event-create-update' ? 'active' : ''
+                location.pathname === "/event-create-update" ? "active" : ""
               }`}
             >
-              <Link to='/event-create-update' alt=''>
-                <Button color='primary' size='sm'>
+              <Link to="/event-create-update" alt="">
+                <Button color="primary" size="sm">
                   Tạo sự kiện
                 </Button>
               </Link>
             </div>
           ) : null}
-          <div className='header__log'>
+          {isLogin && (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                position: "relative",
+              }}
+              onClick={() => setIsOpenNotify(!isOpenNotify)}
+            >
+              <IoIosNotificationsOutline
+                style={{ fontSize: "30px", color: "white" }}
+              />
+              {isOpenNotify && <Notify closeNotify={handleCloseNotify} />}
+            </div>
+          )}
+
+          <div className="header__log">
             {isLogin ? (
               <AvatarComponent {...userInfo}></AvatarComponent>
             ) : (
-              <Link to='/login-register' className='header_btn' alt=''>
+              <Link to="/login-register" className="header_btn" alt="">
                 Đăng nhập | Đăng ký
               </Link>
             )}

@@ -25,7 +25,7 @@ h3 {
 	display: grid;
 	grid-template-columns: 30% 70%;
 	grid-gap: 50px;
-	border: 0.1px #00abe1 solid;
+	border: 1px #00abe1 solid;
 	border-radius: 10px;
 	padding: 50px 0;
 	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);
@@ -110,11 +110,19 @@ h3 {
 }
 
 .event__price,
-.event__members,
-.event__status {
-	display: flex;
+.event__members {
 	text-align: center;
-	margin-top: 10px;
+	margin: 10px;
+}
+
+.draft {
+	color: red;
+}
+.Public {
+	color: red;
+}
+.Canceled {
+	color: red;
 }
 
 .change__status {
@@ -152,7 +160,6 @@ h3 {
 
 .gallery__container {
 	width: 1210px;
-	height: 700px;
 	border: 1px #00abe1 solid;
 	border-radius: 10px;
 	-webkit-box-shadow: 3px 3px 3px -1px rgba(0, 0, 0, 0.27);

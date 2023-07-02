@@ -57,6 +57,7 @@ const AvatarComponent = ({ avatar, email, name }) => {
         <hr />
         <section className="avatar__link">
           <Link to="/account/profile">Thông tin người dùng</Link>
+          <Link to="/management-event">Sự kiện của bạn</Link>
           <Link to="">Sự kiện đã mua</Link>
         </section>
         <hr />

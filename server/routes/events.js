@@ -13,7 +13,11 @@ const {
   getJoinedEvent,
   getRegisteredEvent,
   getAllEventOfUser,
-  createNewReview
+  createNewReview,
+  getEventsOrganizers,
+  cancelEvent,
+  removeEventDraft,
+  confirmEventCompleted,
 } = require("../controllers/eventController");
 const { protect, verifyUser } = require("../middleware/authMiddleware");
 
@@ -48,9 +52,20 @@ router.put("/update/:id", protect, updateDraftEventInfo);
 
 //9.CREATE NEW REVIEW & UPDATE RATING
 router.put("/createReview/:id", protect, createNewReview);
-
+//
 router.get("/highlight", highlightEvents);
+//
 router.get("/registered-event", protect, getRegisteredEvent);
+//
 router.get("/joined-event", protect, getJoinedEvent);
+//
+router.get("/organizers/:id", getEventsOrganizers);
+//
 router.get("/user/:id", protect, verifyUser, getAllEventOfUser);
+//
+router.delete("/remove/:id", protect, removeEventDraft);
+//
+router.put("/cancel/:id", protect, cancelEvent);
+//
+router.put("/confirm-completed", protect, confirmEventCompleted);
 module.exports = router;

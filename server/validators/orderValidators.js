@@ -14,8 +14,12 @@ function limitUserValidation(limitUser, listUser) {
     }
 };
 
-function expiredEventValidaiton(expiredEvent) {
-
+function eventExistOrderValidation(requestOrder) {
+    if (requestOrder && requestOrder.length > 0) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
-module.exports = { existOrderValidation, limitUserValidation };
+module.exports = { existOrderValidation, limitUserValidation, eventExistOrderValidation };

@@ -1,17 +1,27 @@
 const asyncHandler = require("express-async-handler");
 const orderModel = require("../models/orderModel");
 const eventModel = require("../models/eventModel");
+const notifyModel = require("../models/notifyModel");
+const userModel = require("../models/userModel");
 const orderValidator = require("../validators/orderValidators");
+const eventValidator = require("../validators/eventValidators");
 const resMes = require("../validators/responsiveMessages");
+const sendEmail = require("../utils/sendEmail");
 
+const dayjs = require("dayjs");
+const ejs = require("ejs");
+const fs = require("fs");
+
+const emailTemplate = fs.readFileSync("./views/index.ejs", "utf-8");
 //1.CREATE NEW ORDER
-const createNewOrder = asyncHandler(async (event, user, creator) => {
+const createNewOrder = asyncHandler(async (event, user) => {
   const existOrder = await orderModel.findOne({
     event: event,
     user: user,
-    creator,
   });
-  const eventOrder = await eventModel.findOne({ _id: event });
+  const eventOrder = await eventModel
+    .findOne({ _id: event })
+    .populate("creator");
   const listOrder = await orderModel.find({ event: event });
 
   if (orderValidator.existOrderValidation(existOrder)) {
@@ -19,9 +29,15 @@ const createNewOrder = asyncHandler(async (event, user, creator) => {
       const newOrder = await orderModel.create({
         event,
         user,
-        creator,
       });
       if (newOrder) {
+        await notifyModel.create({
+          notifyFrom: user,
+          notifyTo: eventOrder.creator,
+          notifyType: "new-order",
+          content: `${eventOrder.creator.name} đã đăng kí sự kiện của bạn`,
+          orderId: newOrder._id,
+        });
         return newOrder;
       } else {
         throw Error("NEW ORDER FAILED!");
@@ -201,6 +217,33 @@ const updateRequestOrder = asyncHandler(
           }))
         );
         if (updateOrder && updateOrder.matchedCount != 0) {
+          if (
+            updateData[0].isPaid === true &&
+            updateData[0].isRefund === false &&
+            updateData[0].isJoined === false
+          )
+            await Promise.all(
+              updateData.map(async (data) => {
+                const renderedTemplate = await ejs.render(emailTemplate, {
+                  title: requestEvent.title,
+                  img: requestEvent.banner,
+                  time: `${dayjs(requestEvent.timeBegin).format(
+                    "ddd,DD MM YYYY hh:mm "
+                  )}-${dayjs(requestEvent.timeEnd).format(
+                    "ddd,DD MM YYYY hh:mm "
+                  )}`,
+                  location: `${requestEvent.location.address} ${requestEvent.location.ward.name} ${requestEvent.location.district.name} ${requestEvent.location.province.name}`,
+                  content: "Đơn hàng của bạn đã được xác nhận thanh toán",
+                  isOnline: requestEvent.isOnline,
+                  linkOnline: "das",
+                });
+                await sendEmail({
+                  to: data.email,
+                  subject: `Vé của bạn cho ${requestEvent.title} đã được xác nhận thanh toán`,
+                  content: renderedTemplate,
+                });
+              })
+            );
           return updateOrder;
         } else {
           throw Error(resMes.orderError.ERR_5);
@@ -214,6 +257,52 @@ const updateRequestOrder = asyncHandler(
   }
 );
 
+//5.EXPORT ORDERS TO EXCEL
+const exportData = asyncHandler(async (requestUserId, requestEventId, workbook) => {
+  const requestEvent = await eventModel.findOne({ _id: requestEventId });
+  //EVENT TỒN TẠI?
+  if (requestEvent) {
+    const requestOrder = await orderModel.find({ event: requestEventId })
+      .populate("event", "title")
+      .populate("user", "name");
+    //EVENT TỒN TẠI DANH SÁCH EVENT?
+    if (orderValidator.eventExistOrderValidation(requestOrder)) {
+      //NGƯỜI REQUEST LÀ CREATOR
+      if (eventValidator.requestIsCreatorValidation(requestEvent, requestUserId)) {
+        const worksheet = workbook.addWorksheet("Orders");
+        worksheet.columns = [
+          { header: "Id No.", key: "id_No", width: 10 },
+          { header: "Event", key: "event_Title", width: 40 },
+          { header: "User", key: "user_Name", width: 40 },
+          { header: "Paid", key: "isPaid", width: 10 },
+          { header: "Refund", key: "isRefund", width: 10 },
+          { header: "Joined", key: "isJoined", width: 10 },
+          { header: "CreatedAt", key: "createdAt", width: 20 },
+        ];
+
+        let counter = 1;
+        requestOrder.forEach((order) => {
+          order.id_No = counter;
+          order.event_Title = order.event.title;
+          order.user_Name = order.user.name;
+          worksheet.addRow(order);
+          counter++;
+        });
+
+        worksheet.getRow(1).eachCell((cell) => {
+          cell.font = { bold: true };
+        });
+      } else {
+        throw Error(resMes.orderError.ERR_7);
+      }
+    } else {
+      throw Error(resMes.orderError.ERR_3);
+    }
+  } else {
+    throw Error(resMes.eventError.ERR_2);
+  }
+});
+
 const updateOrder = async ({ creatorId, orderId, status }) => {
   const findOrder = await orderModel.findById(orderId).populate("event user");
   if (!findOrder) {
@@ -224,9 +313,26 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
   }
   switch (status) {
     case "paid": {
+      const renderedTemplate = await ejs.render(emailTemplate, {
+        title: findOrder.event.title,
+        img: findOrder.event.banner,
+        time: `${dayjs(findOrder.event.timeBegin).format(
+          "ddd,DD MM YYYY hh:mm "
+        )}-${dayjs(findOrder.event.timeEnd).format("ddd,DD MM YYYY hh:mm ")}`,
+        location: `${findOrder.event.location.address} ${findOrder.event.location.ward.name} ${findOrder.event.location.district.name} ${findOrder.event.location.province.name}`,
+        content: "Đơn hàng của bạn đã được xác nhận thanh toán",
+        isOnline: findOrder.event.isOnline,
+        linkOnline: "das",
+      });
+      await sendEmail({
+        to: findOrder.user.email,
+        subject: `Vé của bạn cho ${findOrder.event.title} đã được xác nhận thanh toán`,
+        content: renderedTemplate,
+      });
       findOrder.isPaid = true;
       findOrder.isRefund = false;
       findOrder.isJoined = false;
+
       const findOrdered = await findOrder.save();
       return findOrdered;
     }
@@ -245,6 +351,9 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
       return findOrdered;
     }
     case "refund": {
+      if (findOrder.event.status !== "Canceled") {
+        throw Error("Không thể chuyển status của đơn hàng này");
+      }
       findOrder.isPaid = false;
       findOrder.isRefund = true;
       findOrder.isJoined = false;
@@ -260,10 +369,65 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
   }
 };
 
+const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
+  await Promise.all(
+    ordersId.map(async (item, index) => {
+      const order = await orderModel.findById(item).populate("user event");
+      if (order.event.creator != creatorId.toString()) {
+        throw Error(resMes.orderError.ERR_7);
+      }
+      const contents = `<div>
+    <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
+    <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
+    <div>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
+        }</h4>
+    <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
+        } ${order.event.location.province.name}</p>
+    </div>
+    </div>
+   <div>${content}</div>
+</div>`;
+      await sendEmail({ subject, content: contents, to: order.user.email });
+    })
+  );
+  return "sendEmailsuccess";
+};
+const sendEmailAllOrder = async ({ eventId, creatorId, content, subject }) => {
+  const requestUser = await eventModel.findById(eventId);
+  if (requestUser.creator != creatorId.toString()) {
+    throw Error(resMes.orderError.ERR_6);
+  }
+  const orders = await orderModel
+    .find({ event: eventId })
+    .populate("user event");
+  if (!orders) {
+    throw Error(resMes.orderError.ERR_4);
+  }
+  await Promise.all(
+    orders.map(async (order, index) => {
+      const contents = `<div>
+    <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto">
+    <img src=${order.event.banner}  alt="" style="width:100px;height:100px" />
+    <div>
+    <h4 style="text-tranform:underline;color:blue">${order.event.title}</h4>
+    </div>
+    </div>
+   <div>${content}</div>
+</div>`;
+      await sendEmail({ subject, content: contents, to: order.user.email });
+    })
+  );
+  return;
+};
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
   updateOrder,
   updateAllByEventId,
   updateRequestOrder,
+  sendEmailtoId,
+  sendEmailAllOrder,
+  exportData
 };

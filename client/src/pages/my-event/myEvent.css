@@ -1,5 +1,5 @@
 .my-event {
-  height: 100vh;
+  height: 120vh;
   width: 80%;
   margin: 100px auto;
 }
@@ -38,7 +38,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  background-color: #ccc;
+  background-color: #e4e1e1;
   margin-top: 20px;
   padding: 5px 10px;
   position: relative;
@@ -151,4 +151,91 @@
 .my-event-header-info-time > span:first-child {
   font-weight: 700;
   font-size: 18px;
+}
+.my-event-send-email {
+  display: flex;
+  background-color: #e4e1e1;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+.my-event-send-email-icon {
+  font-size: 20px;
+}
+.my-event-send-email-all,
+.my-event-send-email-selected {
+  background-color: var(--color-primary);
+  color: var(--color-primary2);
+  height: 35px;
+  padding: 0 15px;
+  border-bottom: 1px solid var(--color-primary2);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.my-event-header-btn-cancel {
+  background-color: #ff3333;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 15px;
+  border: none;
+  box-shadow: 1px 0px 5px 0px red;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.my-event-header-btn-cancel:active {
+  box-shadow: none;
+}
+.my-event-header-btn-cancel:hover {
+  opacity: 0.8;
+}
+.modal-cancel-event {
+  display: flex;
+  width: 500px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+}
+.modal-cancel-event p {
+  width: 400px;
+}
+.modal-cancel-event .close-circle-icon {
+  font-size: 50px;
+  color: #ff3333;
+}
+.modal-cancel-event h3 {
+  text-decoration: none;
+}
+.modal-cancel-event-btns {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.my-event-header-status-cancel {
+  color: #ff3333;
+}
+.my-event-btn-exportExcel {
+  margin-top: 20px;
+  background-color: var(--color-primary);
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #3c99a8;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.my-event-btn-exportExcel:active {
+  border: none;
 }

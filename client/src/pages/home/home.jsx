@@ -39,17 +39,11 @@ const Home = () => {
     dispatch(getNewEvent(page));
   }, [page]);
   useEffect(() => {
-    console.log(countDocument);
-  }, [countDocument]);
-  useEffect(() => {
     if (request && newEvents) {
       setNewEvent2([...new Set([...newEvent2, ...newEvents])]);
     }
     setRequest(true);
   }, [newEvents]);
-  useEffect(() => {
-    console.log(registeredEvent);
-  }, [registeredEvent]);
   return (
     <motion.div layout className='home'>
       <Carousel />
@@ -93,7 +87,9 @@ const Home = () => {
           {userHighlight &&
             userHighlight.length > 0 &&
             userHighlight.map((item) => {
-              return <CardOrg title={item.name} img={item.avatar} />;
+              return (
+                <CardOrg title={item.name} img={item.avatar} id={item._id} />
+              );
             })}
         </div>
 

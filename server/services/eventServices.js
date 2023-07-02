@@ -3,8 +3,12 @@ const eventModel = require("../models/eventModel");
 const eventValidators = require("../validators/eventValidators");
 const { eventError, eventSucc } = require("../validators/responsiveMessages");
 const orderModel = require("../models/orderModel");
-
+const sendEmail = require("../utils/sendEmail");
+const dayjs = require("dayjs");
+const ejs = require("ejs");
+const fs = require("fs");
 //1.CREATE NEW EVENT
+const emailTemplate = fs.readFileSync("./views/index.ejs", "utf-8");
 const createNewEvent = asyncHandler(
   async (
     title,
@@ -158,7 +162,9 @@ const updateDraftEventInfo = asyncHandler(
         updateEvent.limitUser = limitUser || updateEvent.limitUser;
         updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
 
-        const existEvent = await eventModel.findOne({ title: updateEvent.title });
+        const existEvent = await eventModel.findOne({
+          title: updateEvent.title,
+        });
         if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
           if (
             eventValidators.inputTimeValidation(
@@ -181,7 +187,6 @@ const updateDraftEventInfo = asyncHandler(
     } else {
       throw Error(eventError.ERR_8);
     }
-
   }
 );
 const attendedEvent = async (id) => {
@@ -232,6 +237,17 @@ const getAllEventOfUser = async (id, status, keyword) => {
         timeEnd: { $lte: new Date() },
       });
     }
+    case "canceled": {
+      if (keyword) {
+        return await eventModel.find({
+          creator: id,
+          status: "Canceled",
+          title: { $regex: keyword, $options: "i" },
+        });
+      }
+
+      return await eventModel.find({ creator: id, status: "Canceled" });
+    }
     default:
       if (keyword) {
         return await eventModel.find({
@@ -239,40 +255,126 @@ const getAllEventOfUser = async (id, status, keyword) => {
           title: { $regex: keyword, $options: "i" },
         });
       }
-      return await eventModel.find({ creator: id });
+
+      return await eventModel.find({ creator: id, status: "Canceled" });
   }
+
+  return await eventModel.find({ creator: id });
 };
 
 //9.CREATE NEW REVIEW FOR EVENT & UPDATE TOTAL RATING
-const createNewReview = asyncHandler(async (
-  requestUserId, requestEventId, title, image, comment, rating) => {
-  const orderedEvent = await orderModel.findOne({ event: requestEventId, user: requestUserId });
-  const reviewdEvent = await eventModel.findOne({ _id: requestEventId, "reviews.user": requestUserId });
-  //KIỂM TRA ĐÃ ĐĂNG KÝ SỰ KIỆN VÀ ĐÃ THAM GIA
-  if (orderedEvent && orderedEvent.isJoined === true) {
-    //KIỂM TRA ĐÃ REVIEW SỰ KIỆN?
-    if (!reviewdEvent) {
-      const eventReview = await eventModel.findOne({ _id: requestEventId });
-      eventReview.reviews.push({
-        "title": title,
-        "image": image,
-        "comment": comment,
-        "rating": rating,
-        "user": requestUserId.toString()
-      });
-      const eventRatingNum = eventReview.reviews.reduce((accumulator, object) => {
-        return (accumulator + object.rating);
-      }, 0);
-      eventReview.eventRating = eventRatingNum / (eventReview.reviews.length);
-      await eventReview.save();
-      return eventReview;
+const createNewReview = asyncHandler(
+  async (requestUserId, requestEventId, title, image, comment, rating) => {
+    const orderedEvent = await orderModel.findOne({
+      event: requestEventId,
+      user: requestUserId,
+    });
+    const reviewdEvent = await eventModel.findOne({
+      _id: requestEventId,
+      "reviews.user": requestUserId,
+    });
+    //KIỂM TRA ĐÃ ĐĂNG KÝ SỰ KIỆN VÀ ĐÃ THAM GIA
+    if (orderedEvent && orderedEvent.isJoined === true) {
+      //KIỂM TRA ĐÃ REVIEW SỰ KIỆN?
+      if (!reviewdEvent) {
+        const eventReview = await eventModel.findOne({ _id: requestEventId });
+        eventReview.reviews.push({
+          title: title,
+          image: image,
+          comment: comment,
+          rating: rating,
+          user: requestUserId.toString(),
+        });
+        const eventRatingNum = eventReview.reviews.reduce(
+          (accumulator, object) => {
+            return accumulator + object.rating;
+          },
+          0
+        );
+        eventReview.eventRating = eventRatingNum / eventReview.reviews.length;
+        await eventReview.save();
+        return eventReview;
+      } else {
+        throw Error(eventError.ERR_6);
+      }
     } else {
-      throw Error(eventError.ERR_6);
+      throw Error(eventError.ERR_7);
     }
-  } else {
-    throw Error(eventError.ERR_7);
   }
-});
+);
+
+//DELETE EVENT
+const removeEventDraft = async (eventId, userId) => {
+  const requestEvent = await eventModel.findById(eventId);
+  if (!requestEvent) {
+    throw Error(eventError.ERR_2);
+  }
+
+  if (requestEvent.creator != userId.toString()) {
+    throw Error(eventError.ERR_8);
+  }
+  if (requestEvent.status !== "draft") {
+    throw Error(eventError.ERR_9);
+  }
+  await eventModel.findOneAndDelete({ _id: eventId, creator: userId });
+  return;
+};
+const cancelEvent = async (eventId, userId) => {
+  const requestEvent = await eventModel.findById(eventId);
+  if (!requestEvent) {
+    throw Error(eventError.ERR_2);
+  }
+  if (requestEvent.creator != userId.toString()) {
+    throw Error(eventError.ERR_8);
+  }
+  if (requestEvent.status !== "Public") {
+    throw Error(eventError.ERR_10);
+  }
+  requestEvent.status = "Canceled";
+  await requestEvent.save();
+  const findOrderByEvent = await orderModel.find({ event: eventId });
+  if (findOrderByEvent) {
+    await Promise.all(
+      findOrderByEvent.map(async (order) => {
+        const renderedTemplate = await ejs.render(emailTemplate, {
+          title: order.event.title,
+          img: order.event.banner,
+          time: `${dayjs(order.event.timeBegin).format(
+            "ddd,DD MM YYYY hh:mm "
+          )}-${dayjs(order.event.timeEnd).format("ddd,DD MM YYYY hh:mm ")}`,
+          location: `${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name} ${order.event.location.province.name}`,
+          content: "Đơn hàng của bạn sẽ được hoàn tiền",
+          isOnline: order.event.isOnline,
+          linkOnline: "da",
+        });
+        await sendEmail({
+          to: order.user.email,
+          subject: `${order.event.title} đã bị huỷ`,
+          content: renderedTemplate,
+        });
+      })
+    );
+  }
+
+  return requestEvent;
+};
+const confirmEventCompleted = async (eventId, userId) => {
+  const requestEvent = await eventModel.findById(eventId);
+  if (!requestEvent) {
+    throw Error(eventError.ERR_2);
+  }
+  if (requestEvent.creator != userId.toString()) {
+    throw Error(eventError.ERR_8);
+  }
+  if (
+    requestEvent.status !== "Public" ||
+    new Date(requestEvent.timeEnd).getTime() <= new Date().getTime()
+  ) {
+    throw Error(eventError.ERR_10);
+  }
+  requestEvent.status = "Canceled";
+  await requestEvent.save();
+};
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -281,5 +383,8 @@ module.exports = {
   attendedEvent,
   registeredEvent,
   getAllEventOfUser,
-  createNewReview
+  createNewReview,
+  cancelEvent,
+  removeEventDraft,
+  confirmEventCompleted,
 };
