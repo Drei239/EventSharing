@@ -6,7 +6,7 @@ export const getComments = async () => {
 			username: "Jack",
 			userId: "1",
 			parentId: null,
-			
+
 		},
 		{
 			id: "2",
@@ -14,7 +14,7 @@ export const getComments = async () => {
 			username: "John",
 			userId: "2",
 			parentId: null,
-			
+
 		},
 		{
 			id: "3",
@@ -22,7 +22,7 @@ export const getComments = async () => {
 			username: "John",
 			userId: "2",
 			parentId: "1",
-			
+
 		},
 		{
 			id: "4",
@@ -30,7 +30,7 @@ export const getComments = async () => {
 			username: "John",
 			userId: "2",
 			parentId: "2",
-		
+
 		},
 	];
 };
@@ -58,26 +58,25 @@ export const deleteComment = async () => {
 
 // [
 // 	{
-// 		"commentId": "string1",
-// 		"text": "text1",
-// 		"user": {
+// 		"commentId": "string",
+// 		"comment": "text",
+// 	    "event": "string"
+//      "createdAt": "string"
+// 		"creator": {
 // 			"name": "name",
 // 			"avatar": "link"
 // 		},
-// 		"date": "time1",
+// 		"date": "time",
 // 		"reply": [
 // 			{
-// 				"commentBody": "info1"
+// 				"commentId": "string",
+// 				"comment": "text",
+// 				"creator": {
+// 					"name": "name",
+// 					"avatar": "link"
+// 				},
+// 				"date": "time",
 // 			},
-// 			{
-// 				"commentBody": "info2"
-// 			},
-// 			{
-// 				"commentBody": "info3"
-// 			},
-// 			{
-// 				"commentBody": "info4"
-// 			}
 // 		]
 // 	},
 // 	{

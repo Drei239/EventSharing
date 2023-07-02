@@ -14,8 +14,7 @@ const getEventById = async (eventId) => {
   const response = await UseCallApi({
     method: "GET",
     url: `/events/get/${eventId}`,
-  });
-  console.log(response);
+});
   return response;
 };
 
