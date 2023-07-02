@@ -67,7 +67,7 @@ function App() {
             }
           />
           <Route
-            path="/my-events/:id"
+            path="/my-event/:id"
             element={
               <LoggedInOnly>
                 <MyEvent />

@@ -1,5 +1,13 @@
 import UseCallApi from "../../hooks/useCallApi";
 
+const createNewOrder = async (eventId) => {
+  const newOrder = await UseCallApi({
+    method: "POST",
+    url: "/orders/create",
+    data: { event: eventId.toString() },
+  });
+  return newOrder;
+};
 const getOrderbyId = async ({ id, keyword, sort, page, limit, status }) => {
   const orders = await UseCallApi({
     url: `/orders/event/${id}?keyword=${keyword ? keyword : ""}&sort=${
@@ -47,5 +55,6 @@ const orderService = {
   updateRequest,
   sendEmail,
   sendEmailAllOrder,
+  createNewOrder,
 };
 export default orderService;

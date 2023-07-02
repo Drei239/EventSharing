@@ -3,11 +3,10 @@
   top: 40px;
   right: 0;
   background-color: white;
-  width: 400px;
+  width: 450px;
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0px 0px 10px 0px #ccc;
-  height: 400px;
 }
 
 .notification .notification-close-btn {
@@ -29,7 +28,27 @@
   overflow-y: auto;
   height: 350px;
 }
-.notification h3 {
+/* Style thanh cuộn */
+.notification-items::-webkit-scrollbar {
+  width: 0px; /* Độ rộng của thanh cuộn */
+  border-radius: 25px;
+  height: 100px;
+}
+
+/* Màu nền của thanh cuộn .notification-items::-webkit-scrollbar-track {
+  background-color: var(--color-primary);
+}
+
+/* Màu nền khi hover trên thanh cuộn */
+/* .notification-items::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary2);
+} */
+
+/* Màu nền khi cuộn trên thanh cuộn */
+/* .notification-items::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-primary2);
+} */
+*/ .notification h3 {
   text-decoration: none;
 }
 .notification-footer {

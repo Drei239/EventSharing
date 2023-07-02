@@ -1,12 +1,17 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsCheck2All } from "react-icons/bs";
 import { notificationToast } from "./notificationToast/notificationToast";
-import { getAllNotify } from "../../features/notification/notifySlice";
+import {
+  getAllNotify,
+  markByIdNotify,
+} from "../../features/notification/notifySlice";
 import NotifyItem from "./notifyItem/notifyItem";
 import "./notify.css";
 const Notify = ({ closeNotify }) => {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { notify, isLoading, isSuccess } = useSelector((state) => state.notify);
   const { isLogin } = useSelector((state) => state.user);
@@ -15,14 +20,14 @@ const Notify = ({ closeNotify }) => {
       dispatch(getAllNotify());
     }
   }, [isLogin]);
-  useEffect(() => {
-    notificationToast({
-      avatar:
-        "https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien-600x600.jpg",
-      content: "đã đăng kí sự kiện của bạn",
-      name: "Hào Nguyễn",
-    });
-  }, []);
+  const handleClickEvent = async (notifyItem) => {
+    await dispatch(markByIdNotify(notifyItem._id));
+    if (notifyItem.notifyType === "new-order") {
+      navigate(`/my-event/${notifyItem?.eventId}`);
+    } else if (notifyItem.notifyType === "new-comment") {
+      navigate(`/event/${notifyItem?.commentId?.event}`);
+    }
+  };
   useEffect(() => {
     console.log(notify);
   }, [notify]);
@@ -33,21 +38,22 @@ const Notify = ({ closeNotify }) => {
       </button>
       <h3>Notifications</h3>
       <div className="notification-items">
-        <NotifyItem
-          avatar="https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien-600x600.jpg"
-          content="đã đăng kí sự kiện của bạn"
-          name="Hào Nguyễn"
-        />
-        <NotifyItem
-          avatar="https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien-600x600.jpg"
-          content="đã đăng kí sự kiện của bạn"
-          name="Hào Nguyễn"
-        />
-        <NotifyItem
-          avatar="https://haycafe.vn/wp-content/uploads/2021/11/Anh-avatar-dep-chat-lam-hinh-dai-dien-600x600.jpg"
-          content="đã đăng kí sự kiện của bạn"
-          name="Hào Nguyễn"
-        />
+        {notify &&
+          notify.length > 0 &&
+          notify.map((item, index) => {
+            return (
+              <div key={item._id} onClick={() => handleClickEvent(item)}>
+                <NotifyItem
+                  avatar={item?.notifyFrom?.avatar}
+                  content={item?.content}
+                  name={item?.notifyFrom?.name}
+                  comment={item?.commentId?.comment}
+                  notifyType={item?.notifyType}
+                  isReadMessage={item?.isReadMessage}
+                />
+              </div>
+            );
+          })}
       </div>
       <div className="notification-footer">
         <div className="notification-footer-mark">

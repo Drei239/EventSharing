@@ -13,4 +13,6 @@ const CommentService = {
 	getCommentByEventId,
 }
 
-export default CommentService;
+import UseCallApi from "../../hooks/useCallApi";
+
+const createComment = () => {};

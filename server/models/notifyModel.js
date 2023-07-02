@@ -4,11 +4,10 @@ const notifySchema = mongoose.Schema(
   {
     notifyType: {
       type: String,
-      enum: ["new-order", "new-comment"],
+      enum: ["new-order", "new-comment", "upcoming-event"],
     },
     notifyFrom: {
       type: mongoose.Schema.Types.ObjectId,
-      required: true,
       ref: "User",
     },
     notifyTo: {
@@ -28,7 +27,7 @@ const notifySchema = mongoose.Schema(
       type: String,
     },
     isReadMessage: {
-      type: String,
+      type: Boolean,
       default: false,
     },
   },

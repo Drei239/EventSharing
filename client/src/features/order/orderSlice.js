@@ -1,4 +1,5 @@
 import { createAsyncThunk, createAction, createSlice } from "@reduxjs/toolkit";
+import { sendNotifyNewOrder } from "../action";
 import orderService from "./orderService";
 const initialState = {
   orders: [],
@@ -11,7 +12,19 @@ const initialState = {
   countDocument: 0,
   isSuccessEmail: false,
   isErrorEmail: false,
+  isSuccessCreate: false,
 };
+export const newCreateOrder = createAsyncThunk(
+  "order/createOrder",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      const order = await orderService.createNewOrder(eventId);
+      return order;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 export const getOrderbyId = createAsyncThunk(
   "order/getOrder",
   async ({ id, keyword, page, limit, sort, status }, { rejectWithValue }) => {
@@ -180,6 +193,22 @@ const orderSlice = createSlice({
         state.isErrorEmail = true;
         state.message = action.payload?.message;
       });
+    builder
+      .addCase(newCreateOrder.pending, (state) => {
+        state.isLoading = true;
+        state.isSuccessCreate = false;
+        state.isErrorEmail = false;
+      })
+      .addCase(newCreateOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isSuccessCreate = true;
+      })
+      .addCase(newCreateOrder.rejected, (state, action) => {
+        state.message = action.payload?.message;
+        state.isError = true;
+        state.isLoading = false;
+      });
+
     builder.addCase(openModalSendEmail, (state, action) => {
       state.open = true;
       state.typeSend = action.payload;

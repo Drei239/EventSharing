@@ -10,10 +10,11 @@ import { AiFillCaretDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { newConnetion } from "../../features/action";
 import { Notify } from "..";
+import { notificationToast } from "../notify/notificationToast/notificationToast";
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const message = useSelector((state) => state.notify.notify);
+  const { notify, notifySocket } = useSelector((state) => state.notify);
   const category = useSelector((state) => state.category.categories);
   const { isLogin, userInfo } = useSelector((state) => state.user);
   const location = useLocation();
@@ -28,8 +29,13 @@ const Header = () => {
     dispatch(getUserInfo());
   }, []);
   useEffect(() => {
+    if (notifySocket) {
+      notificationToast(notifySocket);
+    }
+  }, [notifySocket]);
+  useEffect(() => {
     if (isLogin) {
-      dispatch(newConnetion(userInfo._id));
+      dispatch(newConnetion(userInfo?._id));
     }
   }, [isLogin]);
   useEffect(() => {

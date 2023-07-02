@@ -15,6 +15,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
 import { getOrderbyId } from "../../features/order/orderSlice";
 import { isNullOrUndefined } from '../../utils/isNullOrUndefined';
+import { newCreateOrder } from "../../features/order/orderSlice";
+import { sendNotifyNewOrder } from "../../features/action";
 import parse from "html-react-parser";
 
 const EventDetails = () => {
@@ -25,7 +27,7 @@ const EventDetails = () => {
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
 	const { userInfo } = useSelector((state) => state.user);
 	const isOnline = isOnlineEvent();
-
+	const { isSuccessCreate } = useSelector((state) => state.order);
 	useEffect(() => {
 		dispatch(getEventById(id));
 	}, []);
@@ -33,6 +35,22 @@ const EventDetails = () => {
 	const imageList = eventDetail?.imageList?.map((item) => item);
 
 	isNullOrUndefined(eventDetail);
+  useEffect(() => {
+    dispatch(getEventById(id));
+  }, []);
+  useEffect(() => {
+    if (isSuccessCreate) {
+      dispatch(
+        sendNotifyNewOrder({
+          notifyTo: eventDetail.creator._id,
+          notifyFrom: userInfo,
+          eventId: eventDetail._id,
+          notifyType: "new-order",
+          content: "đã đăng kí sự kiện của bạn",
+        })
+      );
+    }
+  }, [isSuccessCreate]);
 
 	if (imageList === undefined) {
 		return false;
@@ -43,6 +61,10 @@ const EventDetails = () => {
 	}
 
 	let eventStatus;
+
+	const handleBuyTicket = () => {
+		dispatch(newCreateOrder(eventDetail?._id));
+	};
 
 	switch (eventDetail?.status) {
 		case "draft": 

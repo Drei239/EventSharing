@@ -1,6 +1,6 @@
-const asyncHandler = require('express-async-handler');
-const categoryModel = require('../models/categoryModel');
-const categoryService = require('../services/categoryServices');
+const asyncHandler = require("express-async-handler");
+const categoryModel = require("../models/categoryModel");
+const categoryService = require("../services/categoryServices");
 
 //1.GET ALL CATEGORY
 const getAllCategory = asyncHandler(async (req, res) => {
@@ -9,12 +9,12 @@ const getAllCategory = asyncHandler(async (req, res) => {
     return res.status(200).json({
       status: 200,
       data: listCategory,
-      message: 'LẤY DANH SÁCH CATEGORY THÀNH CÔNG!',
+      message: "LẤY DANH SÁCH CATEGORY THÀNH CÔNG!",
     });
   } catch (error) {
     return res
       .status(400)
-      .json({ status: 400, message: 'LẤY DANH SÁCH CATEGORY THẤT BẠI!' });
+      .json({ status: 400, message: "LẤY DANH SÁCH CATEGORY THẤT BẠI!" });
   }
 });
 
@@ -28,12 +28,12 @@ const createNewCategory = asyncHandler(async (req, res) => {
     return res.status(200).json({
       status: 200,
       data: newCategory,
-      message: 'THÊM CATEGORY MỚI THÀNH CÔNG!',
+      message: "THÊM CATEGORY MỚI THÀNH CÔNG!",
     });
   } catch (error) {
     return res
       .status(400)
-      .json({ status: 400, message: 'THÊM CATEGORY MỚI THẤT BẠI!' });
+      .json({ status: 400, message: "THÊM CATEGORY MỚI THẤT BẠI!" });
   }
 });
 
