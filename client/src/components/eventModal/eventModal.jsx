@@ -17,8 +17,6 @@ const EventModal = () => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
 
-	console.log(orders);
-
 	return (
 		<div>
 			<button className='members__list' onClick={() => setVisible(true)}>

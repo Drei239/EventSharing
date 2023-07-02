@@ -38,7 +38,9 @@ export const updateComment = createAsyncThunk(
         id,
         title,
         comment
-      );
+      )
+		console.log(id);
+	  ;
       return updateComment;
     } catch (err) {
       return rejectWithValue(err);

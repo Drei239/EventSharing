@@ -1,11 +1,13 @@
 import { useState } from "react";
 import './CommentForm.css';
+import { Button } from '@nextui-org/react';
 import { createComment } from '../../features/comment/commentSlice';
 import { useDispatch, useSelector } from "react-redux";
 
 const CommentForm = ({
 	handleSubmit,
 	submitLabel,
+	title,
 	hasCancelButton = false,
 	handleCancel,
 	initialText = "",
@@ -17,12 +19,7 @@ const CommentForm = ({
 		handleSubmit(text);
 		setText("");
 	};
-	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
-	const dispatch = useDispatch();
 
-	// const handleComment = () => {
-	// 	dispatch(createComment(eventDetail?._id));
-	// };
 	return (
 		<form onSubmit={onSubmit}>
 			<textarea
