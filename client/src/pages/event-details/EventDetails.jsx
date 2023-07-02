@@ -3,6 +3,7 @@ import './EventDetails.css';
 import Comments from '../../components/comments/Comments';
 import Discussions from '../../components/discussions/Discussions';
 import EventModal from '../../components/eventModal/eventModal';
+import OrderEvent from '../../components/orderEvent/orderEvent';
 import Gallery from '../../components/gallery/Gallery';
 import dayjs from "dayjs";
 import { Button, Tooltip, Link } from "@nextui-org/react";
@@ -13,10 +14,7 @@ import { GiSandsOfTime } from "react-icons/gi";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
-import { getOrderbyId } from "../../features/order/orderSlice";
 import { isNullOrUndefined } from '../../utils/isNullOrUndefined';
-import { newCreateOrder } from "../../features/order/orderSlice";
-import { sendNotifyNewOrder } from "../../features/action";
 import parse from "html-react-parser";
 
 const EventDetails = () => {
@@ -27,7 +25,7 @@ const EventDetails = () => {
 	const eventDetail = useSelector(state => state?.event?.getEventById[0]);
 	const { userInfo } = useSelector((state) => state.user);
 	const isOnline = isOnlineEvent();
-	const { isSuccessCreate } = useSelector((state) => state.order);
+
 	useEffect(() => {
 		dispatch(getEventById(id));
 	}, []);
@@ -35,22 +33,6 @@ const EventDetails = () => {
 	const imageList = eventDetail?.imageList?.map((item) => item);
 
 	isNullOrUndefined(eventDetail);
-  useEffect(() => {
-    dispatch(getEventById(id));
-  }, []);
-  useEffect(() => {
-    if (isSuccessCreate) {
-      dispatch(
-        sendNotifyNewOrder({
-          notifyTo: eventDetail.creator._id,
-          notifyFrom: userInfo,
-          eventId: eventDetail._id,
-          notifyType: "new-order",
-          content: "đã đăng kí sự kiện của bạn",
-        })
-      );
-    }
-  }, [isSuccessCreate]);
 
 	if (imageList === undefined) {
 		return false;
@@ -62,12 +44,8 @@ const EventDetails = () => {
 
 	let eventStatus;
 
-	const handleBuyTicket = () => {
-		dispatch(newCreateOrder(eventDetail?._id));
-	};
-
 	switch (eventDetail?.status) {
-		case "draft": 
+		case "draft":
 			eventStatus = "draftic";
 			break;
 		case "Public":
@@ -154,14 +132,7 @@ const EventDetails = () => {
 									</Button>
 									: <div></div>
 								:
-								<Button
-									size="lg"
-									className="btn__buy"
-									color="primary"
-									bordered="false"
-								>
-									Mua vé
-								</Button>
+								<OrderEvent />
 						}
 						<div className='event__share'>
 							<Button bordered color="primary" size="xs"><div className='btn__share'>Chia sẻ</div></Button>
