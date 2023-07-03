@@ -105,10 +105,58 @@ const replyCommentById = asyncHandler(
   }
 );
 
+//6.UPDATE REPLY COMMENT BY COMMENT ID AND REPLY COMMENT ID
+const updateReplyComment = asyncHandler(async (
+  requestUserId, requestCommentId, replyId, title, comment) => {
+  const existReply = await commentModel.findOne(
+    { _id: requestCommentId, "reply._id": replyId });
+  if (existReply) {
+    const updateReply = await commentModel.findOne(
+      { _id: requestCommentId }).select({ reply: { $elemMatch: { _id: replyId } } });
+    if (updateReply.reply[0].creator.toString() === requestUserId.toString()) {
+      const updateReply = await commentModel.updateOne({ _id: requestCommentId, "reply._id": replyId },
+        {
+          $set: {
+            "reply.$.title": title,
+            "reply.$.comment": comment
+          }
+        });
+      return updateReply;
+    } else {
+      throw Error(resMes.commentError.ERR_3);
+    }
+
+  } else {
+    throw Error(resMes.commentError.ERR_2);
+  }
+});
+
+//7.DELETE REPLY COMMENT BY COMMENT ID & REPLY COMMENT ID
+const deleteReplyComment = asyncHandler(async (
+  requestUserId, requestCommentId, replyId) => {
+  const existReply = await commentModel.findOne(
+    { _id: requestCommentId, "reply._id": replyId });
+  if (existReply) {
+    const deleteComment = await commentModel.findOne(
+      { _id: requestCommentId }).select({ reply: { $elemMatch: { _id: replyId } } });
+    if (deleteComment.reply[0].creator.toString() === requestUserId.toString()) {
+      await commentModel.updateOne(
+        { _id: requestCommentId }, { $pull: { reply: { _id: replyId } } });
+      return true;
+    } else {
+      throw Error(resMes.commentError.ERR_4);
+    }
+  } else {
+    throw Error(resMes.commentError.ERR_2);
+  }
+});
+
 module.exports = {
   createNewComment,
   getCommentByEventId,
   updateCommentById,
   deleteCommentById,
   replyCommentById,
+  updateReplyComment,
+  deleteReplyComment
 };
