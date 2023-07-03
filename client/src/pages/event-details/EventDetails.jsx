@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
 import { isNullOrUndefined } from '../../utils/isNullOrUndefined';
 import parse from "html-react-parser";
+import { identifier } from '@babel/types';
 
 const EventDetails = () => {
 	const navigate = useNavigate();
@@ -165,6 +166,7 @@ const EventDetails = () => {
 						<Button
 							className='comments__btn'
 							onPress={() => setCommentsTabs("comments")}
+							
 						>
 							Comments
 						</Button>
@@ -176,7 +178,7 @@ const EventDetails = () => {
 						</Button>
 					</Button.Group>
 					{
-						commentsTabs === "comments" ? <Comments /> : <Discussions />
+						commentsTabs === "comments" ? <Comments eventId={id} /> : <Discussions />
 					}
 				</div>
 			</div>

@@ -3,19 +3,20 @@ import './Comments.css'
 // import DeleteCommentModal from './components/modals/DeleteComment';
 import CommentForm from "../comment-form/CommentForm";
 import Comment from "../comment/Comment";
-import {
-	getComments as getCommentsApi,
-	createComment as createCommentApi,
-	updateComment as updateCommentApi,
-	deleteComment as deleteCommentApi,
-} from "../api";
+import { useDispatch, useSelector } from "react-redux";
+import { 
+	getCommentByEventId, 
+	createComment, 
+	updateComment, 
+	deleteComment 
+} from '../../features/comment/commentSlice';
 
-const Comments = ({ commentsUrl, currentUserId }) => {
+const Comments = ({ currentUserId, eventId }) => {
 	const [backendComments, setBackendComments] = useState([]);
 	const [activeComment, setActiveComment] = useState(null);
-	const rootComments = backendComments.filter(
-		(backendComment) => backendComment.parentId === null
-	);
+	const dispatch = useDispatch();
+	const { comments } = useSelector(state => state.comment)
+
 	const getReplies = (commentId) =>
 		backendComments
 			.filter((backendComment) => backendComment.parentId === commentId)
@@ -23,49 +24,36 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 				(a, b) =>
 					new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
 			);
-	const addComment = (text, parentId) => {
-		createCommentApi(text, parentId).then((comment) => {
-			setBackendComments([comment, ...backendComments]);
-			setActiveComment(null);
-		});
+
+	const addComment = (text) => {
+		dispatch(
+			createComment({eventId, title: "comment-event", comment: text })
+		)
 	};
 
-	const updateComment = (text, commentId) => {
-		updateCommentApi(text).then(() => {
-			const updatedBackendComments = backendComments.map((backendComment) => {
-				if (backendComment.id === commentId) {
-					return { ...backendComment, body: text };
-				}
-				return backendComment;
-			});
-			setBackendComments(updatedBackendComments);
-			setActiveComment(null);
-		});
+	const updateComments = (text, id) => {
+		console.log(text, id);
+		dispatch(
+			updateComment({id, title: "comment-event", comment: text})
+		)
 	};
-	const deleteComment = (commentId) => { 
-		if (window.confirm("Are you sure you want to remove comment?")) {
-			deleteCommentApi().then(() => {
-				const updatedBackendComments = backendComments.filter(
-					(backendComment) => backendComment.id !== commentId
-				);
-				setBackendComments(updatedBackendComments);
-			});
-		}
-	};
+	
+	// const deleteComment = (commentId) => { 
+	// 	dispatch(
+	// 		deleteComment({})
+	// 	)
+	// };
 
 	useEffect(() => {
-		getCommentsApi().then((data) => {
-			setBackendComments(data);
-		});
+		dispatch(getCommentByEventId(eventId)) 
 	}, []);
 
 	return (
 		<div className="comments">
 			<h4 className="comments-title">Comments</h4>
-			{/* <div className="comment-form-title">Write comment</div> */}
 			<CommentForm submitLabel="Submit" handleSubmit={addComment} />
 			<div className="comments-container">
-				{rootComments.map((rootComment) => (
+				{comments.map((rootComment) => (
 					<Comment
 						key={rootComment.id}
 						comment={rootComment}
@@ -74,7 +62,7 @@ const Comments = ({ commentsUrl, currentUserId }) => {
 						setActiveComment={setActiveComment}
 						addComment={addComment}
 						deleteComment={deleteComment}
-						updateComment={updateComment}
+						updateComment={updateComments}
 						currentUserId={currentUserId}
 					/>
 				))}

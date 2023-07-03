@@ -17,13 +17,12 @@ const EventModal = () => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
 
-	console.log(orders);
-
 	return (
 		<div>
 			<button className='members__list' onClick={() => setVisible(true)}>
 				So nguoi tham gia: {orders?.length}
 			</button>
+			
 			<Modal
 				scroll
 				width="600px"
