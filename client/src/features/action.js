@@ -11,3 +11,15 @@ export const sendNotifyNewOrder = (order) => ({
   data: order,
   emit: true,
 });
+export const sendNotifyNewComment = (comment) => ({
+  type: "NEW_COMMENT",
+  event: "new_comment",
+  data: comment,
+  emit: true,
+});
+export const sendNotifyReplyComment = (comment) => ({
+  type: "REPLY_COMMENT",
+  event: "reply_comment",
+  data: comment,
+  emit: true,
+});

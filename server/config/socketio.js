@@ -17,6 +17,9 @@ function initializeSocket(server) {
     socket.on("new_comment", (comment) => {
       socket.to(comment.creatorId).emit("new_comment", comment);
     });
+    socket.on("reply_comment", (comment) => {
+      socket.to(comment.creator).emit("reply_comment", comment);
+    });
   });
 }
 module.exports = initializeSocket;

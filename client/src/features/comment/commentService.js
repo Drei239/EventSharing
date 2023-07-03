@@ -2,7 +2,7 @@ import UseCallApi from "../../hooks/useCallApi";
 
 const createComment = async (eventId, title, comment) => {
   const newComment = await UseCallApi({
-    url: `/comments/create/${eventId}`,
+    url: `/comments/create/event/${eventId}`,
     data: { title, comment },
     method: "POST",
   });
@@ -10,14 +10,14 @@ const createComment = async (eventId, title, comment) => {
 };
 const getCommentByEventId = async (eventId) => {
   const comments = await UseCallApi({
-    url: `/comments/event${id}`,
+	  url: `/comments/event/${eventId}`,
     method: "GET",
   });
   return comments;
 };
 const updateComment = async (id, title, comment) => {
   const updateComment = await UseCallApi({
-    url: `/comments/${id}`,
+    url: `/comments/update/${id}`,
     data: { title, comment },
     method: "PUT",
   });
