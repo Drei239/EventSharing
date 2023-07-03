@@ -24,6 +24,7 @@ router.put("/update/:id", protect, updateCommentById);
 router.delete("/delete/:id", protect, deleteCommentById);
 
 //5.CREATE NEW REPLY COMMENT BY COMMENT ID
+//===UPDATE ROUTE===
 router.put("/update/:id/createReply", protect, replyCommentById);
 
 //6.UPDATE REPLY COMMENT BY COMMENT ID AND REPLY COMMENT ID
