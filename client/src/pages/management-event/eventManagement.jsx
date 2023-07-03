@@ -94,7 +94,7 @@ const EventManagement = () => {
     setSearch(e.target.value);
   };
   const handleClickSummary = (id) => {
-    navigate(`/my-events/${id}`);
+    navigate(`/my-event/${id}`);
   };
   const handleDeleteEventDraft = () => {
     if (idEventDelete) {

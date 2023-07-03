@@ -10,7 +10,7 @@ const createComment = async (eventId, title, comment) => {
 };
 const getCommentByEventId = async (eventId) => {
   const comments = await UseCallApi({
-    url: `/comments/event${id}`,
+    url: `/comments/event/${eventId}`,
     method: "GET",
   });
   return comments;
