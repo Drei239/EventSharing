@@ -7,7 +7,8 @@ const {
     deleteCommentById,
     replyCommentById,
     updateReplyComment,
-    deleteReplyComment
+    deleteReplyComment,
+    likeComment
 } = require('../controllers/commentController');
 const { protect } = require('../middleware/authMiddleware');
 
@@ -32,6 +33,9 @@ router.put("/update/:id/updateReply", protect, updateReplyComment);
 
 //7.DELETE REPLY COMMENT BY COMMENT ID AND REPLY COMMENT ID
 router.delete("/update/:id/deleteReply", protect, deleteReplyComment);
+
+//8.LIKE COMMENT
+router.put("/update/:id/like", protect, likeComment);
 
 module.exports = router;
 
