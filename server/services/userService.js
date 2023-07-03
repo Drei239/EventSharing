@@ -100,10 +100,10 @@ const forgotPassword = async (email) => {
   }
   let token = await tokenModel.findOne({ userId: checkEmail?._id });
   if (!token) {
-    token = await new tokenModel({
+    token = await tokenModel.create({
       userId: checkEmail._id,
       token: crypto.randomBytes(20).toString("hex"),
-    }).save();
+    });
   } else {
     token.token = crypto.randomBytes(20).toString("hex");
     token.createdAt = new Date();

@@ -95,7 +95,9 @@ const Filter = () => {
       setOpenDate(false);
     }
   };
-  const handleChangeSelectLocation = (selectedOption) => {};
+  const handleChangeSelectLocation = (selectedOption) => {
+    dispatch(handleChangeEvents({ location: selectedOption.value }));
+  };
   const handleChangeSelectCategory = (selectedOption) => {
     setSelectValue(selectedOption);
   };
@@ -137,8 +139,7 @@ const Filter = () => {
             options={location}
             defaultValue={location[0]}
             components={{ Control: CustomControl1 }}
-
-            // onChange={handleChangeSelectLocation}
+            onChange={handleChangeSelectLocation}
           />
         </div>
         <div className="select">

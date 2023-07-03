@@ -23,6 +23,7 @@ import {
   cancelEvent,
   confirmEventCompeleted,
 } from "../../features/events/eventSlice";
+
 const orderStatusOption = [
   {
     label: "Tất cả đơn hàng",
@@ -51,6 +52,8 @@ const MyEvent = () => {
   const { setVisible, bindings } = useModal();
   const [statusSelected, setStatusSelected] = useState(orderStatusOption[0]);
   const [sortSelected, setSortSelected] = useState(orderSortOption[0]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowPerPage] = useState(50);
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selected, setSelected] = useState([]);
 
@@ -78,6 +81,7 @@ const MyEvent = () => {
       eventStatus: orders[i]?.event?.status,
       name: orders[i]?.user?.name,
       email: orders[i]?.user?.email,
+      timeBegin: orders[i]?.event.timeBegin,
     });
   }
 
@@ -107,6 +111,13 @@ const MyEvent = () => {
   const OpenModalCancelEvent = () => {
     setVisible(true);
   };
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+  const handleChangeRowPerPage = (option) => {
+    setRowPerPage(option.target.value);
+    setPage(0);
+  };
   useEffect(() => {
     if (isError) {
       notify("Thay đổi trạng thái của đơn hàng thất bại", "error");
@@ -126,10 +137,12 @@ const MyEvent = () => {
           keyword: searchKeyword,
           sort: sortSelected?.value,
           status: statusSelected?.value,
+          page: page,
+          limit: rowsPerPage,
         })
       );
     }
-  }, [id, searchKeyword, sortSelected, statusSelected]);
+  }, [id, searchKeyword, sortSelected, statusSelected, page, rowsPerPage]);
   useEffect(() => {
     console.log(orders);
   }, [orders]);
@@ -204,7 +217,7 @@ const MyEvent = () => {
             <div className="my-event-header-status-sale">
               <span
                 className={`${
-                  new Date(orders[0]?.event?.timeEndSignup).getTime() >
+                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
                   new Date().getTime()
                     ? "my-event-header-status-sale-on"
                     : "my-event-header-status-sale-end"
@@ -212,22 +225,22 @@ const MyEvent = () => {
               ></span>
               <span
                 className={` ${
-                  new Date(orders[0]?.event?.timeEndSignup).getTime() >
+                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
                   new Date().getTime()
                     ? "my-event-header-status-sale-on-text"
                     : "my-event-header-status-sale-end-text"
                 }`}
               >
-                {new Date(orders[0]?.event?.timeEndSignup).getTime() >
+                {new Date(orders[0]?.event?.timeEndSignup).getTime() <
                 new Date().getTime()
-                  ? "On Sale"
-                  : "Sale Ended"}
+                  ? "Đang bán"
+                  : "Ngừng bán"}
               </span>
             </div>
             {orders &&
             orders.length > 0 &&
             orders[0]?.event?.status === "Public" &&
-            new Date(orders[0]?.event.timeEnd).getTime() <
+            new Date(orders[0]?.event.timeEnd).getTime() >
               new Date().getTime() ? (
               <button
                 className="my-event-header-btn-cancel"
@@ -236,13 +249,13 @@ const MyEvent = () => {
                 Huỷ sự kiện này
               </button>
             ) : (
-              <Button
+              <button
                 color="primary"
                 onClick={handleConfirmCompletedEvent}
                 className="my-event-header-btn-confirm"
               >
                 Xác nhận sự kiện đã hoàn thành
-              </Button>
+              </button>
             )}
           </div>
           <div className="my-event-filter">
@@ -282,6 +295,10 @@ const MyEvent = () => {
             idEvent={id}
             selected={selected}
             setSelected={setSelected}
+            page={page}
+            rowPerPage={rowsPerPage}
+            handleChangePage={handleChangePage}
+            handleChangeRowPerPage={handleChangeRowPerPage}
           />
           <div className="my-event-send-email">
             <RiMailFill className="my-event-send-email-icon" />

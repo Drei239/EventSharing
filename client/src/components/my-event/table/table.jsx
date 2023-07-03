@@ -23,7 +23,6 @@ import { IoMdMore } from "react-icons/io";
 import Select from "react-select";
 import "./table.css";
 import EmptyIcon from "../../../assets/empty-icon.svg";
-// import { TablePagination } from "../../ui";
 
 const options = [
   "Chuyển thành phần đã chọn thành đang xử lí",
@@ -89,10 +88,15 @@ function EnhancedTableToolbar(props) {
             anchorEl={anchorEl}
           >
             {options.map((item, index) => {
-              let requestDisable;
+              let requestDisable = false;
               if (
                 rows[0].eventStatus === "Canceled" &&
                 (index == 1 || index == 2)
+              ) {
+                requestDisable = true;
+              } else if (
+                new Date().getTime() < new Date(rows[0].timeBegin).getTime() &&
+                (index === 3 || index === 2)
               ) {
                 requestDisable = true;
               } else {
@@ -141,11 +145,18 @@ const statusOption = [
   },
 ];
 
-const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
+const TableMyEvent = ({
+  rows,
+  idEvent,
+  selected,
+  setSelected,
+  page,
+  rowPerPage,
+  handleChangeRowPerPage,
+  handleChangePage,
+}) => {
   const { countDocument } = useSelector((state) => state.order);
   const dispatch = useDispatch();
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowPerPage] = useState(50);
   const [anchorEl, setAnchorEl] = useState(null);
 
   const [rowSelect, setRowSelect] = useState([]);
@@ -154,11 +165,14 @@ const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
     setAnchorEl(null);
   };
 
-  const isOptionDisabled = (option, status) => {
+  const isOptionDisabled = (option, status, timeBegin) => {
     console.log(status);
     if (status === "Canceled") {
       const disableOptions = ["paid", "joined"];
       return disableOptions.includes(option.value);
+    } else if (new Date().getTime() < new Date(timeBegin).getTime()) {
+      const disabledOptions = ["refund", "joined"];
+      return disabledOptions.includes(option.value);
     } else {
       const disableOptions = ["refund"];
       return disableOptions.includes(option.value);
@@ -224,7 +238,6 @@ const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
         ];
       }, []);
     }
-    console.log(data);
     if (data) {
       dispatch(updateRequest({ id: idEvent, data: data }));
     }
@@ -249,22 +262,13 @@ const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
   const handleOpenMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
-  const handleChangePage = (event, newPage) => {
-    setPage(newPage);
-  };
-  const handleChangeRowPerPage = (option) => {
-    setRowPerPage(option.target.value);
-    setPage(1);
-  };
+
   const handleChangeStatusOrder = (selectedOption, id, index) => {
     const updateItems = [...rowSelect];
     updateItems[index] = selectedOption;
     setRowSelect(updateItems);
     dispatch(updateOneOrder({ status: selectedOption.value, id: id }));
   };
-  useEffect(() => {
-    console.log(selected);
-  }, [selected]);
 
   return (
     <div className="my-event-table">
@@ -341,7 +345,11 @@ const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
                             handleChangeStatusOrder(e, row?.orderId, index)
                           }
                           isOptionDisabled={(option) =>
-                            isOptionDisabled(option, row.eventStatus)
+                            isOptionDisabled(
+                              option,
+                              row.eventStatus,
+                              row.timeBegin
+                            )
                           }
                         />
                       </TableCell>
@@ -363,7 +371,7 @@ const TableMyEvent = ({ rows, idEvent, selected, setSelected }) => {
           rowsPerPageOptions={[50, 100, 200]}
           component="div"
           count={countDocument}
-          rowsPerPage={rowsPerPage}
+          rowsPerPage={rowPerPage}
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowPerPage}

@@ -1,4 +1,3 @@
-import axios from "axios";
 import dayjs from "dayjs";
 import UseCallApi from "../../hooks/useCallApi";
 const getAllEvent = async (search) => {
@@ -14,7 +13,7 @@ const getEventById = async (eventId) => {
   const response = await UseCallApi({
     method: "GET",
     url: `/events/get/${eventId}`,
-});
+  });
   return response;
 };
 
@@ -38,7 +37,7 @@ const getNewEvent = async (page) => {
     method: "GET",
     url: `/events/getFilter?sort=timeBegin&timeEndSignup[gte]=${dayjs().format(
       "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
-    )}&page=${page ? page : 1}&limit=4`,
+    )}&page=${page ? page : 1}&limit=10`,
   });
 
   return data;
