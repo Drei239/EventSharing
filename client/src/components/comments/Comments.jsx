@@ -4,11 +4,11 @@ import './Comments.css'
 import CommentForm from "../comment-form/CommentForm";
 import Comment from "../comment/Comment";
 import { useDispatch, useSelector } from "react-redux";
-import { 
-	getCommentByEventId, 
-	createComment, 
-	updateComment, 
-	deleteComment 
+import {
+	getCommentByEventId,
+	createComment,
+	updateComment,
+	deleteComment
 } from '../../features/comment/commentSlice';
 
 const Comments = ({ currentUserId, eventId }) => {
@@ -23,29 +23,29 @@ const Comments = ({ currentUserId, eventId }) => {
 			.sort(
 				(a, b) =>
 					new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-			);
+			);	
 
 	const addComment = (text) => {
 		dispatch(
-			createComment({eventId, title: "comment-event", comment: text })
+			createComment({ eventId, title: "comment-event", comment: text })
 		)
 	};
 
 	const updateComments = (text, id) => {
-		console.log(text, id);
+		console.log(id);
 		dispatch(
-			updateComment({id, title: "comment-event", comment: text})
+			updateComment({ id, title: "comment-event", comment: text })
 		)
 	};
-	
-	// const deleteComment = (commentId) => { 
-	// 	dispatch(
-	// 		deleteComment({})
-	// 	)
-	// };
+
+	const deleteComments = (id) => {
+		dispatch(
+			deleteComment({ id })
+		)
+	};
 
 	useEffect(() => {
-		dispatch(getCommentByEventId(eventId)) 
+		dispatch(getCommentByEventId(eventId))
 	}, []);
 
 	return (
@@ -61,7 +61,7 @@ const Comments = ({ currentUserId, eventId }) => {
 						activeComment={activeComment}
 						setActiveComment={setActiveComment}
 						addComment={addComment}
-						deleteComment={deleteComment}
+						deleteComment={deleteComments}
 						updateComment={updateComments}
 						currentUserId={currentUserId}
 					/>

@@ -49,9 +49,10 @@ export const updateComment = createAsyncThunk(
 );
 export const deleteComment = createAsyncThunk(
   "comment/delete",
-  async (id, { rejectWithValue }) => {
+  async ({id}, { rejectWithValue }) => {
     try {
       const res = await commentService.deleteComment(id);
+      console.log("###", res); 
       return id;
     } catch (err) {
       return rejectWithValue(err);
@@ -59,7 +60,7 @@ export const deleteComment = createAsyncThunk(
   }
 );
 export const replyComment = createAsyncThunk(
-  "commment/reply",
+  "comment/reply",
   async ({ id, title, comment }, { rejectWithValue }) => {
     try {
       const res = await commentService.replyComment(id, title, comment);

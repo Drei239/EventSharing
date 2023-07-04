@@ -1,5 +1,6 @@
 import './Comment.css'
 import CommentForm from "../comment-form/CommentForm";
+import { useSelector } from 'react-redux';
 
 const Comment = ({
 	comment,
@@ -20,12 +21,12 @@ const Comment = ({
 		activeComment &&
 		activeComment.id === comment._id &&
 		activeComment.type === "replying";
+	const { userInfo } = useSelector((state) => state.user);
 	const fiveMinutes = 300000;
-	const timePassed = new Date() - new Date(comment.createdAt) > fiveMinutes;
-	const canDelete =
-		currentUserId === comment.userId && replies.length === 0 && !timePassed;
+	// const timePassed = new Date() - new Date(comment.createdAt) > fiveMinutes;
+	const canDelete = userInfo._id === comment.creator._id;
 	const canReply = Boolean(currentUserId);
-	const canEdit = currentUserId === comment.userId && !timePassed;
+	const canEdit = userInfo._id === comment.creator._id;
 	const replyId = parentId ? parentId : comment._id;
 	const createdAt = new Date(comment.createdAt).toLocaleDateString();
 
@@ -75,7 +76,8 @@ const Comment = ({
 					{!canDelete && (						
 						<div
 							className="comment-action"
-							onClick={() => deleteComment(comment._id)}
+							onClick={() => deleteComment(comment._id)
+						}
 						>
 							Delete
 						</div>
@@ -84,7 +86,7 @@ const Comment = ({
 				{isReplying && (
 					<CommentForm
 						submitLabel="Reply"
-						handleSubmit={(text) => addComment(text, replyId)}
+						handleSubmit={(text) => addComment({text, id: comment._id})}
 					/>
 				)}
 				{replies.length > 0 && (
