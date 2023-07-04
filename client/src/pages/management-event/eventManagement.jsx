@@ -247,9 +247,12 @@ const EventManagement = () => {
                           </button>
                         )}
                         {item.status === "draft" && (
-                          <button className="management-events-list-item-btn-edit">
+                          <Link
+                            to={`/event-create-update?type=update&id=${item._id}`}
+                            className="management-events-list-item-btn-edit"
+                          >
                             <AiFillEdit />
-                          </button>
+                          </Link>
                         )}
                         {(item.status === "draft" ||
                           item.status === "completed") && (

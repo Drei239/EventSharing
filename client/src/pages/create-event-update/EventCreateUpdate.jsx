@@ -51,6 +51,7 @@ const EventCreateUpdate = () => {
   const [district, setDistrict] = useState("");
   const [ward, setWard] = useState("");
   const [event, setEvent] = useState({});
+  const [status, setStatus] = useState("draft");
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -67,15 +68,17 @@ const EventCreateUpdate = () => {
       customFetch
         .get(`/events/get/${searchParams.get("id")}`)
         .then((resp) => {
-          if (!(resp.data[0].creator._id === userInfo._id)) {
+          if (!(resp.data.creator._id === userInfo._id)) {
             navigate("/");
           }
-          setEvent(resp.data[0]);
+          setEvent(resp.data);
         })
         .catch((error) => notify("Lỗi kết nối máy chủ", error));
     }
-  }, []);
-
+  }, [searchParams]);
+  useEffect(() => {
+    console.log(event);
+  }, [event]);
   useEffect(() => {
     let tiny;
 
@@ -334,6 +337,7 @@ const EventCreateUpdate = () => {
         timeEndSignup,
         limitUser: Number(inputValue.quantityTicket),
         reviews: [],
+        status: status,
       };
 
       if (searchParams.get("type") === "update") {
@@ -839,17 +843,21 @@ const EventCreateUpdate = () => {
           </div>
         </section>
         <section className="create-event__button-wrapper">
-          <Button type="submit" className="create-event__button">
+          <Button
+            type="submit"
+            className="create-event__button"
+            onClick={() => setStatus("Public")}
+          >
             {searchParams.get("type") === "update" ? "Cập nhật" : "Tạo mới"}
           </Button>
-          {searchParams.get("type") === "update" && (
-            <Button
-              className="create-event__button create-event__button--cancel"
-              onClick={() => navigate(-1)}
-            >
-              Hủy
-            </Button>
-          )}
+
+          <Button
+            type="submit"
+            className="create-event__button create-event__button--cancel"
+            onClick={() => setStatus("draft")}
+          >
+            Lưu
+          </Button>
         </section>
       </form>
       <ToastContainer />

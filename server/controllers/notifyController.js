@@ -9,7 +9,12 @@ const getAllNotify = asyncHandler(async (req, res, next) => {
 
     res
       .status(200)
-      .json({ status: 200, data: notify, message: notifySucc.SUC_1 });
+      .json({
+        status: 200,
+        data: notify.notify,
+        message: notifySucc.SUC_1,
+        countDocument: notify.countDocument,
+      });
   } catch (err) {
     next(err);
   }
@@ -35,4 +40,18 @@ const maskAsReadAll = asyncHandler(async (req, res, next) => {
     next(err);
   }
 });
-module.exports = { getAllNotify, maskAsReadAll, markAsReadById };
+const readConfirmNew = asyncHandler(async (req, res, next) => {
+  const userId = req.user._id;
+  try {
+    await notifySevice.readConfrimNotify(userId);
+    res.status(200).json({ status: 200, message: notifySucc.SUC_2 });
+  } catch (err) {
+    next(err);
+  }
+});
+module.exports = {
+  getAllNotify,
+  maskAsReadAll,
+  markAsReadById,
+  readConfirmNew,
+};

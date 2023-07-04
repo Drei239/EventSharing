@@ -23,3 +23,21 @@ export const sendNotifyReplyComment = (comment) => ({
   data: comment,
   emit: true,
 });
+export const disconnect = (userId) => ({
+  type: "DISCONNECT",
+  event: "logout",
+  data: userId,
+  emit: true,
+});
+export const newConnectEvent = (eventId) => ({
+  type: "NEW_CONNECT_EVENT",
+  event: "connect_event",
+  data: eventId,
+  emit: true,
+});
+export const sendCommentToUserConnect = (comment) => ({
+  type: "NEW_COMMENT2",
+  event: "new_comment2",
+  data: comment,
+  emit: true,
+});

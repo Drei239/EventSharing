@@ -1,33 +1,31 @@
-import './Comment.css'
+import "./Comment.css";
 import CommentForm from "../comment-form/CommentForm";
 import { useSelector } from 'react-redux';
 
 const Comment = ({
-	comment,
-	replies,
-	setActiveComment,
-	activeComment,
-	updateComment,
-	deleteComment,
-	addComment,
-	parentId = null,
-	currentUserId,
+  comment,
+  replies,
+  setActiveComment,
+  activeComment,
+  updateComment,
+  deleteComment,
+  addComment,
+  parentId = null,
+  currentUserId,
 }) => {
 	const isEditing =
 		activeComment &&
-		activeComment.id === comment._id &&
-		activeComment.type === "editing";
+		activeComment.id == comment._id &&
+		activeComment.type == "editing";
 	const isReplying =
 		activeComment &&
-		activeComment.id === comment._id &&
-		activeComment.type === "replying";
+		activeComment.id == comment._id &&
+		activeComment.type == "replying";
 	const { userInfo } = useSelector((state) => state.user);
-	const fiveMinutes = 300000;
-	// const timePassed = new Date() - new Date(comment.createdAt) > fiveMinutes;
-	const canDelete = userInfo._id === comment.creator._id;
+	const canDelete = userInfo._id == comment.creator._id;
 	const canReply = Boolean(currentUserId);
-	const canEdit = userInfo._id === comment.creator._id;
-	const replyId = parentId ? parentId : comment._id;
+	const canEdit = userInfo._id == comment.creator._id;
+	const replyId = comment._id;
 	const createdAt = new Date(comment.createdAt).toLocaleDateString();
 
 	return (
@@ -63,7 +61,7 @@ const Comment = ({
 							Reply
 						</div>
 					)}
-					{!canEdit && (
+					{canEdit && (
 						<div
 							className="comment-action"
 							onClick={() =>
@@ -73,7 +71,7 @@ const Comment = ({
 							Edit
 						</div>
 					)}
-					{!canDelete && (						
+					{canDelete && (						
 						<div
 							className="comment-action"
 							onClick={() => deleteComment(comment._id)
@@ -86,25 +84,29 @@ const Comment = ({
 				{isReplying && (
 					<CommentForm
 						submitLabel="Reply"
-						handleSubmit={(text) => addComment({text, id: comment._id})}
+						handleSubmit={(text) => addComment(text, comment._id)}
 					/>
 				)}
-				{replies.length > 0 && (
+        {comment?.reply > 0 && (
 					<div className="replies">
-						{replies.map((reply) => (
-							<Comment
-								comment={reply}
-								key={reply.id}
-								setActiveComment={setActiveComment}
-								activeComment={activeComment}
-								updateComment={updateComment}
-								deleteComment={deleteComment}
-								addComment={addComment}
-								parentId={comment.id}
-								replies={[]}
-								currentUserId={currentUserId}
-							/>
-						))}
+						{comment?.reply?.map((reply) => {
+              console.log(reply)
+              return (
+              <Comment
+                comment={reply}
+                key={reply._id}
+                setActiveComment={setActiveComment}
+                activeComment={activeComment}
+                updateComment={updateComment}
+                deleteComment={deleteComment}
+                addComment={addComment}
+                parentId={comment._id}
+                replies={[]}
+                currentUserId={currentUserId}
+              />)
+							
+						})}
+
 					</div>
 				)}
 			</div>

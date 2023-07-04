@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-
+import getRelativeTimeFromNow from "../../../utils/getRelativeTimeFromNow";
 import dayjs from "dayjs";
 import "./notifyItem.css";
 const NotifyItem = ({
@@ -14,7 +14,6 @@ const NotifyItem = ({
   isReadMessage,
 }) => {
   const navigate = useNavigate();
-  const handleClickNotiyfy = () => {};
   return (
     <div className="notify-item">
       {!isReadMessage && <div className="notify-item-isRead"></div>}
@@ -29,8 +28,7 @@ const NotifyItem = ({
           </div>
         )}
         <p className="notify-item-time">
-          <span>Friday 2:20pm</span>
-          <span>Sep 20,2024</span>
+          <span>{getRelativeTimeFromNow(time)}</span>
         </p>
       </div>
     </div>

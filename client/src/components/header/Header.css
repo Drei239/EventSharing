@@ -113,3 +113,30 @@ header .wrapper {
 .dropdown:hover .dropdown__content {
   display: block;
 }
+.header__right-notify__count {
+  background-color: var(--color-primary2);
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 14px;
+}
+.header__right-notify {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  position: relative;
+  background-color: #dddcdca4;
+  border-radius: 50%;
+  color: black;
+  font-size: 30px;
+  width: 40px;
+  height: 40px;
+}

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-import './Comments.css'
-// import DeleteCommentModal from './components/modals/DeleteComment';
+import "./Comments.css";
 import CommentForm from "../comment-form/CommentForm";
 import Comment from "../comment/Comment";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,34 +7,46 @@ import {
 	getCommentByEventId,
 	createComment,
 	updateComment,
-	deleteComment
-} from '../../features/comment/commentSlice';
+	deleteComment,
+	replyComment
+} from "../../features/comment/commentSlice";
+import {
+	sendCommentToUserConnect,
+	sendNotifyNewComment,
+} from "../../features/action";
 
 const Comments = ({ currentUserId, eventId }) => {
-	const [backendComments, setBackendComments] = useState([]);
 	const [activeComment, setActiveComment] = useState(null);
 	const dispatch = useDispatch();
-	const { comments } = useSelector(state => state.comment)
+	const { comments, isSuccessCreate } = useSelector((state) => state.comment);
+	const { getEventById } = useSelector((state) => state.event);
+	const { userInfo } = useSelector((state) => state.user);
 
-	const getReplies = (commentId) =>
-		backendComments
-			.filter((backendComment) => backendComment.parentId === commentId)
-			.sort(
-				(a, b) =>
-					new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-			);	
-
-	const addComment = (text) => {
-		dispatch(
-			createComment({ eventId, title: "comment-event", comment: text })
-		)
+	const addComment = (text, id) => {
+		if (id) {
+			dispatch(
+				replyComment({
+					id,
+					title: "reply comment",
+					comment: text,
+				})
+			)
+		} else {
+			dispatch(
+				createComment({
+					eventId,
+					title: "comment-event",
+					comment: text,
+					userInfo
+				})
+			)
+		}
 	};
 
 	const updateComments = (text, id) => {
-		console.log(id);
 		dispatch(
-			updateComment({ id, title: "comment-event", comment: text })
-		)
+			updateComment({ id, title: "comment-event", comment: text, userInfo })
+		);
 	};
 
 	const deleteComments = (id) => {
@@ -45,24 +56,41 @@ const Comments = ({ currentUserId, eventId }) => {
 	};
 
 	useEffect(() => {
-		dispatch(getCommentByEventId(eventId))
+		dispatch(getCommentByEventId(eventId));
 	}, []);
+
+	useEffect(() => {
+		if (isSuccessCreate) {
+			dispatch(
+				sendNotifyNewComment({
+					notifyTo: getEventById?.creator._id,
+					notifyFrom: userInfo,
+					notifyType: "new-comment",
+					commentId: comments[0],
+					content: "đã bình luận trong sự kiện của bạn",
+					isNew: true,
+					createdAt: new Date(),
+				})
+			);
+			dispatch(sendCommentToUserConnect(comments[0]));
+		}
+	}, [isSuccessCreate]);
 
 	return (
 		<div className="comments">
 			<h4 className="comments-title">Comments</h4>
 			<CommentForm submitLabel="Submit" handleSubmit={addComment} />
 			<div className="comments-container">
-				{comments.map((rootComment) => (
+				{comments.map((rootComment, root) => (
 					<Comment
-						key={rootComment.id}
+						key={root}
 						comment={rootComment}
-						replies={getReplies(rootComment.id)}
 						activeComment={activeComment}
 						setActiveComment={setActiveComment}
 						addComment={addComment}
 						deleteComment={deleteComments}
 						updateComment={updateComments}
+						replyComment={addComment}
 						currentUserId={currentUserId}
 					/>
 				))}

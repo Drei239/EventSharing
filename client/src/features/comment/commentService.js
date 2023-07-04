@@ -10,7 +10,7 @@ const createComment = async (eventId, title, comment) => {
 };
 const getCommentByEventId = async (eventId) => {
   const comments = await UseCallApi({
-	  url: `/comments/event/${eventId}`,
+    url: `/comments/event/${eventId}`,
     method: "GET",
   });
   return comments;
@@ -25,7 +25,7 @@ const updateComment = async (id, title, comment) => {
 };
 const replyComment = async (id, title, comment) => {
   const res = await UseCallApi({
-    url: `/comments/update/${id}/reply`,
+    url: `/comments/update/${id}/createReply`,
     data: { title, comment },
     method: "PUT",
   });
@@ -38,6 +38,7 @@ const deleteComment = async (id) => {
   });
   return res;
 };
+
 const commentService = {
   createComment,
   getCommentByEventId,

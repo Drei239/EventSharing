@@ -21,6 +21,12 @@ const socketMiddleware = (url) => {
     socket.on("new_order", (response) => {
       store.dispatch({ type: "receive_notify", payload: response });
     });
+    socket.on("new_comment", (response) => {
+      store.dispatch({ type: "receive_notify", payload: response });
+    });
+    socket.on("send_comment_all", (response) => {
+      store.dispatch({ type: "receive_comment", payload: response });
+    });
   };
 };
 
