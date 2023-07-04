@@ -239,3 +239,16 @@
 .my-event-btn-exportExcel:active {
   border: none;
 }
+.my-event-header-btn-confirm {
+  background-color: var(--color-primary);
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 15px;
+  border: none;
+  box-shadow: 1px 0px 5px 0px var(--color-primary);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}

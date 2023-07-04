@@ -35,6 +35,10 @@ const Events = () => {
           }${filter.fee !== "" ? `&${filter.fee}` : ""}${
             filter.type !== "" ? `&${filter.type}` : ""
           }${
+            filter.location !== ""
+              ? `&location.province.code=${filter.location}`
+              : ""
+          }${
             filter.date
               ? `&timeBegin[gte]=${filter.date.from}&timeEnd[lte]=${
                   filter.date.to

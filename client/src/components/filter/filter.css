@@ -40,6 +40,10 @@ ul {
   flex-wrap: wrap;
   justify-content: space-between;
 }
+.options-date {
+  border-radius: 5px;
+}
+
 .date-option {
   display: flex;
   align-items: center;
@@ -78,7 +82,7 @@ ul {
 }
 .options-date li {
   cursor: pointer;
-  padding: 4px 0;
+  padding: 4px 10px;
 }
 .options-date li:hover {
   background-color: var(--color-primary);
