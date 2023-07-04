@@ -1,8 +1,20 @@
+// function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
+//   if (
+//     timeEnd > timeBegin &&
+//     timeEnd > timeEndSignup &&
+//     timeBegin < timeEndSignup
+//   ) {
+//     return true;
+//   } else {
+//     return false;
+//   }
+// };
+
 function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
   if (
-    Date.parse(timeEnd) > Date.parse(timeBegin) &&
-    Date.parse(timeEnd) > Date.parse(timeEndSignup) &&
-    Date.parse(timeBegin) > Date.parse(timeEndSignup)
+    Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
+    Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
+    Date.parse(timeBegin) < Date.parse(timeEnd)
   ) {
     return true;
   } else {

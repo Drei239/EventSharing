@@ -113,10 +113,128 @@ const replyCommentById = asyncHandler(
   }
 );
 
+//6.UPDATE REPLY COMMENT BY COMMENT ID AND REPLY COMMENT ID
+const updateReplyComment = asyncHandler(async (
+  requestUserId, requestCommentId, replyId, title, comment) => {
+  const existReply = await commentModel.findOne(
+    { _id: requestCommentId, "reply._id": replyId });
+  if (existReply) {
+    const updateReply = await commentModel.findOne(
+      { _id: requestCommentId }).select({ reply: { $elemMatch: { _id: replyId } } });
+    if (updateReply.reply[0].creator.toString() === requestUserId.toString()) {
+      const updateReply = await commentModel.updateOne({ _id: requestCommentId, "reply._id": replyId },
+        {
+          $set: {
+            "reply.$.title": title,
+            "reply.$.comment": comment
+          }
+        });
+      return updateReply;
+    } else {
+      throw Error(resMes.commentError.ERR_3);
+    }
+
+  } else {
+    throw Error(resMes.commentError.ERR_2);
+  }
+});
+
+//7.DELETE REPLY COMMENT BY COMMENT ID & REPLY COMMENT ID
+const deleteReplyComment = asyncHandler(async (
+  requestUserId, requestCommentId, replyId) => {
+  const existReply = await commentModel.findOne(
+    { _id: requestCommentId, "reply._id": replyId });
+  if (existReply) {
+    const deleteComment = await commentModel.findOne(
+      { _id: requestCommentId }).select({ reply: { $elemMatch: { _id: replyId } } });
+    if (deleteComment.reply[0].creator.toString() === requestUserId.toString()) {
+      await commentModel.updateOne(
+        { _id: requestCommentId }, { $pull: { reply: { _id: replyId } } });
+      return true;
+    } else {
+      throw Error(resMes.commentError.ERR_4);
+    }
+  } else {
+    throw Error(resMes.commentError.ERR_2);
+  }
+});
+
+//8.LIKE COMMENT
+const likeComment = asyncHandler(async (requestUserId, requestCommentId, replyId) => {
+  //TRƯỜNG HỢP LIKE LÀ REPLY COMMENT
+  if (replyId) {
+    const replyComment = await commentModel.findOne({ _id: requestCommentId })
+      .select({ reply: { $elemMatch: { _id: replyId } } });
+    //REPLY COMMENT TỒN TẠI
+    if (replyComment && replyComment.reply.length > 0) {
+      //DANH SÁCH USER ĐÃ LIKE
+      const likeList = replyComment.reply[0].likeList;
+      //SO SÁNH DANH SÁCH USER ĐÃ LIKE VÀ REQUEST USER
+      const isFound = likeList.some(element => {
+        if (element.user.toString() === requestUserId.toString()) {
+          return true;
+        }
+        return false;
+      });
+      if (isFound === false) {
+        let likeCount = replyComment.reply[0].likeCount;
+        replyComment.reply[0].likeList.push({ user: requestUserId.toString() });
+        await replyComment.save();
+        const updateLikeCount = await commentModel.updateOne(
+          { _id: requestCommentId, "reply._id": replyId },
+          {
+            $set: {
+              "reply.$.likeCount": likeCount + 1,
+            }
+          });
+      } else {
+        let likeCount = replyComment.reply[0].likeCount;
+        replyComment.reply[0].likeList.pull({ user: requestUserId.toString() });
+        await replyComment.save();
+        const updateLikeCount = await commentModel.updateOne(
+          { _id: requestCommentId, "reply._id": replyId },
+          {
+            $set: {
+              "reply.$.likeCount": likeCount - 1,
+            }
+          });
+      }
+    } else {
+      throw Error(resMes.commentError.ERR_2);
+    }
+    //TRƯỜNG HỢP LÀ COMMENT
+  } else {
+    const comment = await commentModel.findOne({ _id: requestCommentId });
+    //COMMENT TỒN TẠI
+    if (comment) {
+      const likedComment = await commentModel.findOne({
+        _id: requestCommentId,
+        "likeList.user": requestUserId,
+      });
+      //USER CHƯA LIKE - PUSH VÀO LIKE LIST
+      if (!likedComment) {
+        await comment.likeList.push({ user: requestUserId.toString() });
+        comment.likeCount++;
+        await comment.save();
+        //USER ĐÃ LIKE - PULL KHỎI LIKE LIST
+      } else {
+        await comment.likeList.pull({ user: requestUserId.toString() });
+        comment.likeCount--;
+        await comment.save();
+      }
+    } else {
+      throw Error(resMes.commentError.ERR_2);
+    }
+  }
+});
+
 module.exports = {
   createNewComment,
   getCommentByEventId,
   updateCommentById,
   deleteCommentById,
   replyCommentById,
+  updateReplyComment,
+  deleteReplyComment,
+  likeComment
 };
