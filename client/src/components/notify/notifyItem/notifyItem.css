@@ -4,6 +4,7 @@
   padding: 10px;
   border-radius: 10px;
   position: relative;
+  background-color: white;
 }
 .notify-item:hover {
   background-color: #eeeeee;
@@ -41,4 +42,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
+}
+.notify-item-comment {
+  font-size: 15px;
 }

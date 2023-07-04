@@ -121,7 +121,7 @@ export const confirmEventCompeleted = createAsyncThunk(
 );
 const initialState = {
   events: [],
-  getEventById: [],
+  getEventById: null,
   newEvents: [],
   highlightEvent: [],
   joinedEvent: [],

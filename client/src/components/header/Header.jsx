@@ -1,6 +1,6 @@
 import "./Header.css";
 import { Input, Button } from "@nextui-org/react";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, Link } from "react-router-dom";
@@ -11,10 +11,13 @@ import { IoIosNotificationsOutline } from "react-icons/io";
 import { newConnetion } from "../../features/action";
 import { Notify } from "..";
 import { notificationToast } from "../notify/notificationToast/notificationToast";
+import { confirmNewNotify } from "../../features/notification/notifySlice";
 const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { notify, notifySocket } = useSelector((state) => state.notify);
+  const { notify, notifySocket, countDocument } = useSelector(
+    (state) => state.notify
+  );
   const category = useSelector((state) => state.category.categories);
   const { isLogin, userInfo } = useSelector((state) => state.user);
   const location = useLocation();
@@ -25,6 +28,11 @@ const Header = () => {
   const handleCloseNotify = () => {
     setIsOpenNotify(false);
   };
+  useEffect(() => {
+    if (isOpenNotify) {
+      dispatch(confirmNewNotify());
+    }
+  }, [isOpenNotify]);
   useEffect(() => {
     dispatch(getUserInfo());
   }, []);
@@ -42,9 +50,11 @@ const Header = () => {
     const handleScroll = () => {
       if (window.scrollY > scrollTop) {
         setIsHideHeader(true);
+        setIsOpenNotify(false);
       } else {
         setIsHideHeader(false);
       }
+
       setScrollTop(window.scrollY);
     };
 
@@ -127,20 +137,20 @@ const Header = () => {
             </div>
           ) : null}
           {isLogin && (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                position: "relative",
-              }}
-              onClick={() => setIsOpenNotify(!isOpenNotify)}
-            >
+            <div className="header__right-notify">
               <IoIosNotificationsOutline
-                style={{ fontSize: "30px", color: "white" }}
+                onClick={() => setIsOpenNotify(!isOpenNotify)}
               />
-              {isOpenNotify && <Notify closeNotify={handleCloseNotify} />}
+              {countDocument > 0 && (
+                <span className="header__right-notify__count">
+                  {countDocument}
+                </span>
+              )}
+
+              <Notify
+                closeNotify={handleCloseNotify}
+                isOpenNotify={isOpenNotify}
+              />
             </div>
           )}
 

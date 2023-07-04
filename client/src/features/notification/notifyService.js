@@ -1,8 +1,8 @@
 import UseCallApi from "../../hooks/useCallApi";
 
-const getAllNotify = async () => {
+const getAllNotify = async (page, notifyTypeRead) => {
   const notify = UseCallApi({
-    url: "/notify/get-all",
+    url: `/notify/get-all?page=${page}&notifyTypeRead=${notifyTypeRead}`,
   });
   return notify;
 };
@@ -20,9 +20,17 @@ const markAllNotify = async () => {
   });
   return notify;
 };
+const confirmNewNotify = async () => {
+  const notify = UseCallApi({
+    url: `/notify/confirm-new`,
+    method: "PUT",
+  });
+  return notify;
+};
 const notifyService = {
   getAllNotify,
   markAllNotify,
   markNotifyById,
+  confirmNewNotify,
 };
 export default notifyService;

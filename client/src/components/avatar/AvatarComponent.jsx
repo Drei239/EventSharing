@@ -4,6 +4,7 @@ import { useDispatch } from "react-redux";
 import customFetch from "../../utils/axios.config";
 import { useEffect, useRef, useState } from "react";
 import "./AvatarComponent.css";
+import { disconnect } from "../../features/action";
 
 const AvatarComponent = ({ avatar, email, name }) => {
   const dispatch = useDispatch();
@@ -31,6 +32,7 @@ const AvatarComponent = ({ avatar, email, name }) => {
 
   const handleLogout = () => {
     dispatch(logout());
+    dispatch(disconnect());
     customFetch.get("/users/logout");
   };
 

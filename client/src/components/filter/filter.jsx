@@ -137,7 +137,6 @@ const Filter = () => {
         <div className="select">
           <CustomSelect
             options={location}
-            defaultValue={location[0]}
             components={{ Control: CustomControl1 }}
             onChange={handleChangeSelectLocation}
           />

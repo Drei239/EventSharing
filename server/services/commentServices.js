@@ -13,6 +13,7 @@ const createNewComment = asyncHandler(
     if (!existEvent) {
       throw Error(resMes.eventError.ERR_4);
     }
+
     const creator = requestUserId;
     const newComment = await commentModel.create({
       title,
@@ -20,7 +21,10 @@ const createNewComment = asyncHandler(
       event,
       creator,
     });
-    if (newComment) {
+    if (
+      newComment &&
+      existEvent?.creator.toString() != requestUserId.toString()
+    ) {
       await notifyModel.create({
         notifyFrom: creator,
         notifyTo: existEvent.creator,
@@ -28,6 +32,8 @@ const createNewComment = asyncHandler(
         commentId: newComment._id,
         content: `đã bình luận trong sự kiện của bạn`,
       });
+    }
+    if (newComment) {
       return newComment;
     } else {
       throw Error(resMes.commentError.ERR_1);
@@ -41,7 +47,9 @@ const getCommentByEventId = asyncHandler(async (requestEventId) => {
     .find({ event: requestEventId })
     .populate("event", "title")
     .populate("creator", "name avatar")
-    .populate("reply.creator", "name avatar");
+    .populate("reply.creator", "name avatar")
+    .sort("-createdAt");
+
   if (comments && comments.length != 0) {
     return comments;
   } else {

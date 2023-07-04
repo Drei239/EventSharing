@@ -66,41 +66,42 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
     reviews,
     status,
   } = req.body;
-
+  console.log(req.body);
   // Sau khi gán userInfo = req.user
-  // const creator = req.user.id;
+  // const creator = req.user._id;
   // loại bỏ giá trị creator ở req.body
-  if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
-    try {
-      const newEvent = await eventService.createNewEvent(
-        title,
-        description,
-        banner,
-        imageList,
-        category,
-        isOnline,
-        linkOnline,
-        fee,
-        location,
-        timeEndSignup,
-        timeBegin,
-        timeEnd,
-        req.user._id,
-        limitUser,
-        reviews,
-        status
-      );
-      return res
-        .status(200)
-        .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
-    } catch (error) {
-      // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
-      next(error);
-    }
-  } else {
-    res.status(401);
-    throw new Error("CREATE NEW EVENT FAILED!");
+  // if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+  try {
+    const newEvent = await eventService.createNewEvent(
+      title,
+      description,
+      banner,
+      imageList,
+      category,
+      isOnline,
+      linkOnline,
+      fee,
+      location,
+      timeEndSignup,
+      timeBegin,
+      timeEnd,
+      req.user?._id,
+      limitUser,
+      reviews,
+      status
+    );
+    return res
+      .status(200)
+      .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
+  } catch (error) {
+    // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
+    console.log(error);
+    next(error);
   }
+  // } else {
+  //   res.status(401);
+  //   throw new Error("CREATE NEW EVENT FAILED!");
+  // }
 });
 
 //2.GET ALL PUBLIC EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
@@ -174,9 +175,10 @@ const highlightEvents = asyncHandler(async (req, res) => {
 //3.GET INFO EVENT BY ID
 const getEventById = asyncHandler(async (req, res) => {
   const event = await eventModel
-    .find({ _id: req.params.id })
+    .findById(req.params.id)
     .populate("category")
     .populate("creator", "_id name avatar totalRating");
+
   if (event) {
     res.status(200).json(event);
   } else {
@@ -220,6 +222,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     timeEnd,
     limitUser,
   } = req.body;
+  console.log(description);
   try {
     const updateEvent = await eventService.updateDraftEventInfo(
       requestEventId,
@@ -242,6 +245,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: updateEvent, message: eventSucc.SUC_6 });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ status: 400, message: error.message });
   }
 });

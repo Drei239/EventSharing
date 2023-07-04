@@ -10,10 +10,11 @@ const initialState = {
 };
 export const createComment = createAsyncThunk(
   "comment/createComment",
-  async ({ eventId, title, comment }, { rejectWithValue }) => {
+  async ({ eventId, title, comment, userInfo }, { rejectWithValue }) => {
     try {
       const data = await commentService.createComment(eventId, title, comment);
-      return data;
+
+      return { ...data.data, creator: userInfo };
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -32,16 +33,14 @@ export const getCommentByEventId = createAsyncThunk(
 );
 export const updateComment = createAsyncThunk(
   "comment/update",
-  async ({ id, title, comment }, { rejectWithValue }) => {
+  async ({ id, title, comment, userInfo }, { rejectWithValue }) => {
     try {
       const updateComment = await commentService.updateComment(
         id,
         title,
         comment
-      )
-		console.log(id);
-	  ;
-      return updateComment;
+      );
+      return { ...updateComment?.data, creator: userInfo };
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -69,6 +68,12 @@ export const replyComment = createAsyncThunk(
     }
   }
 );
+export const receiveComment = createAction(
+  "receive_comment",
+  function prepare(data) {
+    return { payload: data };
+  }
+);
 const commentSlice = createSlice({
   name: "comment",
   initialState,
@@ -84,7 +89,7 @@ const commentSlice = createSlice({
       .addCase(createComment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccessCreate = true;
-        state.comments = [...state.comments, action.payload?.data];
+        state.comments = [action.payload, ...state.comments];
       })
       .addCase(createComment.rejected, (state, action) => {
         state.isLoading = false;
@@ -116,13 +121,13 @@ const commentSlice = createSlice({
       })
 
       .addCase(updateComment.fulfilled, (state, action) => {
-        const data = action.payload?.data;
+        const data = action.payload;
         state.isLoading = false;
         state.isSuccess = true;
         const commentUpdateIndex = state.comments.findIndex(
           (item) => item._id === data._id
         );
-        state.comments[commentUpdateIndex] = action.payload?.data;
+        state.comments[commentUpdateIndex] = data;
       })
       .addCase(updateComment.rejected, (state, action) => {
         state.isLoading = false;
@@ -168,6 +173,14 @@ const commentSlice = createSlice({
         state.isError = true;
         state.message = action.payload?.message;
       });
+    builder.addCase(receiveComment, (state, action) => {
+      if (
+        !state.comments ||
+        !state.comments.find((comment) => comment._id === action.payload._id)
+      ) {
+        state.comments = [action.payload, ...state.comments];
+      }
+    });
   },
 });
 export default commentSlice;

@@ -1,8 +1,8 @@
 function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
   if (
-    timeEnd > timeBegin &&
-    timeEnd > timeEndSignup &&
-    timeBegin < timeEndSignup
+    Date.parse(timeEnd) > Date.parse(timeBegin) &&
+    Date.parse(timeEnd) > Date.parse(timeEndSignup) &&
+    Date.parse(timeBegin) > Date.parse(timeEndSignup)
   ) {
     return true;
   } else {

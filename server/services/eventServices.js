@@ -46,7 +46,6 @@ const createNewEvent = asyncHandler(
       reviews,
       status,
     });
-    console.log(newEvent);
     if (newEvent) {
       return newEvent;
     } else {
@@ -168,9 +167,9 @@ const updateDraftEventInfo = asyncHandler(
         if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
           if (
             eventValidators.inputTimeValidation(
-              updateEvent.timeEndSignup,
-              updateEvent.timeBegin,
-              updateEvent.timeEnd
+              timeEndSignup,
+              timeBegin,
+              timeEnd
             )
           ) {
             const updatedEvent = await updateEvent.save();
