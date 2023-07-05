@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import "./EventDetails.css";
 import Comments from "../../components/comments/Comments";
-import Discussions from "../../components/discussions/Discussions";
 import EventModal from "../../components/eventModal/eventModal";
 import OrderEvent from "../../components/orderEvent/orderEvent";
 import Gallery from "../../components/gallery/Gallery";
 import dayjs from "dayjs";
 import { Button, Tooltip, Link } from "@nextui-org/react";
-// import { FacebookShareButton, FacebookIcon } from 'react-share';
+import { FacebookShareButton, FacebookIcon } from 'react-share';
+import { TwitterShareButton, TwitterIcon } from 'react-share';
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { GiSandsOfTime } from "react-icons/gi";
@@ -26,11 +26,13 @@ const EventDetails = () => {
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { userInfo } = useSelector((state) => state.user);
+  const { orders } = useSelector((state) => state.order);
   const isOnline = isOnlineEvent();
 
   useEffect(() => {
     dispatch(getEventById(id));
-  }, []);
+  }, [id]);
+
   useEffect(() => {
     if (id) {
       dispatch(newConnectEvent(id));
@@ -48,14 +50,20 @@ const EventDetails = () => {
     return eventDetail?.isOnline ? "Online" : "Offline";
   }
 
+  let today = new Date();
+
+  // получаем дату и время
+  let now = today.toLocaleString();
+  console.log(now);
+
   let eventStatus;
 
   switch (eventDetail?.status) {
     case "draft":
-      eventStatus = "draftic";
+      eventStatus = "DRAFT";
       break;
     case "Public":
-      eventStatus = "Event sắp diễn ra";
+      eventStatus = (now = eventDetail?.timeEnd ? "Sự kiện đang diễn ra" : "Event sắp diễn ra");
       break;
     case "Canceled":
       eventStatus = "Event đã hủy";
@@ -87,13 +95,13 @@ const EventDetails = () => {
                     src={eventDetail?.creator?.avatar}
                     alt=""
                     onClick={() =>
-                      navigate(`/origanizers/${eventDetail.creator._id}`)
+                      navigate(`/origanizers/${eventDetail?.creator?._id}`)
                     }
                   />
                 </div>
                 <h5
                   onClick={() =>
-                    navigate(`/origanizers/${eventDetail.creator._id}`)
+                    navigate(`/origanizers/${eventDetail?.creator?._id}`)
                   }
                 >
                   {eventDetail?.creator?.name || "no information"}
@@ -137,8 +145,6 @@ const EventDetails = () => {
           </div>
           <div className="event__right-block">
             {
-              // eventDetail.status?.toLowerCase() === "draft" &&
-              // eventDetail?.creator?._id === userInfo._id ?
               eventDetail?.creator?._id === userInfo?._id ? (
                 eventDetail.status?.toLowerCase() === "draft" ? (
                   <Button
@@ -163,10 +169,28 @@ const EventDetails = () => {
             }
             <div className="event__share">
               <Button bordered color="primary" size="xs">
-                <div className="btn__share">Chia sẻ</div>
+                <div className="btn__share">
+                  <FacebookShareButton
+                    url={'https://www.example.com'}
+                    quote={'Dummy text!'}
+                    hashtag="#muo"
+                    className='share'
+                  >
+                    <FacebookIcon size={15} round className='fb__icon' /> chia sẻ
+                  </FacebookShareButton>
+                </div>
               </Button>
               <Button bordered color="primary" size="xs">
-                <div className="btn__share">Chia sẻ</div>
+                <div className="btn__share">
+                  <TwitterShareButton
+                    url={'https://www.example.com'}
+                    quote={'Dummy text!'}
+                    hashtag="#muo"
+                    className='share'
+                  >
+                    <TwitterIcon size={15} round /> chia sẻ
+                  </TwitterShareButton>
+                </div>
               </Button>
             </div>
             <div className="event__price">
@@ -177,8 +201,12 @@ const EventDetails = () => {
             </div>
             <div className={eventDetail?.status}>{eventStatus}</div>
             <div className="event__members">
-              <EventModal />
+              <div>
+                <div className="num__members">{orders?.length}</div> người tham gia sự kiện
+                </div>
+              
             </div>
+            <EventModal />
           </div>
           <div className="event__title">
             <h3 className="event__description">Giới thiệu</h3>
@@ -189,28 +217,10 @@ const EventDetails = () => {
         </div>
         <div>
           <h3 className="event__gallery">Gallery</h3>
-          <Gallery imageList={imageList} />
+          <Gallery loading="lazy" imageList={imageList} />
         </div>
         <div className="comment__container">
-          <Button.Group>
-            <Button
-              className="comments__btn"
-              onPress={() => setCommentsTabs("comments")}
-            >
-              Comments
-            </Button>
-            <Button
-              className="comments__btn"
-              onPress={() => setCommentsTabs("discussion")}
-            >
-              Discussions
-            </Button>
-          </Button.Group>
-          {commentsTabs === "comments" ? (
-            <Comments eventId={id} />
-          ) : (
-            <Discussions />
-          )}
+          <Comments eventId={id} />
         </div>
       </div>
     </div>

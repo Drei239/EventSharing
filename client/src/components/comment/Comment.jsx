@@ -4,13 +4,11 @@ import { useSelector } from 'react-redux';
 
 const Comment = ({
   comment,
-  replies,
   setActiveComment,
   activeComment,
   updateComment,
   deleteComment,
   addComment,
-  parentId = null,
   currentUserId,
 }) => {
 	const isEditing =
@@ -36,7 +34,7 @@ const Comment = ({
 			<div className="comment-right-part">
 				<div className="comment-content">
 					<div className="comment-author">{comment.creator.name}</div>
-					{/* <div>{createdAt}</div> */}
+					<div className="comment-date">{createdAt}</div>
 				</div>
 				{!isEditing && <div className="comment-text">{comment.comment}</div>}
 				{isEditing && (
@@ -74,12 +72,19 @@ const Comment = ({
 					{canDelete && (						
 						<div
 							className="comment-action"
-							onClick={() => deleteComment(comment._id)
+							onClick={() => 
+                deleteComment(comment._id)
 						}
 						>
 							Delete
 						</div>
 					)}
+          {/* {
+            canLike && (
+              <div className="comment-action"
+              onClick={}
+            )
+          } */}
 				</div>
 				{isReplying && (
 					<CommentForm
@@ -87,9 +92,9 @@ const Comment = ({
 						handleSubmit={(text) => addComment(text, comment._id)}
 					/>
 				)}
-        {comment?.reply > 0 && (
+        {comment.reply && comment?.reply?.length > 0 && (
 					<div className="replies">
-						{comment?.reply?.map((reply) => {
+						{comment?.reply?.data?.map((reply) => {
               console.log(reply)
               return (
               <Comment
@@ -104,9 +109,7 @@ const Comment = ({
                 replies={[]}
                 currentUserId={currentUserId}
               />)
-							
 						})}
-
 					</div>
 				)}
 			</div>
