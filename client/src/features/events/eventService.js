@@ -77,11 +77,20 @@ const cancelEvent = async (eventId) => {
 };
 const confirmCompletedEvent = async (eventId) => {
   const data = await UseCallApi({
-    url: `/events/confirm-completed`,
+    url: `/events/confirm-completed/${eventId}`,
     method: "PUT",
   });
   return data;
 };
+const createReview = async (eventId, title, image, comment, rating) => {
+  const data = await UseCallApi({
+    url: `/events/createReview/${eventId}`,
+    method: "PUT",
+    data: { title, image, comment, rating },
+  });
+  return data;
+};
+
 const eventService = {
   updateEvent,
   getAllEvent,
@@ -94,5 +103,6 @@ const eventService = {
   cancelEvent,
   removeEventDraft,
   confirmCompletedEvent,
+  createReview,
 };
 export default eventService;

@@ -12,6 +12,7 @@ const NotifyItem = ({
   notifyType,
   comment,
   isReadMessage,
+  replyContent,
 }) => {
   const navigate = useNavigate();
   return (
@@ -25,6 +26,11 @@ const NotifyItem = ({
         {notifyType === "new-comment" && (
           <div className="notify-item-comment">
             {comment && comment.slice(0, 50)}
+          </div>
+        )}
+        {notifyType === "reply-comment" && (
+          <div className="notify-item-comment">
+            {replyContent && replyContent.slice(0, 50)}
           </div>
         )}
         <p className="notify-item-time">

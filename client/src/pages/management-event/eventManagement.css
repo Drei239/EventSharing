@@ -223,3 +223,14 @@
   justify-content: center;
   margin-top: 50px;
 }
+.management-events-list-item-btn-edit {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  border: none;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}

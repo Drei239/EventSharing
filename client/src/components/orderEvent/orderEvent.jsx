@@ -10,12 +10,13 @@ const OrderEvent = () => {
   const [visible, setVisible] = React.useState(false);
   const { isSuccessCreate } = useSelector((state) => state.order);
   const dispatch = useDispatch();
-  const eventDetail = useSelector((state) => state?.event?.getEventById[0]);
+  const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { isLogin, userInfo } = useSelector((state) => state.user);
 
   const handler = () => setVisible(true);
 
   const handleBuyTicket = () => {
+    console.log("a");
     dispatch(newCreateOrder(eventDetail?._id));
   };
 

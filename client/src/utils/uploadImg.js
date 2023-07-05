@@ -1,6 +1,6 @@
 import axios from "axios";
 import UseCallApi from "../hooks/useCallApi";
-export const uploadImage = async (files) => {
+export const uploadImage = async (files, folder) => {
   console.log(files);
   const formData = new FormData();
   for (let i = 0; i <= files.length - 1; i++) {
@@ -11,7 +11,7 @@ export const uploadImage = async (files) => {
   if (formData) {
     const response = await UseCallApi({
       data: formData,
-      url: "/upload?folder=user",
+      url: `/upload?folder=${folder}`,
       method: "POST",
     });
     return response?.data;

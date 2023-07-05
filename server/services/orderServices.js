@@ -18,6 +18,7 @@ const createNewOrder = asyncHandler(async (event, user) => {
     event: event,
     user: user,
   });
+  console.log(event);
   const eventOrder = await eventModel
     .findOne({ _id: event })
     .populate("creator");

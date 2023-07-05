@@ -8,8 +8,6 @@ function initializeSocket(server) {
     },
   });
   io.on("connection", (socket) => {
-    const connectionId = socket.id;
-    activeConnections.push(connectionId);
     socket.on("new_connection", (userId) => {
       socket.join(userId);
     });
@@ -24,13 +22,13 @@ function initializeSocket(server) {
       socket.broadcast.to(comment.notifyTo).emit("new_comment", comment);
     });
     socket.on("new_comment2", (comment) => {
-      activeConnections.forEach((connectionId) => {
-        console.log(connectionId);
-        io.to(connectionId).emit("send_comment_all", comment);
-      });
+      socket.broadcast.emit("send_comment_all", comment);
     });
     socket.on("reply_comment", (comment) => {
       socket.to(comment.notifyTo).emit("reply_comment", comment);
+    });
+    socket.on("reply_comment_show_all", (comment) => {
+      socket.broadcast.emit("reply_comment_show_all", comment);
     });
     socket.on("logout", (userId) => {
       socket.leave(userId);

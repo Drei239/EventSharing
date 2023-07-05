@@ -62,8 +62,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
     }
   }, [notify]);
 
-  useEffect(() => {
-  }, [data]);
+  useEffect(() => {}, [data]);
   return (
     <>
       {isOpenNotify && (
@@ -114,6 +113,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
                       notifyType={item?.notifyType}
                       isReadMessage={item?.isReadMessage}
                       time={item?.createdAt}
+                      replyContent={item?.replyContent}
                     />
                   </div>
                 );
