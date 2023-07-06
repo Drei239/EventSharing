@@ -65,6 +65,7 @@ const OrganizersPage = () => {
     });
   };
 
+  console.log(events);
   const renderPunlicEvents = (type) => {
     let eventsList = [];
     switch (type.toLowerCase()) {
@@ -76,7 +77,7 @@ const OrganizersPage = () => {
 
       case 'complete':
         eventsList = events?.filter(
-          (event) => event.status.toLowerCase() === 'public'
+          (event) => event.status.toLowerCase() === 'complete'
         );
         break;
     }
@@ -175,7 +176,7 @@ const OrganizersPage = () => {
             modules={[Pagination]}
             className='mySwiper'
           >
-            {renderPunlicEvents('complte')}
+            {renderPunlicEvents('complete')}
           </Swiper>
         </section>
       </section>
