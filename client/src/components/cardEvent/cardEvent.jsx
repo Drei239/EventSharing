@@ -85,7 +85,7 @@ const Card = ({
               <div className="cardEvent-info2-item">
                 <BiMap className="cardEvent-info2-item-icon" />
                 <span className="cardEvent-info2-item-text">
-                  {location?.province ? location.province.name : ""}
+                  {location?.province ? location.province.name : "online"}
                 </span>
               </div>
               <div className="cardEvent-info2-item">

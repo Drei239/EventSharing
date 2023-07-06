@@ -106,7 +106,7 @@ const Carousel = () => {
                         <span className="carousel-content-info-text">
                           {item.location?.province
                             ? item.location?.province?.name
-                            : ""}
+                            : "Online"}
                         </span>
                       </div>
                       <div className="carousel-content-info-item">
