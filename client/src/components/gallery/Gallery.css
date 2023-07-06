@@ -7,6 +7,7 @@
 
 .modal {
 	width: 750px;
+	height: 500px;
 	display: flex;
 	flex-direction: column;
 	margin: 20px auto;
@@ -38,4 +39,9 @@
 .image-list,
 .gallery__image {
 	border-radius: 10px;
+}
+
+.gallery__image {
+	height: 500px;
+	object-fit: cover;
 }

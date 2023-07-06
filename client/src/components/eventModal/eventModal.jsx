@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Modal, useModal, Text, Link, Button } from '@nextui-org/react';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,9 +18,25 @@ const EventModal = () => {
 	useEffect(() => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
+	const [message, setMessage] = useState('');
+	useEffect(() => {
+		const now = new Date();
+		const beginTime = new Date(eventDetail?.timeBegin);
+		const endTime = new Date(eventDetail?.timeEnd);
+		console.log("###", endTime);
+
+		if (now >= beginTime && now <= endTime && userStatusArr.isJoined == true) {
+			setMessage('đã tham gia');
+		} else if(now <= beginTime && userStatusArr.isPaid == true) {
+			setMessage('Không tham gia');
+		} else if (now >= beginTime && userStatusArr.isJoined == false) {
+			setMessage('Sẽ tham gia');
+		} else {
+			setMessage('');
+		}}, []);
 
 	let userStatusArr = orders?.map(order => [
-		// order?.isPaid,
+		order?.isPaid,
 		order?.isJoined,
 		// order?.isRefund
 	]);
@@ -33,6 +49,8 @@ const EventModal = () => {
 	// } else if (userStatusArr.orders?.isRefund == true) {
 	// 	userStatus = 'đã hoàn tiền';
 	// }
+
+
 
 	console.log(userStatusArr)
 
@@ -71,7 +89,7 @@ const EventModal = () => {
 										<img className="user__avatar" src={item?.user?.avatar} alt="" />
 										<div className="user__name">
 											{item?.user?.name}
-											<div className="user__status">{userStatus}</div>
+											<div className="user__status">{message}</div>
 										</div>
 									</div>
 									
