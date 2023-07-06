@@ -115,13 +115,13 @@ const EventDetails = () => {
                     src={eventDetail?.creator?.avatar}
                     alt=""
                     onClick={() =>
-                      navigate(`/origanizers/${eventDetail?.creator?._id}`)
+                      navigate(`/organizers/${eventDetail?.creator?._id}`)
                     }
                   />
                 </div>
                 <h5
                   onClick={() =>
-                    navigate(`/origanizers/${eventDetail?.creator?._id}`)
+                    navigate(`/organizers/${eventDetail?.creator?._id}`)
                   }
                 >
                   {eventDetail?.creator?.name || "no information"}
