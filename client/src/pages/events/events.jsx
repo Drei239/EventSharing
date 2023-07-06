@@ -51,7 +51,7 @@ const Events = () => {
       );
     }
     setRequest(true);
-  }, [filter, currentPage, searchParams]);
+  }, [filter, currentPage, searchParams, request]);
 
   useEffect(() => {
     setCurrentPage(1);

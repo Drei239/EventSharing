@@ -114,9 +114,7 @@ const Filter = () => {
   useEffect(() => {
     dispatch(getAllCategory());
   }, []);
-  useEffect(() => {
-    console.log(selectedDate);
-  }, [selectedDate]);
+
   useEffect(() => {
     if (searchParams.get("category")) {
       setSelectValue(
@@ -127,7 +125,7 @@ const Filter = () => {
     }
   }, [searchParams.get("category")]);
   useEffect(() => {
-    if (selectValue && selectValue.value !== undefined) {
+    if (selectValue) {
       dispatch(handleChangeEvents({ category: selectValue?.value }));
     }
   }, [selectValue]);
@@ -261,7 +259,7 @@ const Filter = () => {
         <div className="select">
           <CustomSelect
             options={sortFilter}
-            defaultValue={sortFilter}
+            defaultValue={sortFilter[0]}
             components={{ Control: CustomControl5 }}
             onChange={handleChangeSort}
           />
