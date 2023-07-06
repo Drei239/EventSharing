@@ -157,6 +157,12 @@ const Login = () => {
               value={inputValue.password}
               onChange={handleOnchange}
             />
+            <p
+              className='login__forget-password'
+              onClick={() => navigate('/forgot-password')}
+            >
+              Quên mật khẩu?
+            </p>
             <Button type='submit'>Đăng nhập</Button>
           </form>
           <hr style={{ marginTop: '25px' }} />
