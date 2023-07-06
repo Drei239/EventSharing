@@ -3,11 +3,6 @@ import {
   useValidateDatetime,
   useValidateRegex,
 } from '../../hooks/validateHooks';
-import {
-  createComment,
-  deleteComment,
-  getCommentByEventId,
-} from '../../features/comment/commentSlice';
 import { titleRegex, urlRegex } from '../../constants/regex';
 import customFetch from '../../utils/axios.config';
 import { Button, Input, Loading, Switch } from '@nextui-org/react';
@@ -51,7 +46,6 @@ const EventCreateUpdate = () => {
   const [district, setDistrict] = useState('');
   const [ward, setWard] = useState('');
   const [event, setEvent] = useState({});
-  const [status, setStatus] = useState('draft');
   const editorRef = useRef(null);
 
   useEffect(() => {
@@ -334,7 +328,6 @@ const EventCreateUpdate = () => {
         timeEndSignup,
         limitUser: Number(inputValue.quantityTicket),
         reviews: [],
-        status: status,
       };
 
       if (searchParams.get('type') === 'update') {
@@ -357,33 +350,7 @@ const EventCreateUpdate = () => {
             data: JSON.stringify(data),
           });
           notify('Tạo sự kiện thành công', 'success');
-
-          // Reset value
-          if (editorRef.current) {
-            editorRef.current.setContent('');
-          }
-          setBanner('');
-          setImageEvent([]);
-          setCity('');
-          setDistrict('');
-          setWard('');
-          setIsFree(false);
-          setInputValue({
-            title: '',
-            fee: '',
-            quantityTicket: '',
-            description: '',
-            address: '',
-            typeEvent: 'offline',
-            linkOnline: '',
-            category: '',
-            dateStart: '',
-            dateEnd: '',
-            dateRegisterEnd: '',
-            timeStart: '',
-            timeEnd: '',
-            timeRegisterEnd: '',
-          });
+          navigate(`/event/${response.data.data._id}`);
         } catch (error) {
           notify('Tạo sự kiện thất bại', 'error');
         }
@@ -840,20 +807,16 @@ const EventCreateUpdate = () => {
           </div>
         </section>
         <section className='create-event__button-wrapper'>
-          <Button
-            type='submit'
-            className='create-event__button'
-            onClick={() => setStatus('Public')}
-          >
+          <Button type='submit' className='create-event__button'>
             {searchParams.get('type') === 'update' ? 'Cập nhật' : 'Tạo mới'}
           </Button>
 
           <Button
-            type='submit'
+            type='button'
             className='create-event__button create-event__button--cancel'
-            onClick={() => setStatus('draft')}
+            onClick={() => navigate(-1)}
           >
-            Lưu
+            Quay lại
           </Button>
         </section>
       </form>

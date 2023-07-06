@@ -7,7 +7,7 @@ import EventModal from "../../components/eventModal/eventModal";
 import OrderEvent from "../../components/orderEvent/orderEvent";
 import Gallery from "../../components/gallery/Gallery";
 import dayjs from "dayjs";
-import { Button, Tooltip, Link } from "@nextui-org/react";
+import { Button, Tooltip, Link, Modal } from "@nextui-org/react";
 import { FacebookShareButton, FacebookIcon } from "react-share";
 import { TwitterShareButton, TwitterIcon } from "react-share";
 import { BiMap } from "react-icons/bi";
@@ -18,6 +18,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
 import { isNullOrUndefined } from "../../utils/isNullOrUndefined";
 import parse from "html-react-parser";
+import customFetch from '../../utils/axios.config';
 // import { identifier } from "@babel/types";
 import { newConnectEvent } from "../../features/action";
 import { Rating } from "../../components";
@@ -32,6 +33,7 @@ const EventDetails = () => {
   const { userInfo, isLogin } = useSelector((state) => state.user);
   const { orders } = useSelector((state) => state.order);
   const isOnline = isOnlineEvent();
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
     dispatch(getEventById(id));
   }, [id]);
@@ -93,6 +95,18 @@ const EventDetails = () => {
       break;
   }
 
+  const handlePublic = () => {
+    customFetch
+      .put(`/events/change-public/${id}`)
+      .then((resp) => {
+        if (resp.data.update === 'success') {
+          dispatch(getEventById(id));
+        }
+      })
+      .catch((err) => console.log(err));
+    setVisible(false);
+  };
+
   return (
     <motion.div layout>
       <img
@@ -146,12 +160,14 @@ const EventDetails = () => {
                   </Button>
                 </Tooltip>
               </Link>
-              <div className="event__adress">
-                <BiMap className="cardEvent-info2-item-icon" />
-                {eventDetail?.location?.district?.name || "no information"},
-                {eventDetail?.location?.province?.name || "no information"},
-                {eventDetail?.location?.ward?.name || "no information"},
-                {eventDetail?.location?.address || "no information"}
+              <div className='event__adress'>
+                <BiMap className='cardEvent-info2-item-icon' />
+                {eventDetail?.location?.district?.name &&
+                eventDetail?.location?.province?.name &&
+                eventDetail?.location?.ward?.name &&
+                eventDetail?.location?.address
+                  ? ` ${eventDetail?.location?.address}, ${eventDetail?.location?.ward?.name}, ${eventDetail?.location?.district?.name}, ${eventDetail?.location?.province?.name}`
+                  : ' Online'}
               </div>
               <div className="event__time">
                 <GiSandsOfTime className="cardEvent-info2-item-icon" />
@@ -160,25 +176,37 @@ const EventDetails = () => {
                 {dayjs(eventDetail?.timeBegin).format("HH:mm:ss")} -{" "}
                 {dayjs(eventDetail?.timeEnd).format("HH:mm:ss")})
               </div>
-              <div className="event__type">{isOnline}</div>
             </div>
           </div>
           <div className="event__right-block">
             {eventDetail?.creator?._id === userInfo?._id ? (
-              eventDetail.status?.toLowerCase() === "draft" ? (
-                <Button
-                  size="lg"
-                  className="btn__buy"
-                  color="primary"
-                  bordered="false"
-                  onClick={() =>
-                    navigate(
-                      `/event-create-update?type=update&id=${eventDetail?._id}`
-                    )
-                  }
-                >
-                  Cập nhật
-                </Button>
+              eventDetail.status?.toLowerCase() === 'draft' ? (
+                <>
+                  <Button
+                    size='lg'
+                    className='btn__buy'
+                    color='primary'
+                    bordered='false'
+                    onClick={() =>
+                      navigate(
+                        `/event-create-update?type=update&id=${eventDetail._id}`
+                      )
+                    }
+                  >
+                    Cập nhật
+                  </Button>
+                  <Button
+                    size='lg'
+                    className='btn__buy'
+                    color='primary'
+                    auto
+                    shadow
+                    onPress={() => setVisible(true)}
+                    bordered='false'
+                  >
+                    Đăng sự kiện
+                  </Button>
+                </>
               ) : (
                 <div></div>
               )
@@ -262,7 +290,27 @@ const EventDetails = () => {
           {commentsTabs === "comments" ? <Comments eventId={id} /> : <Rating />}
         </div>
       </div>
-    </motion.div>
+
+      <Modal
+        closeButton
+        blur
+        aria-labelledby='modal-title'
+        open={visible}
+        onClose={() => setVisible(false)}
+      >
+        <Modal.Header>
+          <p>Bạn có chắc muốn đăng sự kiện này không?</p>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button auto flat color='error' onPress={() => setVisible(false)}>
+            Không
+          </Button>
+          <Button auto onPress={handlePublic}>
+            Có
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   );
 };
 export default EventDetails;
