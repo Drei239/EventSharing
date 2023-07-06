@@ -21,6 +21,7 @@ import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
+import { Pagination } from "@mui/material";
 
 import notify from "../../utils/notify";
 import EmptyIcon from "../../assets/empty.svg";
@@ -32,6 +33,10 @@ import {
 } from "../../features/events/eventSlice";
 dayjs.locale(locale);
 const eventTypeOption = [
+  {
+    label: "Tất cả",
+    value: "",
+  },
   {
     label: "Nháp",
     value: "draft",
@@ -48,24 +53,27 @@ const eventTypeOption = [
     label: "Hoàn tất",
     value: "Completed",
   },
-  {
-    label: "Tất cả",
-    value: "",
-  },
 ];
 
 const EventManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isSuccessRemove, isError, events, isLoading, isErrorDelete } =
-    useSelector((state) => state.event);
+  const {
+    isSuccessRemove,
+    isError,
+    countDocument,
+    events,
+    isLoading,
+    isErrorDelete,
+  } = useSelector((state) => state.event);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   const { setVisible, bindings } = useModal();
   const [selectType, setSelectType] = useState("list");
-  const [status, setStatus] = useState("draft");
+  const [status, setStatus] = useState("");
   const [search, setSearch] = useState("");
   const [idEventDelete, setIdEventDelete] = useState(null);
+  const [page, setPage] = useState(1);
 
   const handleChangeSelect = (selectedOption) => {
     setStatus(selectedOption.value);
@@ -101,6 +109,9 @@ const EventManagement = () => {
       setVisible(false);
     }
   };
+  const onChangePage = (event, page) => {
+    setPage(page);
+  };
   const openModalDeleteEvent = (id) => {
     setIdEventDelete(id);
     setVisible(true);
@@ -112,10 +123,11 @@ const EventManagement = () => {
           id: `${userInfo?._id}`,
           status: status,
           keyword: search,
+          page: page,
         })
       );
     }
-  }, [userInfo, status, search, dispatch]);
+  }, [userInfo, status, search, dispatch, page]);
   useEffect(() => {
     if (isSuccessRemove) {
       notify("Xoá sự kiện thành công", "success");
@@ -280,6 +292,18 @@ const EventManagement = () => {
                 <Loading size="md" />
               </div>
             )}
+          </div>
+          <div className="management-events-pagination">
+            <Pagination
+              count={
+                countDocument % 5 > 0
+                  ? Math.floor(countDocument / 5) + 1
+                  : Math.floor(countDocument / 5)
+              }
+              color="primary"
+              page={page}
+              onChange={onChangePage}
+            />
           </div>
         </div>
       ) : (

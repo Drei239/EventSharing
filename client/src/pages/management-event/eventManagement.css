@@ -234,3 +234,9 @@
   justify-content: center;
   cursor: pointer;
 }
+.management-events-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}

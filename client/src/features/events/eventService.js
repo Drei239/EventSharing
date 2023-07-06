@@ -55,9 +55,9 @@ const getJoinedEvent = async () => {
   });
   return data;
 };
-const getAllEventofUser = async (id, status, keyword) => {
+const getAllEventofUser = async (id, status, keyword, page) => {
   const data = await UseCallApi({
-    url: `/events/user/${id}?status=${status}&keyword=${keyword}`,
+    url: `/events/user/${id}?status=${status}&keyword=${keyword}&page=${page}`,
   });
   return data;
 };

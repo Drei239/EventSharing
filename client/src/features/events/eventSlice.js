@@ -79,7 +79,8 @@ export const getAllEventofUser = createAsyncThunk(
       return await eventService.getAllEventofUser(
         data?.id,
         data?.status,
-        data?.keyword
+        data?.keyword,
+        data?.page
       );
     } catch (err) {
       return rejectWithValue(err);
@@ -276,6 +277,7 @@ const eventSlice = createSlice({
     });
     builder.addCase(getAllEventofUser.fulfilled, (state, action) => {
       state.events = action.payload?.data;
+      state.countDocument = action.payload?.countDocument;
       state.isLoading = false;
       state.isSuccess = true;
     });

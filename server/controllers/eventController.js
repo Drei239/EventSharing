@@ -291,12 +291,20 @@ const getRegisteredEvent = asyncHandler(async (req, res, next) => {
 });
 const getAllEventOfUser = asyncHandler(async (req, res, next) => {
   const { id } = req.params;
-  const { status, keyword } = req.query;
+
   try {
-    const events = await eventService.getAllEventOfUser(id, status, keyword);
+    const { event, countDocument } = await eventService.getAllEventOfUser(
+      id,
+      req.query
+    );
     res
       .status(200)
-      .json({ status: 200, data: events, message: eventSucc.SUC_3 });
+      .json({
+        status: 200,
+        data: event,
+        message: eventSucc.SUC_3,
+        countDocument: countDocument,
+      });
   } catch (err) {
     next(err);
   }

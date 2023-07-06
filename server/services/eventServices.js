@@ -30,10 +30,13 @@ const createNewEvent = asyncHandler(
     reviews,
     status
   ) => {
-    const existEvent = await eventModel.findOne({ title: title })
+    const existEvent = await eventModel
+      .findOne({ title: title })
       .collation({ locale: "en", strength: 2 });
     if (!existEvent) {
-      if (eventValidators.inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+      if (
+        eventValidators.inputTimeValidation(timeEndSignup, timeBegin, timeEnd)
+      ) {
         const newEvent = await eventModel.create({
           title,
           description,
@@ -170,16 +173,21 @@ const updateDraftEventInfo = asyncHandler(
           updateEvent.isOnline = isOnline || updateEvent.isOnline;
           updateEvent.fee = fee || updateEvent.fee;
           updateEvent.location = location || updateEvent.location;
-          updateEvent.timeEndSignup = timeEndSignup || updateEvent.timeEndSignup;
+          updateEvent.timeEndSignup =
+            timeEndSignup || updateEvent.timeEndSignup;
           updateEvent.timeBegin = timeBegin || updateEvent.timeBegin;
           updateEvent.timeEnd = timeEnd || updateEvent.timeEnd;
           updateEvent.limitUser = limitUser || updateEvent.limitUser;
           updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
 
-          const existEvent = await eventModel.findOne({
-            title: updateEvent.title,
-          }).collation({ locale: "en", strength: 2 });
-          if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
+          const existEvent = await eventModel
+            .findOne({
+              title: updateEvent.title,
+            })
+            .collation({ locale: "en", strength: 2 });
+          if (
+            eventValidators.inputTitleValidation(existEvent, requestEventId)
+          ) {
             if (
               eventValidators.inputTimeValidation(
                 timeEndSignup,
@@ -221,7 +229,9 @@ const registeredEvent = async (id) => {
   return event;
 };
 
-const getAllEventOfUser = async (id, status, keyword) => {
+const getAllEventOfUser = async (id, query) => {
+  const { keyword, status, page = 1, limit = 5 } = query;
+  const skip = (page - 1) * limit;
   if (keyword) {
     let findObject = {
       creator: id,
@@ -230,13 +240,22 @@ const getAllEventOfUser = async (id, status, keyword) => {
     if (status || status !== "") {
       findObject = Object.assign(findObject, { status: status });
     }
-    return await eventModel.find(findObject);
+    const event = await eventModel.find(findObject).limit(limit).skip(skip);
+    const countDocument = await eventModel
+      .find(findObject)
+      .model.countDocuments(eventModel.find(findObject).getFilter());
+    return { event, countDocument };
   }
   let findObject = { creator: id };
   if (status || status !== "") {
     findObject = Object.assign(findObject, { status: status });
   }
-  return await eventModel.find(findObject);
+
+  const event = await eventModel.find(findObject).limit(limit).skip(skip);
+  const countDocument = await eventModel
+    .find(findObject)
+    .model.countDocuments(eventModel.find(findObject).getFilter());
+  return { event, countDocument };
 };
 //9.CREATE NEW REVIEW FOR EVENT & UPDATE TOTAL RATING
 const createNewReview = asyncHandler(
