@@ -3,6 +3,8 @@ const eventModel = require("../models/eventModel");
 const eventService = require("../services/eventServices");
 const { eventError, eventSucc } = require("../validators/responsiveMessages");
 const orderModel = require("../models/orderModel");
+const eventValidators = require("../validators/eventValidators");
+
 //UPDATE CREATE REVIEW EVENT - UPDATE EVENT RATING - PROTECT UPDATE DRAFT EVENT
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
@@ -35,20 +37,8 @@ console.log(
   })
 );
 
-function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
-  if (
-    timeBegin < timeEnd &&
-    timeEndSignup < timeEnd &&
-    timeEndSignup > timeBegin
-  ) {
-    return true;
-  } else {
-    return false;
-  }
-}
-
 //1.CREATE NEW EVENT
-const createNewEvent = asyncHandler(async (req, res, next) => {
+const createNewEvent = asyncHandler(async (req, res) => {
   const {
     title,
     description,
@@ -66,11 +56,6 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
     reviews,
     status,
   } = req.body;
-  console.log(req.body);
-  // Sau khi gán userInfo = req.user
-  // const creator = req.user._id;
-  // loại bỏ giá trị creator ở req.body
-  // if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
   try {
     const newEvent = await eventService.createNewEvent(
       title,
@@ -90,18 +75,13 @@ const createNewEvent = asyncHandler(async (req, res, next) => {
       reviews,
       status
     );
+    console.log(newEvent);
     return res
       .status(200)
       .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
   } catch (error) {
-    // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
-    console.log(error);
-    next(error);
+    return res.status(400).json({ status: 400, message: error.message });
   }
-  // } else {
-  //   res.status(401);
-  //   throw new Error("CREATE NEW EVENT FAILED!");
-  // }
 });
 
 //2.GET ALL PUBLIC EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC

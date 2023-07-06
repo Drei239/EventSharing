@@ -30,6 +30,7 @@ const orderError = {
   ERR_5: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THẤT BẠI!",
   ERR_6: "CHỈ CÓ NGƯỜI TỔ CHỨC MỚI CÓ QUYỀN CẬP NHẬT THÔNG TIN NÀY!",
   ERR_7: "BẠN KHÔNG PHẢI NGƯỜI TỔ CHỨC SỰ KIỆN",
+  ERR_8: "THỜI GIAN ĐĂNG KÝ THAM GIA SỰ KIỆN ĐÃ KẾT THÚC!"
 };
 
 const orderSucc = {
