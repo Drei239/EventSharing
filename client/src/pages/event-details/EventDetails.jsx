@@ -19,20 +19,37 @@ import { getEventById } from '../../features/events/eventSlice';
 import { isNullOrUndefined } from '../../utils/isNullOrUndefined';
 import parse from 'html-react-parser';
 import customFetch from '../../utils/axios.config';
-// import { identifier } from "@babel/types";
 import { newConnectEvent } from '../../features/action';
 import { Rating } from '../../components';
+
 const EventDetails = () => {
   const navigate = useNavigate();
   const timeOutRef = useRef();
   const [searchParams] = useSearchParams();
   const [commentsTabs, setCommentsTabs] = useState('comments');
+  const [eventStat, setEventStat] = useState('');
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { userInfo, isLogin } = useSelector((state) => state.user);
   const { orders } = useSelector((state) => state.order);
   const isOnline = isOnlineEvent();
+
+  useEffect(() => {
+    const now = new Date();
+    const beginTime = new Date(eventDetail?.timeBegin);
+    const endTime = new Date(eventDetail?.timeEnd);
+    console.log(beginTime);
+
+    if (now <= beginTime) {
+      setEventStat('Sự kiện sắp diễn ra');
+    } else if (now >= beginTime && now <= endTime) {
+      setEventStat('Sự kiện đang diễn ra');
+    } else if (now >= endTime) {
+      setEventStat('Sự kiện đã hoàn tất');
+    }
+  }, []);
+
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     dispatch(getEventById(id));
@@ -42,9 +59,7 @@ const EventDetails = () => {
       dispatch(newConnectEvent(id));
     }
   }, [id]);
-  useEffect(() => {
-    console.log(orders);
-  }, [orders]);
+
   const handleGoToComment = (commentId) => {
     const commentElement = document.getElementById(commentId);
     if (commentElement) {
@@ -70,12 +85,6 @@ const EventDetails = () => {
     return eventDetail?.isOnline ? 'Online' : 'Offline';
   }
 
-  let today = new Date();
-
-  // получаем дату и время
-  let now = today.toLocaleString();
-  console.log(now);
-
   let eventStatus;
 
   switch (eventDetail?.status) {
@@ -83,9 +92,9 @@ const EventDetails = () => {
       eventStatus = 'DRAFT';
       break;
     case 'Public':
-      eventStatus = now = eventDetail?.timeEnd
-        ? 'Sự kiện đang diễn ra'
-        : 'Event sắp diễn ra';
+      eventStatus = eventStat;
+    case "Public":
+      eventStatus = eventStat;
       break;
     case 'Canceled':
       eventStatus = 'Event đã hủy';
@@ -176,6 +185,7 @@ const EventDetails = () => {
                 {dayjs(eventDetail?.timeBegin).format('HH:mm:ss')} -{' '}
                 {dayjs(eventDetail?.timeEnd).format('HH:mm:ss')})
               </div>
+              <div className="event__type">{isOnline}</div>
             </div>
           </div>
           <div className='event__right-block'>
