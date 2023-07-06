@@ -11,7 +11,6 @@ const reviewSchema = mongoose.Schema({
 
 const locationShecma = mongoose.Schema({
   address: { type: String },
-
   province: {
     name: { type: String },
     code: { type: Number },
@@ -48,7 +47,7 @@ const eventSchema = mongoose.Schema({
   timeEndSignup: { type: Date, required: true, default: Date.now() },
   timeBegin: { type: Date, default: Date.now(), required: true },
   timeEnd: { type: Date, default: Date.now(), required: true },
-  status: { type: String, default: "draft" },
+  status: { type: String, default: 'draft', enum: ['draft', 'Public', 'Canceled', 'Completed'] },
   creator: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,

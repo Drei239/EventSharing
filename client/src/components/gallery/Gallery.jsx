@@ -4,7 +4,6 @@ import { CgCloseO } from "react-icons/cg";
 import './Gallery.css'
 
 const Gallery = ({ imageList }) => {
-	const [images, setImages] = useState(imageList);
 	const [currentImageIndex, setCurrentImageIndex] = useState(null);
 	const openImage = (index) => {
 		setCurrentImageIndex(index);
@@ -15,7 +14,7 @@ const Gallery = ({ imageList }) => {
 	};
 
 	const navigateImages = (direction) => {
-		const lastIndex = images.length - 1;
+		const lastIndex = imageList.length - 1;
 		let newIndex;
 
 		if (direction === 'prev') {
@@ -29,7 +28,7 @@ const Gallery = ({ imageList }) => {
 	return (
 		<div className="gallery__content">
 			<div className="image-list">
-				{images.map((image, index) => (
+				{imageList.map((image, index) => (
 					<img
 						key={index}
 						src={image}
@@ -49,7 +48,7 @@ const Gallery = ({ imageList }) => {
 							<Button size="xs" className="gallery__btn" onClick={() => navigateImages('next')}>Next</Button>
 						</div>
 					</div>
-					<img className="gallery__image" src={images[currentImageIndex]} alt="" />
+					<img className="gallery__image" src={imageList[currentImageIndex]} alt="" />
 				</div>
 			)}
 		</div>

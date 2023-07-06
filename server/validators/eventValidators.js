@@ -12,6 +12,7 @@
 
 function inputTimeValidation(timeEndSignup, timeBegin, timeEnd) {
   if (
+    Date.parse(timeEndSignup) > Date.now() &&
     Date.parse(timeEndSignup) < Date.parse(timeBegin) &&
     Date.parse(timeEndSignup) < Date.parse(timeEnd) &&
     Date.parse(timeBegin) < Date.parse(timeEnd)
