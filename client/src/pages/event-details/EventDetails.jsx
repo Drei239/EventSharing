@@ -16,12 +16,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { getEventById } from "../../features/events/eventSlice";
 import { isNullOrUndefined } from "../../utils/isNullOrUndefined";
 import parse from "html-react-parser";
-import { identifier } from "@babel/types";
+// import { identifier } from "@babel/types";
 import { newConnectEvent } from "../../features/action";
 
 const EventDetails = () => {
   const navigate = useNavigate();
-  const [commentsTabs, setCommentsTabs] = useState("comments");
+  // const [commentsTabs, setCommentsTabs] = useState("comments");
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
