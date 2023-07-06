@@ -41,3 +41,9 @@ export const sendCommentToUserConnect = (comment) => ({
   data: comment,
   emit: true,
 });
+export const replyCommentShowAll = (comment) => ({
+  type: "REPLY_COMMENT_SHOW_ALL",
+  event: "reply_comment_show_all",
+  data: comment,
+  emit: true,
+});

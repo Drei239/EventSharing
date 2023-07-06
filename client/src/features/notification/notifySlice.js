@@ -140,7 +140,7 @@ const notifySlice = createSlice({
       });
 
     builder.addCase(receiveNotify, (state, action) => {
-      state.notify = [...state.notify, action.payload];
+      state.notify = [action.payload, ...state.notify];
       state.countDocument = state.countDocument + 1;
       state.notifySocket = action.payload;
     });

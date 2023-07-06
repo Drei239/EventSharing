@@ -119,6 +119,23 @@ export const confirmEventCompeleted = createAsyncThunk(
     }
   }
 );
+export const createReview = createAsyncThunk(
+  "event/createReviewRating",
+  async ({ eventId, title, image, comment, rating }, { rejectWithValue }) => {
+    try {
+      const data = await eventService.createReview(
+        eventId,
+        title,
+        image,
+        comment,
+        rating
+      );
+      return data;
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 const initialState = {
   events: [],
   getEventById: null,
@@ -140,6 +157,7 @@ const initialState = {
   isError: false,
   isSuccess: false,
   isSuccessRemove: false,
+  isSuccessRating: false,
   message: "",
 };
 export const handleChangeEvents = createAction(
@@ -309,6 +327,23 @@ const eventSlice = createSlice({
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload?.message;
+      });
+    builder
+      .addCase(createReview.pending, (state, action) => {
+        state.isLoading = true;
+        state.isError = false;
+        state.isSuccessRating = false;
+      })
+      .addCase(createReview.fulfilled, (state, action) => {
+        const data = action.payload.data;
+        state.isLoading = false;
+        state.isSuccessRating = true;
+        state.getEventById = data;
+      })
+      .addCase(createReview.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isError = true;
+        state.message = action.payload.message;
       });
     builder.addCase(handleChangeEvents, (state, action) => {
       state.filter = { ...state.filter, ...action.payload };

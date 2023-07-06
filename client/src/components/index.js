@@ -11,3 +11,4 @@ export { default as EmptyEvent } from "./emptyEvent/emptyEvent";
 export { default as LoggedInOnly } from "./hoc/loggedInOnly";
 export { default as NotLoggedInOnly } from "./hoc/notLoggedInOnly";
 export { default as Notify } from "./notify/notify";
+export { default as Rating } from "./rating/rating";

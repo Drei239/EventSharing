@@ -102,12 +102,17 @@ const updateReplyComment = asyncHandler(async (req, res) => {
     const updateReply = await commentService.updateReplyComment(
       requestUserId,
       requestCommentId,
-      replyId, title, comment
+      replyId,
+      title,
+      comment
     );
-    return res
-      .status(200)
-      .json({ status: 200, data: updateReply, message: resMes.commentSucc.SUC_3 });
+    return res.status(200).json({
+      status: 200,
+      data: updateReply,
+      message: resMes.commentSucc.SUC_3,
+    });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
@@ -137,9 +142,7 @@ const likeComment = asyncHandler(async (req, res) => {
   const { replyId } = req.body;
   try {
     await commentService.likeComment(requestUserId, requestCommentId, replyId);
-    return res
-      .status(200)
-      .json({ status: 200, message: "SUCCESS" });
+    return res.status(200).json({ status: 200, message: "SUCCESS" });
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
@@ -153,5 +156,5 @@ module.exports = {
   replyCommentById,
   updateReplyComment,
   deleteReplyComment,
-  likeComment
+  likeComment,
 };

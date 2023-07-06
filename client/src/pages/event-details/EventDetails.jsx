@@ -18,10 +18,10 @@ import { isNullOrUndefined } from "../../utils/isNullOrUndefined";
 import parse from "html-react-parser";
 // import { identifier } from "@babel/types";
 import { newConnectEvent } from "../../features/action";
-
+import { Rating } from "../../components";
 const EventDetails = () => {
   const navigate = useNavigate();
-  // const [commentsTabs, setCommentsTabs] = useState("comments");
+  const [commentsTabs, setCommentsTabs] = useState("comments");
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
@@ -32,7 +32,6 @@ const EventDetails = () => {
   useEffect(() => {
     dispatch(getEventById(id));
   }, [id]);
-
   useEffect(() => {
     if (id) {
       dispatch(newConnectEvent(id));
@@ -220,7 +219,22 @@ const EventDetails = () => {
           <Gallery loading="lazy" imageList={imageList} />
         </div>
         <div className="comment__container">
-          <Comments eventId={id} />
+          <Button.Group>
+            <Button
+              className="comments__btn"
+              onPress={() => setCommentsTabs("comments")}
+            >
+              Bình luận
+            </Button>
+            <Button
+              className="comments__btn"
+              onPress={() => setCommentsTabs("discussion")}
+              disabled={eventDetail.status !== "Completed" ? true : false}
+            >
+              Đánh giá
+            </Button>
+          </Button.Group>
+          {commentsTabs === "comments" ? <Comments eventId={id} /> : <Rating />}
         </div>
       </div>
     </div>

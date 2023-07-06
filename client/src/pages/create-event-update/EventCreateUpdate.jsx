@@ -77,9 +77,6 @@ const EventCreateUpdate = () => {
     }
   }, [searchParams]);
   useEffect(() => {
-    console.log(event);
-  }, [event]);
-  useEffect(() => {
     let tiny;
 
     if (event?._id) {

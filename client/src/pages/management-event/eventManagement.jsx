@@ -38,19 +38,19 @@ const eventTypeOption = [
   },
   {
     label: "Public",
-    value: "public",
+    value: "Public",
   },
   {
     label: "Đã Huỷ",
-    value: "canceled",
+    value: "Canceled",
   },
   {
     label: "Hoàn tất",
-    value: "completed",
+    value: "Completed",
   },
   {
     label: "Tất cả",
-    value: "all",
+    value: "",
   },
 ];
 
@@ -229,7 +229,7 @@ const EventManagement = () => {
                         {" "}
                         {(item.status === "Public" ||
                           item.status === "Canceled" ||
-                          item.status === "completed") && (
+                          item.status === "Completed") && (
                           <Link to={`/event/${item._id}`}>
                             <button className="management-events-list-item-btn-view">
                               <AiFillEye />
@@ -237,7 +237,7 @@ const EventManagement = () => {
                           </Link>
                         )}
                         {(item.status === "Public" ||
-                          item.status === "completed" ||
+                          item.status === "Completed" ||
                           item.status === "Canceled") && (
                           <button
                             className="management-events-list-item-btn-summary"
