@@ -63,7 +63,7 @@ const Card = ({
                   <div className="cardEvent-info1-category">
                     {category?.categoryName ||
                       categories.find((item) => item._id === category)
-                        .categoryName ||
+                        ?.categoryName ||
                       ""}
                   </div>
                 </div>

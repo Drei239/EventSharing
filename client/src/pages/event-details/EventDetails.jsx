@@ -173,7 +173,7 @@ const EventDetails = () => {
                   bordered="false"
                   onClick={() =>
                     navigate(
-                      `/event-create-update?type=update&id=${eventDetail._id}`
+                      `/event-create-update?type=update&id=${eventDetail?._id}`
                     )
                   }
                 >
@@ -183,7 +183,7 @@ const EventDetails = () => {
                 <div></div>
               )
             ) : isLogin &&
-              orders.find((item) => item.user._id === userInfo?._id) ? (
+              orders.find((item) => item.user?._id === userInfo?._id) ? (
               <span className="event-joined-text">
                 Bạn đã đăng kí sự kiện này.
               </span>
