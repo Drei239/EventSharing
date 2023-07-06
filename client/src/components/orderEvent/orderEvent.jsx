@@ -14,7 +14,7 @@ const OrderEvent = () => {
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { isLogin, userInfo } = useSelector((state) => state.user);
-
+  const { notifyOrder } = useSelector((state) => state.order);
   const handler = () => {
     if (isLogin) {
       setVisible(true);
@@ -24,7 +24,7 @@ const OrderEvent = () => {
   };
 
   const handleBuyTicket = () => {
-    dispatch(newCreateOrder(eventDetail?._id));
+    dispatch(newCreateOrder({ eventId: eventDetail?._id, userInfo }));
   };
 
   useEffect(() => {
@@ -38,13 +38,8 @@ const OrderEvent = () => {
       notify("đăng ký kiện thành công", "success");
       dispatch(
         sendNotifyNewOrder({
-          notifyTo: eventDetail.creator._id,
+          ...notifyOrder,
           notifyFrom: userInfo,
-          eventId: eventDetail._id,
-          notifyType: "new-order",
-          content: "đã đăng kí sự kiện của bạn",
-          isNew: true,
-          createdAt: new Date(),
         })
       );
     }

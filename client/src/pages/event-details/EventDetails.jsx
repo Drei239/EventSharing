@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import "./EventDetails.css";
+import { motion } from "framer-motion";
 import Comments from "../../components/comments/Comments";
 import EventModal from "../../components/eventModal/eventModal";
 import OrderEvent from "../../components/orderEvent/orderEvent";
@@ -21,6 +23,8 @@ import { newConnectEvent } from "../../features/action";
 import { Rating } from "../../components";
 const EventDetails = () => {
   const navigate = useNavigate();
+  const timeOutRef = useRef();
+  const [searchParams] = useSearchParams();
   const [commentsTabs, setCommentsTabs] = useState("comments");
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -39,6 +43,19 @@ const EventDetails = () => {
   useEffect(() => {
     console.log(orders);
   }, [orders]);
+  const handleGoToComment = (commentId) => {
+    const commentElement = document.getElementById(commentId);
+    if (commentElement) {
+      commentElement.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
+  useEffect(() => {
+    if (searchParams.get("commentId")) {
+      handleGoToComment(searchParams.get("commentId"));
+    }
+  }, [searchParams.get("commentId")]);
+
   const imageList = eventDetail?.imageList?.map((item) => item);
 
   isNullOrUndefined(eventDetail);
@@ -77,7 +94,7 @@ const EventDetails = () => {
   }
 
   return (
-    <div>
+    <motion.div layout>
       <img
         src={eventDetail?.banner || "no information"}
         alt=""
@@ -166,7 +183,7 @@ const EventDetails = () => {
                 <div></div>
               )
             ) : isLogin &&
-              orders.find((item) => item.user._id != userInfo?._id) ? (
+              orders.find((item) => item.user._id === userInfo?._id) ? (
               <span className="event-joined-text">
                 Bạn đã đăng kí sự kiện này.
               </span>
@@ -245,7 +262,7 @@ const EventDetails = () => {
           {commentsTabs === "comments" ? <Comments eventId={id} /> : <Rating />}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 export default EventDetails;

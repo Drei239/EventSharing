@@ -37,7 +37,15 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
     if (notifyItem.notifyType === "new-order") {
       navigate(`/my-event/${notifyItem?.eventId}`);
     } else if (notifyItem.notifyType === "new-comment") {
-      navigate(`/event/${notifyItem?.commentId?.event}`);
+      navigate(
+        `/event/${notifyItem?.commentId?.event}?commentId=${notifyItem.commentId._id}`
+      );
+    } else if (notifyItem.notifyType === "reply-comment") {
+      navigate(
+        `/event/${
+          notifyItem?.commentId?.event || notifyItem?.eventId
+        }?commentId=${notifyItem.commentId?._id || notifyItem.commentId}`
+      );
     }
   };
   const markReadAll = () => {
@@ -62,7 +70,6 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
     }
   }, [notify]);
 
-  useEffect(() => {}, [data]);
   return (
     <>
       {isOpenNotify && (
@@ -102,7 +109,6 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
             {data &&
               data.length > 0 &&
               data.map((item, index) => {
-                console.log(item.createdAt);
                 return (
                   <div key={item._id} onClick={() => handleClickEvent(item)}>
                     <NotifyItem

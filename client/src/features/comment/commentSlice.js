@@ -10,6 +10,7 @@ const initialState = {
   reply: null,
   replyContent: "",
   message: "",
+  notifyComment: null,
 };
 export const createComment = createAsyncThunk(
   "comment/createComment",
@@ -17,7 +18,10 @@ export const createComment = createAsyncThunk(
     try {
       const data = await commentService.createComment(eventId, title, comment);
 
-      return { ...data.data, creator: userInfo };
+      return {
+        comment: { ...data.data.newComment, creator: userInfo },
+        notify: data.data.notify,
+      };
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -140,7 +144,9 @@ const commentSlice = createSlice({
       .addCase(createComment.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccessCreate = true;
-        state.comments = [action.payload, ...state.comments];
+        state.comments = [action.payload.comment, ...state.comments];
+        console.log(action.payload.notify);
+        state.notifyComment = action.payload.notify;
       })
       .addCase(createComment.rejected, (state, action) => {
         state.isLoading = false;
@@ -216,10 +222,11 @@ const commentSlice = createSlice({
         state.isSuccessReply = true;
 
         const commentUpdateIndex = state.comments.findIndex(
-          (item) => item._id === data._id
+          (item) => item._id === data.comment._id
         );
-        state.comments[commentUpdateIndex] = data;
-        state.reply = data;
+        state.comments[commentUpdateIndex] = data.comment;
+        state.reply = data.comment;
+        state.notifyComment = data.notify;
         state.replyContent = action.payload.replyContent;
       })
       .addCase(replyComment.rejected, (state, action) => {

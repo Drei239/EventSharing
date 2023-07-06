@@ -10,7 +10,7 @@ import { AiFillCaretDown } from "react-icons/ai";
 import { IoIosNotificationsOutline } from "react-icons/io";
 import { newConnetion } from "../../features/action";
 import { Notify } from "..";
-import { notificationToast } from "../notify/notificationToast/notificationToast";
+import NotificationToast from "../notify/notificationToast/notificationToast";
 import { confirmNewNotify } from "../../features/notification/notifySlice";
 const Header = () => {
   const navigate = useNavigate();
@@ -38,7 +38,7 @@ const Header = () => {
   }, []);
   useEffect(() => {
     if (notifySocket) {
-      notificationToast(notifySocket);
+      NotificationToast(notifySocket);
     }
   }, [notifySocket]);
   useEffect(() => {

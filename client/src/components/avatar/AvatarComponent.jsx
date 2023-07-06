@@ -18,7 +18,7 @@ const AvatarComponent = ({ avatar, email, name }) => {
       }
 
       if (isOpen.flag === 2) {
-        if (!menuRef.current.contains(e.target)) {
+        if (!menuRef.current?.contains(e.target)) {
           setIsOpen({ flag: 0, is: false });
         }
       }

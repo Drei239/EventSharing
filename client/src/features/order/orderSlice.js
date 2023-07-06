@@ -3,6 +3,7 @@ import { sendNotifyNewOrder } from "../action";
 import orderService from "./orderService";
 const initialState = {
   orders: [],
+  notifyOrder: null,
   open: false,
   typeSend: "",
   isLoading: false,
@@ -16,10 +17,10 @@ const initialState = {
 };
 export const newCreateOrder = createAsyncThunk(
   "order/createOrder",
-  async (eventId, { rejectWithValue }) => {
+  async ({ eventId, userInfo }, { rejectWithValue }) => {
     try {
       const order = await orderService.createNewOrder(eventId);
-      return order;
+      return { data: order?.data, creator: userInfo };
     } catch (err) {
       return rejectWithValue(err);
     }
@@ -201,7 +202,13 @@ const orderSlice = createSlice({
         state.isError = false;
       })
       .addCase(newCreateOrder.fulfilled, (state, action) => {
+        const data = action.payload.data;
         state.isLoading = false;
+        state.notifyOrder = action.payload.data.notify;
+        state.orders = [
+          { ...data.newOrder, user: action.payload.creator },
+          ...state.orders,
+        ];
         state.isSuccessCreate = true;
       })
       .addCase(newCreateOrder.rejected, (state, action) => {

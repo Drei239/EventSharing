@@ -89,6 +89,7 @@ const replyCommentById = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: reply, message: resMes.commentSucc.SUC_1 });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
