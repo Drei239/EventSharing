@@ -1,15 +1,15 @@
-const asyncHandler = require("express-async-handler");
-const eventModel = require("../models/eventModel");
-const eventValidators = require("../validators/eventValidators");
-const { eventError, eventSucc } = require("../validators/responsiveMessages");
-const orderModel = require("../models/orderModel");
-const sendEmail = require("../utils/sendEmail");
-const dayjs = require("dayjs");
-const ejs = require("ejs");
-const fs = require("fs");
+const asyncHandler = require('express-async-handler');
+const eventModel = require('../models/eventModel');
+const eventValidators = require('../validators/eventValidators');
+const { eventError, eventSucc } = require('../validators/responsiveMessages');
+const orderModel = require('../models/orderModel');
+const sendEmail = require('../utils/sendEmail');
+const dayjs = require('dayjs');
+const ejs = require('ejs');
+const fs = require('fs');
 
 //1.CREATE NEW EVENT
-const emailTemplate = fs.readFileSync("./views/index.ejs", "utf-8");
+const emailTemplate = fs.readFileSync('./views/index.ejs', 'utf-8');
 
 const createNewEvent = asyncHandler(
   async (
@@ -27,12 +27,11 @@ const createNewEvent = asyncHandler(
     timeEnd,
     creator,
     limitUser,
-    reviews,
-    status
+    reviews
   ) => {
     const existEvent = await eventModel
       .findOne({ title: title })
-      .collation({ locale: "en", strength: 2 });
+      .collation({ locale: 'en', strength: 2 });
     if (!existEvent) {
       if (
         eventValidators.inputTimeValidation(timeEndSignup, timeBegin, timeEnd)
@@ -53,7 +52,6 @@ const createNewEvent = asyncHandler(
           creator,
           limitUser,
           reviews,
-          status,
         });
         if (newEvent) {
           return newEvent;
@@ -75,9 +73,9 @@ const createNewEvent = asyncHandler(
 //EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
 const getPublicEvents = asyncHandler(async (req, res) => {
   const events = await eventModel
-    .find({ status: "Public" })
-    .populate("category")
-    .populate("creator");
+    .find({ status: 'Public' })
+    .populate('category')
+    .populate('creator');
   if (events && events.length > 0) {
     return events;
   } else {
@@ -88,7 +86,7 @@ const getPublicEvents = asyncHandler(async (req, res) => {
 const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
   let queryObj2 = queryObj;
 
-  const excludeField = ["page", "sort", "limit", "keyword"];
+  const excludeField = ['page', 'sort', 'limit', 'keyword'];
   // loc tu khoa
   excludeField.forEach((el) => delete queryObj2[el]);
   let queryStr = JSON.stringify(queryObj2);
@@ -96,38 +94,38 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
 
   queryStr = queryStr.replace(/\b(gt|gte|lte|lt)\b/g, (match) => `$${match}`);
   queryStr = JSON.parse(queryStr);
-  if (queryStr.isOnline == "true" || queryStr.isOnline == "false") {
-    queryStr.isOnline = queryStr.isOnline === "true";
+  if (queryStr.isOnline == 'true' || queryStr.isOnline == 'false') {
+    queryStr.isOnline = queryStr.isOnline === 'true';
   }
   let query;
   console.log(queryStr);
-  if (queryKey.keyword !== "" && queryKey.keyword) {
+  if (queryKey.keyword !== '' && queryKey.keyword) {
     const queryObj = await Object.assign(
       {
         $or: [
-          { title: { $regex: queryKey.keyword, $options: "i" } },
-          { "location.province": { $regex: queryKey.keyword, $options: "i" } },
+          { title: { $regex: queryKey.keyword, $options: 'i' } },
+          { 'location.province': { $regex: queryKey.keyword, $options: 'i' } },
         ],
       },
-      { status: "Public" },
+      { status: 'Public' },
       queryStr
     );
     query = eventModel.find(queryObj);
   } else {
-    query = eventModel.find(Object.assign({ status: "Public" }, queryStr));
+    query = eventModel.find(Object.assign({ status: 'Public' }, queryStr));
   }
   if (queryKey.sort) {
-    const sortBy = queryKey.sort.split(",").join(" ");
+    const sortBy = queryKey.sort.split(',').join(' ');
     query = query.sort(sortBy);
   } else {
-    query = query.sort("-createdAt");
+    query = query.sort('-createdAt');
   }
   const countryQuery = query.model.countDocuments(query.getFilter());
   const totalCount = await countryQuery.exec();
   const limit = queryKey.limit || 10;
   const page = queryKey.page || 1;
   const skip = (Number(page) - 1) * limit;
-  query = query.skip(skip).limit(limit).populate("creator category").exec();
+  query = query.skip(skip).limit(limit).populate('creator category').exec();
 
   // const eventCount=await eventModel.countDocuments();
 
@@ -164,7 +162,7 @@ const updateDraftEventInfo = asyncHandler(
     const updateEvent = await eventModel.findOne({ _id: requestEventId });
     if (updateEvent) {
       if (updateEvent.creator.toString() === requestUserId.toString()) {
-        if (updateEvent.status === "draft") {
+        if (updateEvent.status === 'draft') {
           updateEvent.title = title || updateEvent.title;
           updateEvent.description = description || updateEvent.description;
           updateEvent.banner = banner || updateEvent.banner;
@@ -184,7 +182,7 @@ const updateDraftEventInfo = asyncHandler(
             .findOne({
               title: updateEvent.title,
             })
-            .collation({ locale: "en", strength: 2 });
+            .collation({ locale: 'en', strength: 2 });
           if (
             eventValidators.inputTitleValidation(existEvent, requestEventId)
           ) {
@@ -218,14 +216,14 @@ const updateDraftEventInfo = asyncHandler(
 const attendedEvent = async (id) => {
   const event = await orderModel
     .find({ user: id, isJoined: true })
-    .populate("event user");
+    .populate('event user');
   return event;
 };
 
 const registeredEvent = async (id) => {
   const event = await orderModel
     .find({ user: id.toString(), isPaid: true, isJoined: false })
-    .populate("event user");
+    .populate('event user');
   return event;
 };
 
@@ -235,9 +233,9 @@ const getAllEventOfUser = async (id, query) => {
   if (keyword) {
     let findObject = {
       creator: id,
-      title: { $regex: keyword, $options: "i" },
+      title: { $regex: keyword, $options: 'i' },
     };
-    if (status || status !== "") {
+    if (status || status !== '') {
       findObject = Object.assign(findObject, { status: status });
     }
     const event = await eventModel.find(findObject).limit(limit).skip(skip);
@@ -247,7 +245,7 @@ const getAllEventOfUser = async (id, query) => {
     return { event, countDocument };
   }
   let findObject = { creator: id };
-  if (status || status !== "") {
+  if (status || status !== '') {
     findObject = Object.assign(findObject, { status: status });
   }
 
@@ -266,7 +264,7 @@ const createNewReview = asyncHandler(
     });
     const reviewdEvent = await eventModel.findOne({
       _id: requestEventId,
-      "reviews.user": requestUserId,
+      'reviews.user': requestUserId,
     });
     //KIỂM TRA ĐÃ ĐĂNG KÝ SỰ KIỆN VÀ ĐÃ THAM GIA
     if (orderedEvent && orderedEvent.isJoined === true) {
@@ -308,7 +306,7 @@ const removeEventDraft = async (eventId, userId) => {
   if (requestEvent.creator != userId.toString()) {
     throw Error(eventError.ERR_8);
   }
-  if (requestEvent.status !== "draft") {
+  if (requestEvent.status !== 'draft') {
     throw Error(eventError.ERR_9);
   }
   await eventModel.findOneAndDelete({ _id: eventId, creator: userId });
@@ -323,10 +321,10 @@ const cancelEvent = async (eventId, userId) => {
   if (requestEvent.creator != userId.toString()) {
     throw Error(eventError.ERR_8);
   }
-  if (requestEvent.status !== "Public") {
+  if (requestEvent.status !== 'Public') {
     throw Error(eventError.ERR_10);
   }
-  requestEvent.status = "Canceled";
+  requestEvent.status = 'Canceled';
   await requestEvent.save();
   const findOrderByEvent = await orderModel.find({ event: eventId });
   if (findOrderByEvent) {
@@ -336,12 +334,12 @@ const cancelEvent = async (eventId, userId) => {
           title: order.event.title,
           img: order.event.banner,
           time: `${dayjs(order.event.timeBegin).format(
-            "ddd,DD MM YYYY hh:mm "
-          )}-${dayjs(order.event.timeEnd).format("ddd,DD MM YYYY hh:mm ")}`,
+            'ddd,DD MM YYYY hh:mm '
+          )}-${dayjs(order.event.timeEnd).format('ddd,DD MM YYYY hh:mm ')}`,
           location: `${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name} ${order.event.location.province.name}`,
-          content: "Đơn hàng của bạn sẽ được hoàn tiền",
+          content: 'Đơn hàng của bạn sẽ được hoàn tiền',
           isOnline: order.event.isOnline,
-          linkOnline: "da",
+          linkOnline: 'da',
         });
         await sendEmail({
           to: order.user.email,
@@ -364,12 +362,12 @@ const confirmEventCompleted = async (eventId, userId) => {
     throw Error(eventError.ERR_8);
   }
   if (
-    requestEvent.status != "Public" ||
+    requestEvent.status != 'Public' ||
     Date.parse(requestEvent.timeBegin) >= Date.now()
   ) {
     throw Error(eventError.ERR_10);
   }
-  requestEvent.status = "Completed";
+  requestEvent.status = 'Completed';
   await requestEvent.save();
 };
 const changeStatusPublic = asyncHandler(
@@ -408,7 +406,7 @@ const changeStatusPublic = asyncHandler(
       creator,
       limitUser,
       reviews,
-      status: "Public",
+      status: 'Public',
     });
     if (newEvent) {
       return newEvent;
