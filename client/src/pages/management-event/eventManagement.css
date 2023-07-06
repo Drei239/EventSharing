@@ -240,3 +240,27 @@
   justify-content: center;
   margin-top: 20px;
 }
+.management-events-list-item-status {
+  font-size: 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.management-events-list-item-status span {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+}
+.blue {
+  background-color: #0059b3;
+}
+.red {
+  background-color: red;
+}
+.green {
+  background-color: #00b300;
+}
+.gray {
+  background-color: grey;
+}

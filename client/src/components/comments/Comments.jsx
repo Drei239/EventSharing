@@ -99,7 +99,6 @@ const Comments = ({ currentUserId, eventId }) => {
   }, [isSuccessCreate]);
   useEffect(() => {
     if (isSuccessReply) {
-      console.log(reply);
       dispatch(
         sendNotifyReplyComment({
           ...notifyComment,

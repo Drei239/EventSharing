@@ -255,13 +255,26 @@ const EventManagement = () => {
                         {item.fee > 0 ? `${item.fee} đ` : "free"}
                       </div>
                       <div className="management-events-list-item-status">
-                        {item.status === "draft"
-                          ? "Nháp"
-                          : item.status === "Public"
-                          ? "Công khai"
-                          : item.status === "Canceled"
-                          ? "Đã huỷ"
-                          : "Đã hoàn thành"}
+                        <span
+                          className={`${
+                            item.status === "draft"
+                              ? "grey"
+                              : item.status === "Public"
+                              ? "blue"
+                              : item.status === "Canceled"
+                              ? "red"
+                              : "green"
+                          }`}
+                        ></span>
+                        <div>
+                          {item.status === "draft"
+                            ? "Nháp"
+                            : item.status === "Public"
+                            ? "Công khai"
+                            : item.status === "Canceled"
+                            ? "Đã huỷ"
+                            : "Đã hoàn thành"}
+                        </div>
                       </div>
                       <div className="management-events-list-item-tool">
                         {" "}
