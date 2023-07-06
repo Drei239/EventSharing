@@ -18,6 +18,7 @@ const {
   cancelEvent,
   removeEventDraft,
   confirmEventCompleted,
+  changeStatusPublic,
 } = require("../controllers/eventController");
 const { protect, verifyUser } = require("../middleware/authMiddleware");
 
@@ -67,5 +68,7 @@ router.delete("/remove/:id", protect, removeEventDraft);
 //
 router.put("/cancel/:id", protect, cancelEvent);
 //
-router.put("/confirm-completed", protect, confirmEventCompleted);
+router.put("/confirm-completed/:id", protect, confirmEventCompleted);
+
+router.put("/change-public/:id", protect, changeStatusPublic);
 module.exports = router;

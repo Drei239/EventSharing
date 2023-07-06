@@ -9,55 +9,76 @@ import {
   createComment,
   updateComment,
   deleteComment,
+  replyComment,
+  updateReplyComment,
+  deleteReplyComment,
 } from "../../features/comment/commentSlice";
 import {
   sendCommentToUserConnect,
   sendNotifyNewComment,
+  sendNotifyReplyComment,
+  replyCommentShowAll,
 } from "../../features/action";
 
 const Comments = ({ currentUserId, eventId }) => {
-  const [backendComments, setBackendComments] = useState([]);
   const [activeComment, setActiveComment] = useState(null);
   const dispatch = useDispatch();
-  const { comments, isSuccessCreate } = useSelector((state) => state.comment);
+  const { comments, isSuccessCreate, isSuccessReply, reply, replyContent } =
+    useSelector((state) => state.comment);
   const { getEventById } = useSelector((state) => state.event);
   const { userInfo } = useSelector((state) => state.user);
-  const getReplies = (commentId) =>
-    backendComments
-      .filter((backendComment) => backendComment.parentId === commentId)
-      .sort(
-        (a, b) =>
-          new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+
+  const addComment = (text, id) => {
+    if (id) {
+      dispatch(
+        replyComment({
+          id: id,
+          title: "reply comment",
+          comment: text,
+        })
       );
-
-  const addComment = (text) => {
-    console.log("a");
-    dispatch(
-      createComment({
-        eventId,
-        title: "comment-event",
-        comment: text,
-        userInfo,
-      })
-    );
+    } else {
+      dispatch(
+        createComment({
+          eventId,
+          title: "comment-event",
+          comment: text,
+          userInfo,
+        })
+      );
+    }
   };
 
-  const updateComments = (text, id) => {
-    console.log(text, id);
-    dispatch(
-      updateComment({ id, title: "comment-event", comment: text, userInfo })
-    );
+  const updateComments = ({ comment, parentId, commentId }) => {
+    if (!parentId) {
+      dispatch(
+        updateComment({ commentId, title: "comment-event", comment: comment })
+      );
+    } else {
+      dispatch(
+        updateReplyComment({
+          commentId: parentId,
+          replyId: commentId,
+          title: "reply-comment",
+          comment,
+          userInfo,
+        })
+      );
+    }
   };
 
-  // const deleteComment = (commentId) => {
-  // 	dispatch(
-  // 		deleteComment({})
-  // 	)
-  // };
+  const deleteComments = ({ commentId, parentId }) => {
+    if (!parentId) {
+      dispatch(deleteComment({ id: commentId }));
+    } else {
+      dispatch(deleteReplyComment({ commentId: parentId, replyId: commentId }));
+    }
+  };
 
   useEffect(() => {
     dispatch(getCommentByEventId(eventId));
   }, []);
+
   useEffect(() => {
     if (isSuccessCreate) {
       dispatch(
@@ -74,21 +95,42 @@ const Comments = ({ currentUserId, eventId }) => {
       dispatch(sendCommentToUserConnect(comments[0]));
     }
   }, [isSuccessCreate]);
+  useEffect(() => {
+    if (isSuccessReply) {
+      console.log(reply);
+      dispatch(
+        sendNotifyReplyComment({
+          notifyTo: reply?.creator?._id,
+          notifyFrom: userInfo,
+          notifyType: "reply-comment",
+          commentId: reply?._id,
+          replyContent: replyContent,
+          content: "đã phản hồi bình luận của bạn",
+          isNew: true,
+          createdAt: new Date(),
+        })
+      );
+      dispatch(replyCommentShowAll(reply));
+    }
+  }, [isSuccessReply]);
+  useEffect(() => {
+    console.log(comments);
+  }, [comments]);
   return (
     <div className="comments">
       <h4 className="comments-title">Comments</h4>
       <CommentForm submitLabel="Submit" handleSubmit={addComment} />
       <div className="comments-container">
-        {comments.map((rootComment) => (
+        {comments.map((rootComment, root) => (
           <Comment
-            key={rootComment.id}
+            key={root}
             comment={rootComment}
-            replies={getReplies(rootComment.id)}
             activeComment={activeComment}
             setActiveComment={setActiveComment}
             addComment={addComment}
-            deleteComment={deleteComment}
+            deleteComment={deleteComments}
             updateComment={updateComments}
+            replyComment={addComment}
             currentUserId={currentUserId}
           />
         ))}

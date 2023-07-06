@@ -26,7 +26,6 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
   const [notifyType, setNotifyType] = useState("all");
   useEffect(() => {
     if (isLogin) {
-      console.log(page);
       dispatch(getAllNotify({ page, notifyTypeRead: notifyType }));
     }
   }, [isLogin, page, notifyType]);
@@ -51,7 +50,6 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
       scrollRef.current.scrollHeight - scrollRef.current.scrollTop <=
       scrollRef.current.clientHeight + 20
     ) {
-      console.log("a");
       setPage(page + 1);
     }
   };
@@ -64,9 +62,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
     }
   }, [notify]);
 
-  useEffect(() => {
-    console.log(data);
-  }, [data]);
+  useEffect(() => {}, [data]);
   return (
     <>
       {isOpenNotify && (
@@ -117,6 +113,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
                       notifyType={item?.notifyType}
                       isReadMessage={item?.isReadMessage}
                       time={item?.createdAt}
+                      replyContent={item?.replyContent}
                     />
                   </div>
                 );

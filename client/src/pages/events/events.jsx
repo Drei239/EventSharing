@@ -23,11 +23,7 @@ const Events = () => {
     setCurrentPage(newPage);
   };
   useEffect(() => {
-    if (
-      request ||
-      searchParams.get("search") ||
-      (!searchParams.get("search") && filter.category === "")
-    ) {
+    if (request || searchParams.get("search")) {
       dispatch(
         getEvent(
           `${filter.category !== "" ? `category=${filter.category}` : ""}${

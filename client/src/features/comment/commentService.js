@@ -25,7 +25,7 @@ const updateComment = async (id, title, comment) => {
 };
 const replyComment = async (id, title, comment) => {
   const res = await UseCallApi({
-    url: `/comments/update/${id}/reply`,
+    url: `/comments/update/${id}/createReply`,
     data: { title, comment },
     method: "PUT",
   });
@@ -38,12 +38,38 @@ const deleteComment = async (id) => {
   });
   return res;
 };
-
+const likeOrUnLikeComment = async (commentId, replyId) => {
+  const res = await UseCallApi({
+    url: `/comments/update/${commentId}/like`,
+    method: "PUT",
+    data: { replyId },
+  });
+  return res;
+};
+const deleteReplyComment = async (commentId, replyId) => {
+  const res = await UseCallApi({
+    url: `/comments/update/${commentId}/deleteReply`,
+    method: "DELETE",
+    data: { replyId },
+  });
+  return res;
+};
+const updateReplyComment = async (commentId, replyId, title, comment) => {
+  const res = await UseCallApi({
+    url: `comments/update/${commentId}/updateReply`,
+    method: "PUT",
+    data: { replyId, title, comment },
+  });
+  return res;
+};
 const commentService = {
   createComment,
   getCommentByEventId,
   updateComment,
   replyComment,
   deleteComment,
+  updateReplyComment,
+  deleteReplyComment,
+  likeOrUnLikeComment,
 };
 export default commentService;

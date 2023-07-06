@@ -191,10 +191,10 @@ const MyEvent = () => {
               <div className="my-event-header-address">
                 <span>Địa chỉ: </span>
                 <p className="my-event-header-address">
-                  {orders[0]?.event.location.address}{" "}
-                  {orders[0]?.event.location.ward.name}{" "}
-                  {orders[0]?.event.location.district.name}{" "}
-                  {orders[0]?.event.location.province.name}
+                  {orders[0]?.event.location?.address}{" "}
+                  {orders[0]?.event.location.ward?.name}{" "}
+                  {orders[0]?.event.location.district?.name}{" "}
+                  {orders[0]?.event.location.province?.name}
                 </p>
               </div>
               <div className="my-event-header-info-sold">
@@ -217,45 +217,44 @@ const MyEvent = () => {
             <div className="my-event-header-status-sale">
               <span
                 className={`${
-                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
-                  new Date().getTime()
+                  Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
                     ? "my-event-header-status-sale-on"
                     : "my-event-header-status-sale-end"
                 } `}
               ></span>
               <span
                 className={` ${
-                  new Date(orders[0]?.event?.timeEndSignup).getTime() <
-                  new Date().getTime()
+                  Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
                     ? "my-event-header-status-sale-on-text"
                     : "my-event-header-status-sale-end-text"
                 }`}
               >
-                {new Date(orders[0]?.event?.timeEndSignup).getTime() <
-                new Date().getTime()
+                {Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
                   ? "Đang bán"
                   : "Ngừng bán"}
               </span>
             </div>
             {orders &&
             orders.length > 0 &&
-            orders[0]?.event?.status === "Public" &&
-            new Date(orders[0]?.event.timeEnd).getTime() >
-              new Date().getTime() ? (
-              <button
-                className="my-event-header-btn-cancel"
-                onClick={OpenModalCancelEvent}
-              >
-                Huỷ sự kiện này
-              </button>
+            orders[0]?.event?.status === "Public" ? (
+              Date.parse(orders[0]?.event.timeBegin) > Date.now() ? (
+                <button
+                  className="my-event-header-btn-cancel"
+                  onClick={OpenModalCancelEvent}
+                >
+                  Huỷ sự kiện này
+                </button>
+              ) : (
+                <button
+                  color="primary"
+                  onClick={handleConfirmCompletedEvent}
+                  className="my-event-header-btn-confirm"
+                >
+                  Xác nhận sự kiện đã hoàn thành
+                </button>
+              )
             ) : (
-              <button
-                color="primary"
-                onClick={handleConfirmCompletedEvent}
-                className="my-event-header-btn-confirm"
-              >
-                Xác nhận sự kiện đã hoàn thành
-              </button>
+              ""
             )}
           </div>
           <div className="my-event-filter">

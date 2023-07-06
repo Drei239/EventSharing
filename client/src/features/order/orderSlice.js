@@ -197,7 +197,7 @@ const orderSlice = createSlice({
       .addCase(newCreateOrder.pending, (state) => {
         state.isLoading = true;
         state.isSuccessCreate = false;
-        state.isErrorEmail = false;
+        state.isError = false;
       })
       .addCase(newCreateOrder.fulfilled, (state, action) => {
         state.isLoading = false;

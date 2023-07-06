@@ -155,7 +155,8 @@ const updateDraftEventInfo = asyncHandler(
     timeEndSignup,
     timeBegin,
     timeEnd,
-    limitUser
+    limitUser,
+    status
   ) => {
     const updateEvent = await eventModel.findOne({ _id: requestEventId });
     if (updateEvent) {
@@ -221,66 +222,23 @@ const registeredEvent = async (id) => {
 };
 
 const getAllEventOfUser = async (id, status, keyword) => {
-  switch (status) {
-    case "public": {
-      if (keyword) {
-        return await eventModel.find({
-          creator: id,
-          status: "Public",
-          title: { $regex: keyword, $options: "i" },
-        });
-      }
+  if (keyword) {
+    let findObject = {
+      creator: id,
 
-      return await eventModel.find({ creator: id, status: "Public" });
+      title: { $regex: keyword, $options: "i" },
+    };
+    if (status || status !== "") {
+      findObject = Object.assign(findObject, { status: status });
     }
-    case "draft": {
-      if (keyword) {
-        return await eventModel.find({
-          creator: id,
-          status: "draft",
-          title: { $regex: keyword, $options: "i" },
-        });
-      }
-      return await eventModel.find({ creator: id, status: "draft" });
-    }
-    case "completed": {
-      if (keyword) {
-        return await eventModel.find({
-          creator: id,
-          timeEnd: { $lte: new Date() },
-          title: { $regex: keyword, $options: "i" },
-        });
-      }
-      return await eventModel.find({
-        creator: id,
-        timeEnd: { $lte: new Date() },
-      });
-    }
-    case "canceled": {
-      if (keyword) {
-        return await eventModel.find({
-          creator: id,
-          status: "Canceled",
-          title: { $regex: keyword, $options: "i" },
-        });
-      }
-
-      return await eventModel.find({ creator: id, status: "Canceled" });
-    }
-    default:
-      if (keyword) {
-        return await eventModel.find({
-          creator: id,
-          title: { $regex: keyword, $options: "i" },
-        });
-      }
-
-      return await eventModel.find({ creator: id, status: "Canceled" });
+    return await eventModel.find(findObject);
   }
-
-  return await eventModel.find({ creator: id });
+  let findObject = { creator: id };
+  if (status || status !== "") {
+    findObject = Object.assign(findObject, { status: status });
+  }
+  return await eventModel.find(findObject);
 };
-
 //9.CREATE NEW REVIEW FOR EVENT & UPDATE TOTAL RATING
 const createNewReview = asyncHandler(
   async (requestUserId, requestEventId, title, image, comment, rating) => {
@@ -388,15 +346,59 @@ const confirmEventCompleted = async (eventId, userId) => {
     throw Error(eventError.ERR_8);
   }
   if (
-    requestEvent.status !== "Public" ||
-    new Date(requestEvent.timeEnd).getTime() <= new Date().getTime()
+    requestEvent.status != "Public" ||
+    Date.parse(requestEvent.timeBegin) >= Date.now()
   ) {
     throw Error(eventError.ERR_10);
   }
-  requestEvent.status = "Canceled";
+  requestEvent.status = "Completed";
   await requestEvent.save();
 };
-
+const changeStatusPublic = asyncHandler(
+  async (
+    eventId,
+    title,
+    description,
+    banner,
+    imageList,
+    category,
+    isOnline,
+    linkOnline,
+    fee,
+    location,
+    timeEndSignup,
+    timeBegin,
+    timeEnd,
+    creator,
+    limitUser,
+    reviews,
+    status
+  ) => {
+    const newEvent = await eventModel.findByIdAndUpdate(eventId, {
+      title,
+      description,
+      banner,
+      imageList,
+      category,
+      isOnline,
+      linkOnline,
+      fee,
+      location,
+      timeEndSignup,
+      timeBegin,
+      timeEnd,
+      creator,
+      limitUser,
+      reviews,
+      status: "Public",
+    });
+    if (newEvent) {
+      return newEvent;
+    } else {
+      throw Error(eventError.ERR_1);
+    }
+  }
+);
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -409,4 +411,5 @@ module.exports = {
   cancelEvent,
   removeEventDraft,
   confirmEventCompleted,
+  changeStatusPublic,
 };

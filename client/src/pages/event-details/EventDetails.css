@@ -40,6 +40,7 @@ h3 {
 	align-items: center;
 	flex-direction: column;
 	gap: 15px;
+	transition: all, ease-in-out, 0.1s
 }
 
 .organizers {
@@ -48,9 +49,9 @@ h3 {
 	margin-left: 60px;
 }
 
-.organizers:hover {
+.organizers__container:hover {
 	color: #00abe1;
-	transition: all, ease-in-out, 0.1s;
+	;
 }
 
 .organizers__image {
@@ -105,8 +106,12 @@ h3 {
 	gap: 5px;
 }
 
-.btn__share {
+.btn__share, .share {
 	width: 100px;
+	display: flex;
+	align-items: center;
+	text-align: center;
+	justify-content: center;
 }
 
 .event__price,
@@ -115,15 +120,9 @@ h3 {
 	margin: 10px;
 }
 
-.draft {
+.draft, .Public, .Canceled {
 	color: red;
-	font-size: 30px;
-}
-.Public {
-	color: red;
-}
-.Canceled {
-	color: red;
+	font-size: 20px;
 }
 
 .change__status {
@@ -138,11 +137,9 @@ h3 {
 	color: red !important;
 }
 
-.members__list {
-	background: none;
-	border: none;
-	cursor: pointer;
-	margin-left: 5px;
+.num__members {
+	font-weight: bold;
+	font-size: 20px;
 }
 
 .event__title {

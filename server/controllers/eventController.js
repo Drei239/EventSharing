@@ -157,7 +157,8 @@ const getEventById = asyncHandler(async (req, res) => {
   const event = await eventModel
     .findById(req.params.id)
     .populate("category")
-    .populate("creator", "_id name avatar totalRating");
+    .populate("creator", "_id name avatar totalRating")
+    .populate("reviews.user", "name avatar");
 
   if (event) {
     res.status(200).json(event);
@@ -201,6 +202,7 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     timeBegin,
     timeEnd,
     limitUser,
+    status,
   } = req.body;
   console.log(description);
   try {
@@ -219,7 +221,8 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
       timeEndSignup,
       timeBegin,
       timeEnd,
-      limitUser
+      limitUser,
+      status
     );
     res
       .status(200)
@@ -354,9 +357,64 @@ const confirmEventCompleted = asyncHandler(async (req, res, next) => {
     await eventService.confirmEventCompleted(eventId, userId);
     res.status(200).json({ status: 200, message: eventSucc.SUC_7 });
   } catch (err) {
+    console.log(err);
     next(err);
   }
 });
+const changeStatusPublic = asyncHandler(async (req, res, next) => {
+  const {
+    title,
+    description,
+    banner,
+    imageList,
+    category,
+    isOnline,
+    fee,
+    location,
+    linkOnline,
+    timeEndSignup,
+    timeBegin,
+    timeEnd,
+    limitUser,
+    reviews,
+    status,
+  } = req.body;
+  const eventId = req.params.id;
+  console.log(req.body);
+  // Sau khi gán userInfo = req.user
+  // const creator = req.user._id;
+  // loại bỏ giá trị creator ở req.body
+  // if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+  try {
+    const newEvent = await eventService.changeStatusPublic(
+      eventId,
+      title,
+      description,
+      banner,
+      imageList,
+      category,
+      isOnline,
+      linkOnline,
+      fee,
+      location,
+      timeEndSignup,
+      timeBegin,
+      timeEnd,
+      req.user?._id,
+      limitUser,
+      reviews,
+      status
+    );
+    return res
+      .status(200)
+      .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
+  } catch (error) {
+    // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
+    console.log(error);
+    next(error);
+  }
+});
+
 module.exports = {
   createNewEvent,
   getPublicEvents,
@@ -375,4 +433,5 @@ module.exports = {
   cancelEvent,
   removeEventDraft,
   confirmEventCompleted,
+  changeStatusPublic,
 };

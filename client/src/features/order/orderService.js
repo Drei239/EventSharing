@@ -4,7 +4,7 @@ const createNewOrder = async (eventId) => {
   const newOrder = await UseCallApi({
     method: "POST",
     url: "/orders/create",
-    data: { event: eventId.toString() },
+    data: { event: eventId },
   });
   return newOrder;
 };
