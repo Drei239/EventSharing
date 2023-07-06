@@ -21,6 +21,8 @@ const Card = ({
   creator,
   fee,
   timeEndSignup,
+  purchased,
+  handleVisibleModal,
 }) => {
   const { isLoading } = useSelector((state) => state.event);
   const categories = useSelector((state) => state.category.categories);
@@ -43,10 +45,18 @@ const Card = ({
       return 'Đã kết thúc';
     }
   };
+
   return (
     <>
       {!isLoading && (
-        <Link to={`/event/${_id}`}>
+        <Link
+          to={purchased ? '' : `/event/${_id}`}
+          onClick={() => {
+            if (purchased) {
+              handleVisibleModal(_id);
+            }
+          }}
+        >
           <div className='card-items'>
             <div className='hot-event'></div>
             <img src={banner} alt='' className='card-img' loading='lazy' />
