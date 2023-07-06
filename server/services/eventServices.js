@@ -7,8 +7,10 @@ const sendEmail = require("../utils/sendEmail");
 const dayjs = require("dayjs");
 const ejs = require("ejs");
 const fs = require("fs");
+
 //1.CREATE NEW EVENT
 const emailTemplate = fs.readFileSync("./views/index.ejs", "utf-8");
+
 const createNewEvent = asyncHandler(
   async (
     title,
@@ -28,28 +30,38 @@ const createNewEvent = asyncHandler(
     reviews,
     status
   ) => {
-    const newEvent = await eventModel.create({
-      title,
-      description,
-      banner,
-      imageList,
-      category,
-      isOnline,
-      linkOnline,
-      fee,
-      location,
-      timeEndSignup,
-      timeBegin,
-      timeEnd,
-      creator,
-      limitUser,
-      reviews,
-      status,
-    });
-    if (newEvent) {
-      return newEvent;
+    const existEvent = await eventModel.findOne({ title: title })
+      .collation({ locale: "en", strength: 2 });
+    if (!existEvent) {
+      if (eventValidators.inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
+        const newEvent = await eventModel.create({
+          title,
+          description,
+          banner,
+          imageList,
+          category,
+          isOnline,
+          linkOnline,
+          fee,
+          location,
+          timeEndSignup,
+          timeBegin,
+          timeEnd,
+          creator,
+          limitUser,
+          reviews,
+          status,
+        });
+        if (newEvent) {
+          return newEvent;
+        } else {
+          throw Error(eventError.ERR_1);
+        }
+      } else {
+        throw Error(eventError.ERR_4);
+      }
     } else {
-      throw Error(eventError.ERR_1);
+      throw Error(eventError.ERR_5);
     }
   }
 );
@@ -122,6 +134,7 @@ const getEventsFilter = asyncHandler(async (queryObj, queryKey) => {
   //   throw Error(eventError.ERR_2);
   // }
 });
+
 //5.UPDATE EVENT
 //CHO PHÉP NTCSK CẬP NHẬT THÔNG TIN SỰ KIỆN KHI VẪN CÒN LÀ BẢN NHÁP (STATUS = "DRAFT")
 //SAU KHI CÓ ĐĂNG NHẬP THÌ CẦN KIỂM TRA REQUEST USER ID = CREATOR MỚI CHO PHÉP UPDATE
@@ -145,61 +158,68 @@ const updateDraftEventInfo = asyncHandler(
     limitUser
   ) => {
     const updateEvent = await eventModel.findOne({ _id: requestEventId });
-    if (updateEvent.creator.toString() === requestUserId.toString()) {
-      if (updateEvent.status === "draft") {
-        updateEvent.title = title || updateEvent.title;
-        updateEvent.description = description || updateEvent.description;
-        updateEvent.banner = banner || updateEvent.banner;
-        updateEvent.imageList = imageList || updateEvent.imageList;
-        updateEvent.category = category || updateEvent.category;
-        updateEvent.isOnline = isOnline || updateEvent.isOnline;
-        updateEvent.fee = fee || updateEvent.fee;
-        updateEvent.location = location || updateEvent.location;
-        updateEvent.timeEndSignup = timeEndSignup || updateEvent.timeEndSignup;
-        updateEvent.timeBegin = timeBegin || updateEvent.timeBegin;
-        updateEvent.timeEnd = timeEnd || updateEvent.timeEnd;
-        updateEvent.limitUser = limitUser || updateEvent.limitUser;
-        updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
+    if (updateEvent) {
+      if (updateEvent.creator.toString() === requestUserId.toString()) {
+        if (updateEvent.status === "draft") {
+          updateEvent.title = title || updateEvent.title;
+          updateEvent.description = description || updateEvent.description;
+          updateEvent.banner = banner || updateEvent.banner;
+          updateEvent.imageList = imageList || updateEvent.imageList;
+          updateEvent.category = category || updateEvent.category;
+          updateEvent.isOnline = isOnline || updateEvent.isOnline;
+          updateEvent.fee = fee || updateEvent.fee;
+          updateEvent.location = location || updateEvent.location;
+          updateEvent.timeEndSignup = timeEndSignup || updateEvent.timeEndSignup;
+          updateEvent.timeBegin = timeBegin || updateEvent.timeBegin;
+          updateEvent.timeEnd = timeEnd || updateEvent.timeEnd;
+          updateEvent.limitUser = limitUser || updateEvent.limitUser;
+          updateEvent.linkOnline = linkOnline || updateEvent.linkOnline;
 
-        const existEvent = await eventModel.findOne({
-          title: updateEvent.title,
-        });
-        if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
-          if (
-            eventValidators.inputTimeValidation(
-              timeEndSignup,
-              timeBegin,
-              timeEnd
-            )
-          ) {
-            const updatedEvent = await updateEvent.save();
-            return updatedEvent;
+          const existEvent = await eventModel.findOne({
+            title: updateEvent.title,
+          }).collation({ locale: "en", strength: 2 });
+          if (eventValidators.inputTitleValidation(existEvent, requestEventId)) {
+            if (
+              eventValidators.inputTimeValidation(
+                timeEndSignup,
+                timeBegin,
+                timeEnd
+              )
+            ) {
+              const updatedEvent = await updateEvent.save();
+              return updatedEvent;
+            } else {
+              throw Error(eventError.ERR_4);
+            }
           } else {
-            throw Error(eventError.ERR_4);
+            throw Error(eventError.ERR_5);
           }
         } else {
-          throw Error(eventError.ERR_5);
+          throw Error(eventError.ERR_3);
         }
       } else {
-        throw Error(eventError.ERR_3);
+        throw Error(eventError.ERR_8);
       }
     } else {
-      throw Error(eventError.ERR_8);
+      throw Error(eventError.ERR_2);
     }
   }
 );
+
 const attendedEvent = async (id) => {
   const event = await orderModel
     .find({ user: id, isJoined: true })
     .populate("event user");
   return event;
 };
+
 const registeredEvent = async (id) => {
   const event = await orderModel
     .find({ user: id.toString(), isPaid: true })
     .populate("event user");
   return event;
 };
+
 const getAllEventOfUser = async (id, status, keyword) => {
   switch (status) {
     case "public": {
@@ -318,6 +338,7 @@ const removeEventDraft = async (eventId, userId) => {
   await eventModel.findOneAndDelete({ _id: eventId, creator: userId });
   return;
 };
+
 const cancelEvent = async (eventId, userId) => {
   const requestEvent = await eventModel.findById(eventId);
   if (!requestEvent) {
@@ -357,6 +378,7 @@ const cancelEvent = async (eventId, userId) => {
 
   return requestEvent;
 };
+
 const confirmEventCompleted = async (eventId, userId) => {
   const requestEvent = await eventModel.findById(eventId);
   if (!requestEvent) {
@@ -374,6 +396,7 @@ const confirmEventCompleted = async (eventId, userId) => {
   requestEvent.status = "Canceled";
   await requestEvent.save();
 };
+
 module.exports = {
   createNewEvent,
   getPublicEvents,

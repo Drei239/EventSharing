@@ -22,30 +22,37 @@ const createNewOrder = asyncHandler(async (event, user) => {
     .findOne({ _id: event })
     .populate("creator");
   const listOrder = await orderModel.find({ event: event });
-
-  if (orderValidator.existOrderValidation(existOrder)) {
-    if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
-      const newOrder = await orderModel.create({
-        event,
-        user,
-      });
-      if (newOrder) {
-        await notifyModel.create({
-          notifyFrom: user,
-          notifyTo: eventOrder.creator,
-          notifyType: "new-order",
-          content: `đã đăng kí sự kiện của bạn`,
-          eventId: newOrder.event,
-        });
-        return newOrder;
+  if (eventOrder) {
+    if (orderValidator.existOrderValidation(existOrder)) {
+      if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
+        if (Date.now() < eventOrder.timeEndSignup) {
+          const newOrder = await orderModel.create({
+            event,
+            user,
+          });
+          if (newOrder) {
+            await notifyModel.create({
+              notifyFrom: user,
+              notifyTo: eventOrder.creator,
+              notifyType: "new-order",
+              content: `đã đăng kí sự kiện của bạn`,
+              eventId: newOrder.event,
+            });
+            return newOrder;
+          } else {
+            throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
+          }
+        } else {
+          throw Error(resMes.orderError.ERR_8);
+        }
       } else {
-        throw Error("NEW ORDER FAILED!");
+        throw Error(resMes.orderError.ERR_2);
       }
     } else {
-      throw Error(resMes.orderError.ERR_2);
+      throw Error(resMes.orderError.ERR_1);
     }
   } else {
-    throw Error(resMes.orderError.ERR_1);
+    throw Error(resMes.eventError.ERR_2);
   }
 });
 
@@ -383,13 +390,11 @@ const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
     <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
     <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
     <div>
-    <h4 style="text-tranform:underline;color:blue;font-size:20px">${
-      order.event.title
-    }</h4>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
+        }</h4>
     <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
-    <p>${order.event.location.address} ${order.event.location.ward.name} ${
-        order.event.location.district.name
-      } ${order.event.location.province.name}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
+        } ${order.event.location.province.name}</p>
     </div>
     </div>
    <div>${content}</div>
