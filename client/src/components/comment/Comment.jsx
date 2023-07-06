@@ -1,7 +1,6 @@
 import "./Comment.css";
 import CommentForm from "../comment-form/CommentForm";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { likeOrUnlikeComment } from "../../features/comment/commentSlice";
 const Comment = ({
