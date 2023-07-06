@@ -1,7 +1,6 @@
 import "./Comment.css";
 import CommentForm from "../comment-form/CommentForm";
 import { useSelector, useDispatch } from "react-redux";
-import { useEffect } from "react";
 import { AiFillLike, AiOutlineLike } from "react-icons/ai";
 import { likeOrUnlikeComment } from "../../features/comment/commentSlice";
 const Comment = ({
@@ -36,7 +35,7 @@ const Comment = ({
   const checkIsLikeUser =
     userInfo && comment?.likeList.find((list) => list.user === userInfo._id);
   return (
-    <div key={comment?._id} className="comment">
+    <div key={comment?._id} className="comment" id={comment?._id}>
       <div className="comment-image-container">
         <img src={comment.creator.avatar} />
       </div>

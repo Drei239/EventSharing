@@ -4,55 +4,43 @@ import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrderbyId } from "../../features/order/orderSlice";
 import { LuFileSymlink } from "react-icons/lu";
-import './eventModal.css';
+import "./eventModal.css";
 
 const EventModal = () => {
-
 	const { orders } = useSelector((state) => state.order);
 	const { setVisible, bindings } = useModal();
 	const { id } = useParams();
 	const { userInfo } = useSelector((state) => state.user);
 	const eventDetail = useSelector((state) => state?.event?.getEventById);
 	const dispatch = useDispatch();
+	const [message, setMessage] = useState('');
 
 	useEffect(() => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
-	const [message, setMessage] = useState('');
+
+	useEffect(() => {
+		dispatch(getOrderbyId({ id, status: "all" }));
+	}, []);
 	useEffect(() => {
 		const now = new Date();
 		const beginTime = new Date(eventDetail?.timeBegin);
 		const endTime = new Date(eventDetail?.timeEnd);
-		console.log("###", endTime);
 
-		if (now >= beginTime && now <= endTime && userStatusArr.isJoined == true) {
+		if (now >= beginTime && now <= endTime && userStatusArr == true) {
+			setMessage('đang tham gia');
+		} else if (now >= endTime && userStatusArr == true) {
 			setMessage('đã tham gia');
-		} else if(now <= beginTime && userStatusArr.isPaid == true) {
+		} else if (now >= beginTime && userStatusArr == false) {
 			setMessage('Không tham gia');
-		} else if (now >= beginTime && userStatusArr.isJoined == false) {
+		} else if (now <= beginTime && userStatusArr == false) {
 			setMessage('Sẽ tham gia');
-		} else {
-			setMessage('');
-		}}, []);
+		}
+	}, []);
 
 	let userStatusArr = orders?.map(order => [
-		order?.isPaid,
 		order?.isJoined,
-		// order?.isRefund
 	]);
-	let userStatus = (userStatusArr == true ? "Đã tham gia" : "Sẽ tham gia");
-
-	// if (userStatusArr.orders?.isPaid == true) {
-	// 	userStatus = 'sắp tham gia';
-	// } else if (userStatusArr.orders?.isJoined == true) {
-	// 	userStatus = 'đã tham gia';
-	// } else if (userStatusArr.orders?.isRefund == true) {
-	// 	userStatus = 'đã hoàn tiền';
-	// }
-
-
-
-	console.log(userStatusArr)
 
 	return (
 		<div>
@@ -92,7 +80,7 @@ const EventModal = () => {
 											<div className="user__status">{message}</div>
 										</div>
 									</div>
-									
+
 								</div>
 							</Link>
 						))}

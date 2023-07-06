@@ -2,7 +2,7 @@ import React from "react";
 import { toast } from "react-toastify";
 import "./notificationToast.css";
 
-export const notificationToast = (noti) => {
+const NotificationToast = (noti) => {
   return toast(
     <div className="notification-toast">
       <img src={noti?.notifyFrom?.avatar} alt="" />
@@ -25,3 +25,4 @@ export const notificationToast = (noti) => {
     }
   );
 };
+export default NotificationToast;

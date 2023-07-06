@@ -21,20 +21,15 @@ const createNewComment = asyncHandler(
       event,
       creator,
     });
-    if (
-      newComment &&
-      existEvent?.creator.toString() != requestUserId.toString()
-    ) {
-      await notifyModel.create({
+    if (newComment) {
+      const notify = await notifyModel.create({
         notifyFrom: creator,
         notifyTo: existEvent.creator,
         notifyType: "new-comment",
         commentId: newComment._id,
         content: `đã bình luận trong sự kiện của bạn`,
       });
-    }
-    if (newComment) {
-      return newComment;
+      return { newComment, notify };
     } else {
       throw Error(resMes.commentError.ERR_1);
     }
@@ -115,15 +110,15 @@ const replyCommentById = asyncHandler(
         .populate("event", "title")
         .populate("creator", "name avatar")
         .populate("reply.creator", "name avatar");
-      await notifyModel.create({
+      const notify = await notifyModel.create({
         notifyFrom: requestUserId,
         notifyTo: requestComment.creator,
         notifyType: "reply-comment",
-        commentId: requestComment._id,
+        commentId: requestComment,
         replyContent: comment,
         content: `đã phản hồi bình luận của bạn`,
       });
-      return updateComment;
+      return { comment: updateComment, notify };
     } else {
       throw Error("KHÔNG TÌM THẤY COMMENT!");
     }

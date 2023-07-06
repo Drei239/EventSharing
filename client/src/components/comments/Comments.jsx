@@ -23,8 +23,14 @@ import {
 const Comments = ({ currentUserId, eventId }) => {
   const [activeComment, setActiveComment] = useState(null);
   const dispatch = useDispatch();
-  const { comments, isSuccessCreate, isSuccessReply, reply, replyContent } =
-    useSelector((state) => state.comment);
+  const {
+    comments,
+    isSuccessCreate,
+    isSuccessReply,
+    reply,
+    replyContent,
+    notifyComment,
+  } = useSelector((state) => state.comment);
   const { getEventById } = useSelector((state) => state.event);
   const { userInfo } = useSelector((state) => state.user);
 
@@ -83,13 +89,9 @@ const Comments = ({ currentUserId, eventId }) => {
     if (isSuccessCreate) {
       dispatch(
         sendNotifyNewComment({
-          notifyTo: getEventById?.creator._id,
+          ...notifyComment,
           notifyFrom: userInfo,
-          notifyType: "new-comment",
           commentId: comments[0],
-          content: "đã bình luận trong sự kiện của bạn",
-          isNew: true,
-          createdAt: new Date(),
         })
       );
       dispatch(sendCommentToUserConnect(comments[0]));
@@ -100,14 +102,9 @@ const Comments = ({ currentUserId, eventId }) => {
       console.log(reply);
       dispatch(
         sendNotifyReplyComment({
-          notifyTo: reply?.creator?._id,
+          ...notifyComment,
           notifyFrom: userInfo,
-          notifyType: "reply-comment",
-          commentId: reply?._id,
           replyContent: replyContent,
-          content: "đã phản hồi bình luận của bạn",
-          isNew: true,
-          createdAt: new Date(),
         })
       );
       dispatch(replyCommentShowAll(reply));

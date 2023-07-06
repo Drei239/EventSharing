@@ -32,14 +32,14 @@ const createNewOrder = asyncHandler(async (event, user) => {
             user,
           });
           if (newOrder) {
-            await notifyModel.create({
+            const notify = await notifyModel.create({
               notifyFrom: user,
-              notifyTo: eventOrder.creator,
+              notifyTo: eventOrder.creator._id,
               notifyType: "new-order",
               content: `đã đăng kí sự kiện của bạn`,
               eventId: newOrder.event,
             });
-            return newOrder;
+            return { newOrder, notify };
           } else {
             throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
           }
@@ -391,11 +391,13 @@ const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
     <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
     <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
     <div>
-    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
-        }</h4>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${
+      order.event.title
+    }</h4>
     <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
-    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
-        } ${order.event.location.province.name}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${
+        order.event.location.district.name
+      } ${order.event.location.province.name}</p>
     </div>
     </div>
    <div>${content}</div>
