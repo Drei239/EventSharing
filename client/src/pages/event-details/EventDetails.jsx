@@ -26,8 +26,8 @@ const EventDetails = () => {
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { userInfo } = useSelector((state) => state.user);
+  const { orders } = useSelector((state) => state.order);
   const isOnline = isOnlineEvent();
-
   useEffect(() => {
     dispatch(getEventById(id));
   }, [id]);
@@ -36,6 +36,9 @@ const EventDetails = () => {
       dispatch(newConnectEvent(id));
     }
   }, [id]);
+  useEffect(() => {
+    console.log(orders);
+  }, [orders]);
   const imageList = eventDetail?.imageList?.map((item) => item);
 
   isNullOrUndefined(eventDetail);
@@ -157,8 +160,12 @@ const EventDetails = () => {
                 ) : (
                   <div></div>
                 )
-              ) : (
+              ) : !orders.find((item) => item.user._id != userInfo?._id) ? (
                 <OrderEvent />
+              ) : (
+                <span className="event-joined-text">
+                  Bạn đã đăng kí sự kiện này.
+                </span>
               )
             }
             <div className="event__share">

@@ -57,9 +57,8 @@ const eventTypeOption = [
 const EventManagement = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isSuccessRemove, isError, events, isLoading } = useSelector(
-    (state) => state.event
-  );
+  const { isSuccessRemove, isError, events, isLoading, isErrorDelete } =
+    useSelector((state) => state.event);
   const userInfo = useSelector((state) => state.user.userInfo);
 
   const { setVisible, bindings } = useModal();
@@ -123,11 +122,10 @@ const EventManagement = () => {
     }
   }, [isSuccessRemove]);
   useEffect(() => {
-    if (isError) {
-      console.log(isError);
+    if (isErrorDelete) {
       notify("Xoá sự kiện thất bại", "error");
     }
-  }, [isError]);
+  }, [isErrorDelete]);
   return (
     <div className="management-events">
       <h2>Quản lý sự kiện</h2>

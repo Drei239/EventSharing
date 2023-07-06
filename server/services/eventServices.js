@@ -197,7 +197,7 @@ const attendedEvent = async (id) => {
 };
 const registeredEvent = async (id) => {
   const event = await orderModel
-    .find({ user: id.toString(), isPaid: true })
+    .find({ user: id.toString(), isPaid: true, isJoined: false })
     .populate("event user");
   return event;
 };
@@ -205,7 +205,6 @@ const getAllEventOfUser = async (id, status, keyword) => {
   if (keyword) {
     let findObject = {
       creator: id,
-
       title: { $regex: keyword, $options: "i" },
     };
     if (status || status !== "") {

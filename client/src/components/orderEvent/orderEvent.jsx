@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, Link, Modal, Text } from "@nextui-org/react";
 import { newCreateOrder } from "../../features/order/orderSlice";
 import { sendNotifyNewOrder } from "../../features/action";
@@ -7,16 +8,22 @@ import { newConnetion } from "../../features/action";
 import notify from "../../utils/notify";
 
 const OrderEvent = () => {
+  const navigate = useNavigate();
   const [visible, setVisible] = React.useState(false);
   const { isSuccessCreate } = useSelector((state) => state.order);
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { isLogin, userInfo } = useSelector((state) => state.user);
 
-  const handler = () => setVisible(true);
+  const handler = () => {
+    if (isLogin) {
+      setVisible(true);
+    } else {
+      navigate("/login-register");
+    }
+  };
 
   const handleBuyTicket = () => {
-    console.log("a");
     dispatch(newCreateOrder(eventDetail?._id));
   };
 

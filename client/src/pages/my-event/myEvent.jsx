@@ -1,18 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-
+import { Link } from "react-router-dom";
 import Select from "react-select";
 import { BiSearch } from "react-icons/bi";
 import { useModal, Modal, Button } from "@nextui-org/react";
 import { RiMailFill } from "react-icons/ri";
 import { AiOutlineCloseCircle } from "react-icons/ai";
 import dayjs from "dayjs";
+import { MdArrowBackIosNew } from "react-icons/md";
 
 import { ExportToExcel } from "../../components/ui";
 import {
   getOrderbyId,
   updateCancelEvent,
+  updateCompletedEvent,
 } from "../../features/order/orderSlice";
 import "./myEvent.css";
 import OpenIcon from "../../assets/icon-open.png";
@@ -57,10 +59,18 @@ const MyEvent = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [selected, setSelected] = useState([]);
 
-  const { orders, isLoading, isSuccess, isError } = useSelector(
-    (state) => state.order
+  const {
+    orders,
+    isLoading,
+    isSuccess,
+    isError,
+    isSuccessUpdate,
+    isErrorUpdate,
+    isSuccessUpdateCancel,
+  } = useSelector((state) => state.order);
+  const isSuccessEvent = useSelector(
+    (state) => state.event.isSuccessUpdateCancel
   );
-  const isSuccessEvent = useSelector((state) => state.event.isSuccess);
   const rows = [];
   for (let i = 0; i < orders.length; i++) {
     let status;
@@ -124,11 +134,12 @@ const MyEvent = () => {
     }
   }, [isError]);
   useEffect(() => {
-    if (isSuccessEvent) {
+    if (isSuccessUpdateCancel) {
+      notify("Huỷ sự kiện thành công", "success");
+      setVisible(false);
       dispatch(updateCancelEvent());
-      notify("Huỷ sự kiện thành công");
     }
-  }, [isSuccessEvent]);
+  }, [isSuccessUpdateCancel]);
   useEffect(() => {
     if (id) {
       dispatch(
@@ -144,12 +155,27 @@ const MyEvent = () => {
     }
   }, [id, searchKeyword, sortSelected, statusSelected, page, rowsPerPage]);
   useEffect(() => {
+    if (isSuccessUpdate) {
+      notify("Cập nhật trạng thái sự kiện thành công", "success");
+      dispatch(updateCompletedEvent());
+    }
+  }, [isSuccessUpdate]);
+  useEffect(() => {
+    if (isErrorUpdate) {
+      notify("Cập nhật trạng thái sự kiện thất bại", "error");
+    }
+  }, [isErrorUpdate]);
+  useEffect(() => {
     console.log(orders);
   }, [orders]);
   return (
     <>
       {orders && orders.length > 0 && (
         <div className="my-event" key={orders._id}>
+          <Link className="my-event-return" to="/management-event">
+            <MdArrowBackIosNew fontSize={30} />
+            <span>Quay lại trang tổ chức sự kiện</span>
+          </Link>
           <div className="my-event-header">
             <img src={orders[0]?.event?.banner} alt="" />
             <div className="my-event-header-info">
@@ -168,7 +194,9 @@ const MyEvent = () => {
                     ? "Công khai"
                     : orders[0]?.event.status === "Canceled"
                     ? "Đã Huỷ"
-                    : ""}
+                    : orders[0].event.status === "Completed"
+                    ? "Đã Hoàn Thành"
+                    : "Nháp"}
                 </span>
               </div>
               <h3>{orders[0]?.event.title}</h3>
@@ -200,7 +228,7 @@ const MyEvent = () => {
               <div className="my-event-header-info-sold">
                 <span style={{ fontWeight: 700 }}>Đã bán:</span>
                 <div>
-                  <span>{orders.length}</span>
+                  <span>{orders[0] && orders[0].user ? orders.length : 0}</span>
                   <span> / </span>
                   <span>{orders[0]?.event.limitUser}</span>
                 </div>

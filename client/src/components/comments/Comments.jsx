@@ -113,9 +113,6 @@ const Comments = ({ currentUserId, eventId }) => {
       dispatch(replyCommentShowAll(reply));
     }
   }, [isSuccessReply]);
-  useEffect(() => {
-    console.log(comments);
-  }, [comments]);
   return (
     <div className="comments">
       <h4 className="comments-title">Comments</h4>

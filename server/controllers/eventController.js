@@ -155,10 +155,10 @@ const getFilterEvents = asyncHandler(async (req, res) => {
 //HOT EVENTS
 const highlightEvents = asyncHandler(async (req, res) => {
   try {
-    console.log("a");
     const events = await eventModel
       .find({
         timeEndSignup: { $gte: Date.now() },
+        status: "Public",
       })
       .populate({ path: "creator", options: { sort: { userRating: -1 } } })
       .populate("category")
@@ -179,9 +179,16 @@ const getEventById = asyncHandler(async (req, res) => {
     .populate("category")
     .populate("creator", "_id name avatar totalRating")
     .populate("reviews.user", "name avatar");
-
   if (event) {
-    res.status(200).json(event);
+    if (event.status === "draft") {
+      if (!req.user || req.user._id !== event.creator._id) {
+        throw Error("Bạn không có quyền vào trang này");
+      } else {
+        res.status(200).json(event);
+      }
+    } else {
+      res.status(200).json(event);
+    }
   } else {
     res.status(401);
     throw new Error("KHÔNG TÌM THẤY EVENT!");

@@ -97,6 +97,7 @@ export const openModalSendEmail = createAction(
   }
 );
 export const updateCancelEvent = createAction("updateCancelEventSuccesfully");
+export const updateCompletedEvent = createAction("updateCompletedEvent");
 export const closeModalSendEmail = createAction("closeModalSendEmail");
 const orderSlice = createSlice({
   name: "order",
@@ -223,6 +224,16 @@ const orderSlice = createSlice({
           return [
             ...arr,
             { ...order, event: { ...order.event, status: "Canceled" } },
+          ];
+        }, []);
+    });
+    builder.addCase(updateCompletedEvent, (state) => {
+      state.orders =
+        state.orders.length > 0 &&
+        state.orders.reduce((arr, order) => {
+          return [
+            ...arr,
+            { ...order, event: { ...order.event, status: "Completed" } },
           ];
         }, []);
     });

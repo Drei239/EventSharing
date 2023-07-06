@@ -155,9 +155,13 @@ const initialState = {
   countDocument: 1,
   isLoading: false,
   isError: false,
+  isErrorDelete: false,
   isSuccess: false,
   isSuccessRemove: false,
   isSuccessRating: false,
+  isSuccessUpdate: false,
+  isErrorUpdate: false,
+  isSuccessUpdateCancel: false,
   message: "",
 };
 export const handleChangeEvents = createAction(
@@ -284,7 +288,7 @@ const eventSlice = createSlice({
       .addCase(removeEventDraft.pending, (state) => {
         state.isLoading = true;
         state.isSuccessRemove = false;
-        state.isError = false;
+        state.isErrorDelete = false;
       })
       .addCase(removeEventDraft.fulfilled, (state, action) => {
         state.isSuccessRemove = true;
@@ -294,39 +298,40 @@ const eventSlice = createSlice({
         state.isLoading = false;
       })
       .addCase(removeEventDraft.rejected, (state, action) => {
-        state.isError = true;
+        state.isErrorDelete = true;
         state.message = action.payload.message;
         state.isLoading = false;
       });
     builder
       .addCase(cancelEvent.pending, (state) => {
         state.isLoading = true;
-        state.isSuccess = false;
-        state.isError = false;
+        state.isSuccessUpdateCancel = false;
+        state.isErrorUpdate = false;
       })
       .addCase(cancelEvent.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
+        state.isSuccessUpdateCancel = true;
       })
       .addCase(cancelEvent.rejected, (state, action) => {
         state.isLoading = false;
-        state.isError = true;
+        state.isErrorUpdate = true;
         state.message = action.payload?.message;
       });
     builder
       .addCase(confirmEventCompeleted.pending, (state) => {
         state.isLoading = true;
-        state.isSuccess = false;
+        state.isSuccessUpdate = false;
         state.isError = false;
       })
       .addCase(confirmEventCompeleted.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
+        state.isSuccessUpdate = true;
       })
       .addCase(confirmEventCompeleted.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.message = action.payload?.message;
+        state.isErrorUpdate = false;
       });
     builder
       .addCase(createReview.pending, (state, action) => {
