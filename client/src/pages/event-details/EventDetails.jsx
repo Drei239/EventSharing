@@ -6,8 +6,8 @@ import OrderEvent from "../../components/orderEvent/orderEvent";
 import Gallery from "../../components/gallery/Gallery";
 import dayjs from "dayjs";
 import { Button, Tooltip, Link } from "@nextui-org/react";
-import { FacebookShareButton, FacebookIcon } from 'react-share';
-import { TwitterShareButton, TwitterIcon } from 'react-share';
+import { FacebookShareButton, FacebookIcon } from "react-share";
+import { TwitterShareButton, TwitterIcon } from "react-share";
 import { BiMap } from "react-icons/bi";
 import { MdOutlineAttachMoney } from "react-icons/md";
 import { GiSandsOfTime } from "react-icons/gi";
@@ -25,7 +25,7 @@ const EventDetails = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
-  const { userInfo } = useSelector((state) => state.user);
+  const { userInfo, isLogin } = useSelector((state) => state.user);
   const { orders } = useSelector((state) => state.order);
   const isOnline = isOnlineEvent();
   useEffect(() => {
@@ -64,7 +64,9 @@ const EventDetails = () => {
       eventStatus = "DRAFT";
       break;
     case "Public":
-      eventStatus = (now = eventDetail?.timeEnd ? "Sự kiện đang diễn ra" : "Event sắp diễn ra");
+      eventStatus = now = eventDetail?.timeEnd
+        ? "Sự kiện đang diễn ra"
+        : "Event sắp diễn ra";
       break;
     case "Canceled":
       eventStatus = "Event đã hủy";
@@ -145,53 +147,53 @@ const EventDetails = () => {
             </div>
           </div>
           <div className="event__right-block">
-            {
-              eventDetail?.creator?._id === userInfo?._id ? (
-                eventDetail.status?.toLowerCase() === "draft" ? (
-                  <Button
-                    size="lg"
-                    className="btn__buy"
-                    color="primary"
-                    bordered="false"
-                    onClick={() =>
-                      navigate(
-                        `/event-create-update?type=update&id=${eventDetail._id}`
-                      )
-                    }
-                  >
-                    Cập nhật
-                  </Button>
-                ) : (
-                  <div></div>
-                )
-              ) : !orders.find((item) => item.user._id != userInfo?._id) ? (
-                <OrderEvent />
+            {eventDetail?.creator?._id === userInfo?._id ? (
+              eventDetail.status?.toLowerCase() === "draft" ? (
+                <Button
+                  size="lg"
+                  className="btn__buy"
+                  color="primary"
+                  bordered="false"
+                  onClick={() =>
+                    navigate(
+                      `/event-create-update?type=update&id=${eventDetail._id}`
+                    )
+                  }
+                >
+                  Cập nhật
+                </Button>
               ) : (
-                <span className="event-joined-text">
-                  Bạn đã đăng kí sự kiện này.
-                </span>
+                <div></div>
               )
-            }
+            ) : isLogin &&
+              orders.find((item) => item.user._id != userInfo?._id) ? (
+              <span className="event-joined-text">
+                Bạn đã đăng kí sự kiện này.
+              </span>
+            ) : (
+              <OrderEvent />
+            )}
             <div className="event__share">
               <Button bordered color="primary" size="xs">
                 <div className="btn__share">
                   <FacebookShareButton
-                    url={'https://www.example.com'}
-                    quote={'Dummy text!'}
+                    url={"https://www.example.com"}
+                    quote={"Dummy text!"}
                     hashtag="#muo"
-                    className='share'
+                    className="share"
                   >
-                    <FacebookIcon size={15} round className='fb__icon' /> chia sẻ
+                    <FacebookIcon size={15} round className="fb__icon" /> chia
+                    sẻ
                   </FacebookShareButton>
                 </div>
               </Button>
               <Button bordered color="primary" size="xs">
                 <div className="btn__share">
                   <TwitterShareButton
-                    url={'https://www.example.com'}
-                    quote={'Dummy text!'}
+                    url={"https://www.example.com"}
+                    quote={"Dummy text!"}
                     hashtag="#muo"
-                    className='share'
+                    className="share"
                   >
                     <TwitterIcon size={15} round /> chia sẻ
                   </TwitterShareButton>
@@ -207,9 +209,9 @@ const EventDetails = () => {
             <div className={eventDetail?.status}>{eventStatus}</div>
             <div className="event__members">
               <div>
-                <div className="num__members">{orders?.length}</div> người tham gia sự kiện
-                </div>
-              
+                <div className="num__members">{orders?.length}</div> người tham
+                gia sự kiện
+              </div>
             </div>
             <EventModal />
           </div>
