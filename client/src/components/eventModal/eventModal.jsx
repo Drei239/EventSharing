@@ -1,30 +1,45 @@
 import React, { useEffect } from 'react';
-import { Modal, useModal, Text, Link } from '@nextui-org/react';
+import { Modal, useModal, Text, Link, Button } from '@nextui-org/react';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getOrderbyId } from "../../features/order/orderSlice";
+import { LuFileSymlink } from "react-icons/lu";
 import './eventModal.css';
-// import { FaListAlt } from "react-icons/fa";
 
 const EventModal = () => {
 
 	const { orders } = useSelector((state) => state.order);
 	const { setVisible, bindings } = useModal();
 	const { id } = useParams();
-	// const { userInfo } = useSelector((state) => state.user);
+	const { userInfo } = useSelector((state) => state.user);
+	const eventDetail = useSelector((state) => state?.event?.getEventById);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
-	// const a = orders.filter((order) => userInfo._id === order.event.creator)
-	// console.log("###", userInfo._id);
-	// console.log("####", a);
+
+	let userStatusArr = orders?.map(order => [
+		// order?.isPaid,
+		order?.isJoined,
+		// order?.isRefund
+	]);
+	let userStatus = (userStatusArr == true ? "Đã tham gia" : "Sẽ tham gia");
+
+	// if (userStatusArr.orders?.isPaid == true) {
+	// 	userStatus = 'sắp tham gia';
+	// } else if (userStatusArr.orders?.isJoined == true) {
+	// 	userStatus = 'đã tham gia';
+	// } else if (userStatusArr.orders?.isRefund == true) {
+	// 	userStatus = 'đã hoàn tiền';
+	// }
+
+	console.log(userStatusArr)
 
 	return (
 		<div>
 			<button className='members__list' onClick={() => setVisible(true)}>
-				So nguoi tham gia: {orders?.length}
+				Xem danh sách <LuFileSymlink />
 			</button>
 
 			<Modal
@@ -39,10 +54,16 @@ const EventModal = () => {
 						Danh sách người tham gia
 					</Text>
 				</Modal.Header>
+				{
+					userInfo._id === eventDetail?.creator?._id ?
+						<Link
+							href={`/my-event/${eventDetail?._id}`}
+							className='participants__change-link'>
+							<Button size="xs">Cập nhật</Button>
+						</Link> : ""
+				}
 				<div className="participants__container">
 					{
-					// userInfo._id === orders?.creator ?
-					// 	<div>dsadsad</div> :
 						orders?.map((item) => (
 							<Link>
 								<div className="participants">
@@ -50,9 +71,10 @@ const EventModal = () => {
 										<img className="user__avatar" src={item?.user?.avatar} alt="" />
 										<div className="user__name">
 											{item?.user?.name}
+											<div className="user__status">{userStatus}</div>
 										</div>
 									</div>
-									<div className="user__status">{item?.isJoined}</div>
+									
 								</div>
 							</Link>
 						))}
