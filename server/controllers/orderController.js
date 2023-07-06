@@ -1,8 +1,8 @@
-const asyncHandler = require("express-async-handler");
-const orderModel = require("../models/orderModel");
-const orderService = require("../services/orderServices");
-const resMes = require("../validators/responsiveMessages");
-const excelJs = require("exceljs");
+const asyncHandler = require('express-async-handler');
+const orderModel = require('../models/orderModel');
+const orderService = require('../services/orderServices');
+const resMes = require('../validators/responsiveMessages');
+const excelJs = require('exceljs');
 
 //1.CREATE NEW ORDER
 const createNewOrder = asyncHandler(async (req, res) => {
@@ -25,9 +25,9 @@ const getOrdersByEventId = asyncHandler(async (req, res) => {
   try {
     const page = req.query.page || 1;
     const limit = req.query.limit || 20;
-    const keyword = req.query.keyword || "";
-    const sort = req.query.sort || "-createdAt";
-    const status = req.query.status || "all";
+    const keyword = req.query.keyword || '';
+    const sort = req.query.sort || '-createdAt';
+    const status = req.query.status || 'all';
     const orders = await orderService.getOrdersByEventId({
       requestEvent,
       page,
@@ -116,10 +116,10 @@ const exportData = asyncHandler(async (req, res) => {
       workbook
     );
     res.setHeader(
-      "Content-Type",
-      "application/vnd.openxmlformats-officedocument.spreadsheatml.sheet"
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheatml.sheet'
     );
-    res.setHeader("Content-Disposition", `attachment; filename=orders.xlsx`);
+    res.setHeader('Content-Disposition', `attachment; filename=orders.xlsx`);
     return workbook.xlsx.write(res).then(() => {
       res.status(200);
     });
@@ -137,7 +137,7 @@ const sendEmailtoId = asyncHandler(async (req, res, next) => {
       ordersId: ordersId,
       creatorId: req.user._id,
     });
-    res.status(200).json({ status: 200, message: "send email success" });
+    res.status(200).json({ status: 200, message: 'send email success' });
   } catch (err) {
     next(err);
   }
@@ -151,11 +151,24 @@ const sendEmailAllOrder = asyncHandler(async (req, res, next) => {
       eventId,
       creatorId: req.user._id,
     });
-    res.status(200).json({ status: 200, message: "send email success" });
+    res.status(200).json({ status: 200, message: 'send email success' });
   } catch (err) {
     next(err);
   }
 });
+
+const getOrdersByUserId = asyncHandler(async (req, res) => {
+  const orderList = await orderModel
+    .find({ user: req.user._id })
+    .populate('event');
+  if (orderList) {
+    res.status(200).json(orderList);
+  } else {
+    res.status(400);
+    throw new Error('Fail');
+  }
+});
+
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
@@ -165,4 +178,5 @@ module.exports = {
   sendEmailtoId,
   sendEmailAllOrder,
   exportData,
+  getOrdersByUserId,
 };

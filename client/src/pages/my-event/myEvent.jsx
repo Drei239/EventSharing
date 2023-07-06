@@ -1,50 +1,50 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import Select from "react-select";
-import { BiSearch } from "react-icons/bi";
-import { useModal, Modal, Button } from "@nextui-org/react";
-import { RiMailFill } from "react-icons/ri";
-import { AiOutlineCloseCircle } from "react-icons/ai";
-import dayjs from "dayjs";
-import { MdArrowBackIosNew } from "react-icons/md";
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+import Select from 'react-select';
+import { BiSearch } from 'react-icons/bi';
+import { useModal, Modal, Button } from '@nextui-org/react';
+import { RiMailFill } from 'react-icons/ri';
+import { AiOutlineCloseCircle } from 'react-icons/ai';
+import dayjs from 'dayjs';
+import { MdArrowBackIosNew } from 'react-icons/md';
 
-import { ExportToExcel } from "../../components/ui";
+import { ExportToExcel } from '../../components/ui';
 import {
   getOrderbyId,
   updateCancelEvent,
   updateCompletedEvent,
-} from "../../features/order/orderSlice";
-import "./myEvent.css";
-import OpenIcon from "../../assets/icon-open.png";
-import { Table, SendEmail } from "../../components/my-event";
-import notify from "../../utils/notify";
-import { openModalSendEmail } from "../../features/order/orderSlice";
+} from '../../features/order/orderSlice';
+import './myEvent.css';
+import OpenIcon from '../../assets/icon-open.png';
+import { Table, SendEmail } from '../../components/my-event';
+import notify from '../../utils/notify';
+import { openModalSendEmail } from '../../features/order/orderSlice';
 import {
   cancelEvent,
   confirmEventCompeleted,
-} from "../../features/events/eventSlice";
+} from '../../features/events/eventSlice';
 
 const orderStatusOption = [
   {
-    label: "Tất cả đơn hàng",
-    value: "all",
+    label: 'Tất cả đơn hàng',
+    value: 'all',
   },
-  { label: "Đã Thanh toán", value: "paid" },
-  { label: "Chưa thanh toán", value: "unpaid" },
-  { label: "Đã hoàn tiền", value: "refund" },
-  { label: "Đã tham gia", value: "joined" },
+  { label: 'Đã Thanh toán', value: 'paid' },
+  { label: 'Chưa thanh toán', value: 'unpaid' },
+  { label: 'Đã hoàn tiền', value: 'refund' },
+  { label: 'Đã tham gia', value: 'joined' },
 ];
 
 const orderSortOption = [
   {
-    label: "Mới nhất",
-    value: "-createdAt",
+    label: 'Mới nhất',
+    value: '-createdAt',
   },
   {
-    label: "Cũ nhất",
-    value: "createdAt",
+    label: 'Cũ nhất',
+    value: 'createdAt',
   },
 ];
 
@@ -56,7 +56,7 @@ const MyEvent = () => {
   const [sortSelected, setSortSelected] = useState(orderSortOption[0]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowPerPage] = useState(50);
-  const [searchKeyword, setSearchKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState('');
   const [selected, setSelected] = useState([]);
 
   const {
@@ -75,17 +75,17 @@ const MyEvent = () => {
   for (let i = 0; i < orders.length; i++) {
     let status;
     if (orders[i].isRefund) {
-      status = "Đã hoàn tiền";
+      status = 'Đã hoàn tiền';
     } else if (orders[i].isJoined) {
-      status = "Đã tham gia";
+      status = 'Đã tham gia';
     } else if (orders[i].isPaid) {
-      status = "Đã thanh toán";
+      status = 'Đã thanh toán';
     } else {
-      status = "Đang xử lí";
+      status = 'Đang xử lí';
     }
     rows.push({
       no1: i + 1,
-      timeOrder: dayjs(orders[i]?.createdAt).format("ddd ,DD/MM/YYYY, hh:mm "),
+      timeOrder: dayjs(orders[i]?.createdAt).format('ddd ,DD/MM/YYYY, hh:mm '),
       orderId: orders[i]?._id,
       status: status,
       eventStatus: orders[i]?.event?.status,
@@ -102,7 +102,7 @@ const MyEvent = () => {
     setStatusSelected(selectedOption);
   };
   const handleClickSendMailAll = () => {
-    dispatch(openModalSendEmail("all"));
+    dispatch(openModalSendEmail('all'));
   };
   const handleCancleEvent = () => {
     dispatch(cancelEvent(id));
@@ -112,11 +112,11 @@ const MyEvent = () => {
   };
   useEffect(() => {
     if (isSuccess) {
-      notify("Thay đổi trạng thái của đơn hàng thành công", "success");
+      notify('Thay đổi trạng thái của đơn hàng thành công', 'success');
     }
   }, [isSuccess]);
   const handleClickSendEmailSelect = () => {
-    dispatch(openModalSendEmail("select"));
+    dispatch(openModalSendEmail('select'));
   };
   const OpenModalCancelEvent = () => {
     setVisible(true);
@@ -130,12 +130,12 @@ const MyEvent = () => {
   };
   useEffect(() => {
     if (isError) {
-      notify("Thay đổi trạng thái của đơn hàng thất bại", "error");
+      notify('Thay đổi trạng thái của đơn hàng thất bại', 'error');
     }
   }, [isError]);
   useEffect(() => {
     if (isSuccessUpdateCancel) {
-      notify("Huỷ sự kiện thành công", "success");
+      notify('Huỷ sự kiện thành công', 'success');
       setVisible(false);
       dispatch(updateCancelEvent());
     }
@@ -156,13 +156,13 @@ const MyEvent = () => {
   }, [id, searchKeyword, sortSelected, statusSelected, page, rowsPerPage]);
   useEffect(() => {
     if (isSuccessUpdate) {
-      notify("Cập nhật trạng thái sự kiện thành công", "success");
+      notify('Cập nhật trạng thái sự kiện thành công', 'success');
       dispatch(updateCompletedEvent());
     }
   }, [isSuccessUpdate]);
   useEffect(() => {
     if (isErrorUpdate) {
-      notify("Cập nhật trạng thái sự kiện thất bại", "error");
+      notify('Cập nhật trạng thái sự kiện thất bại', 'error');
     }
   }, [isErrorUpdate]);
   useEffect(() => {
@@ -171,61 +171,61 @@ const MyEvent = () => {
   return (
     <>
       {orders && orders.length > 0 && (
-        <div className="my-event" key={orders._id}>
-          <Link className="my-event-return" to="/management-event">
+        <div className='my-event' key={orders._id}>
+          <Link className='my-event-return' to='/management-event'>
             <MdArrowBackIosNew fontSize={30} />
             <span>Quay lại trang tổ chức sự kiện</span>
           </Link>
-          <div className="my-event-header">
-            <img src={orders[0]?.event?.banner} alt="" />
-            <div className="my-event-header-info">
-              <div className="my-event-header-status">
-                {orders[0]?.event.status === "Public" && (
-                  <img src={OpenIcon} alt="" />
+          <div className='my-event-header'>
+            <img src={orders[0]?.event?.banner} alt='' />
+            <div className='my-event-header-info'>
+              <div className='my-event-header-status'>
+                {orders[0]?.event.status === 'Public' && (
+                  <img src={OpenIcon} alt='' />
                 )}
                 <span
                   className={`${
-                    orders[0]?.event.status === "Canceled"
-                      ? "my-event-header-status-cancel"
-                      : ""
+                    orders[0]?.event.status === 'Canceled'
+                      ? 'my-event-header-status-cancel'
+                      : ''
                   }`}
                 >
-                  {orders[0]?.event.status === "Public"
-                    ? "Công khai"
-                    : orders[0]?.event.status === "Canceled"
-                    ? "Đã Huỷ"
-                    : orders[0].event.status === "Completed"
-                    ? "Đã Hoàn Thành"
-                    : "Nháp"}
+                  {orders[0]?.event.status === 'Public'
+                    ? 'Công khai'
+                    : orders[0]?.event.status === 'Canceled'
+                    ? 'Đã Huỷ'
+                    : orders[0].event.status === 'Completed'
+                    ? 'Đã Hoàn Thành'
+                    : 'Nháp'}
                 </span>
               </div>
               <h3>{orders[0]?.event.title}</h3>
-              <div className="my-event-header-info-time">
+              <div className='my-event-header-info-time'>
                 <span>Thời gian diễn ra sự kiện: </span>
                 <div>
                   <span>
                     {dayjs(orders[0]?.event.timeBegin).format(
-                      "ddd ,DD/MM/YYYY, hh:mm "
+                      'ddd ,DD/MM/YYYY, hh:mm '
                     )}
                   </span>
                   <span> - </span>
                   <span>
                     {dayjs(orders[0]?.event.timeEnd).format(
-                      "ddd ,DD/MM/YYYY, hh:mm "
+                      'ddd ,DD/MM/YYYY, hh:mm '
                     )}
                   </span>
                 </div>
               </div>
-              <div className="my-event-header-address">
+              <div className='my-event-header-address'>
                 <span>Địa chỉ: </span>
-                <p className="my-event-header-address">
-                  {orders[0]?.event.location?.address}{" "}
-                  {orders[0]?.event.location.ward?.name}{" "}
-                  {orders[0]?.event.location.district?.name}{" "}
+                <p className='my-event-header-address'>
+                  {orders[0]?.event.location?.address}{' '}
+                  {orders[0]?.event.location.ward?.name}{' '}
+                  {orders[0]?.event.location.district?.name}{' '}
                   {orders[0]?.event.location.province?.name}
                 </p>
               </div>
-              <div className="my-event-header-info-sold">
+              <div className='my-event-header-info-sold'>
                 <span style={{ fontWeight: 700 }}>Đã bán:</span>
                 <div>
                   <span>{orders[0] && orders[0].user ? orders.length : 0}</span>
@@ -233,81 +233,81 @@ const MyEvent = () => {
                   <span>{orders[0]?.event.limitUser}</span>
                 </div>
               </div>
-              <div className="my-event-header-info-fee">
+              <div className='my-event-header-info-fee'>
                 <span>Phí: </span>
                 <span>
                   {orders[0].event.fee > 0
                     ? `${orders[0].event.fee}đ`
-                    : "Miễn phí"}
+                    : 'Miễn phí'}
                 </span>
               </div>
             </div>
-            <div className="my-event-header-status-sale">
+            <div className='my-event-header-status-sale'>
               <span
                 className={`${
                   Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
-                    ? "my-event-header-status-sale-on"
-                    : "my-event-header-status-sale-end"
+                    ? 'my-event-header-status-sale-on'
+                    : 'my-event-header-status-sale-end'
                 } `}
               ></span>
               <span
                 className={` ${
                   Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
-                    ? "my-event-header-status-sale-on-text"
-                    : "my-event-header-status-sale-end-text"
+                    ? 'my-event-header-status-sale-on-text'
+                    : 'my-event-header-status-sale-end-text'
                 }`}
               >
                 {Date.parse(orders[0]?.event?.timeEndSignup) > Date.now()
-                  ? "Đang bán"
-                  : "Ngừng bán"}
+                  ? 'Đang bán'
+                  : 'Ngừng bán'}
               </span>
             </div>
             {orders &&
             orders.length > 0 &&
-            orders[0]?.event?.status === "Public" ? (
+            orders[0]?.event?.status === 'Public' ? (
               Date.parse(orders[0]?.event.timeBegin) > Date.now() ? (
                 <button
-                  className="my-event-header-btn-cancel"
+                  className='my-event-header-btn-cancel'
                   onClick={OpenModalCancelEvent}
                 >
                   Huỷ sự kiện này
                 </button>
               ) : (
                 <button
-                  color="primary"
+                  color='primary'
                   onClick={handleConfirmCompletedEvent}
-                  className="my-event-header-btn-confirm"
+                  className='my-event-header-btn-confirm'
                 >
                   Xác nhận sự kiện đã hoàn thành
                 </button>
               )
             ) : (
-              ""
+              ''
             )}
           </div>
-          <div className="my-event-filter">
+          <div className='my-event-filter'>
             <Select
-              className="my-event-filter-select"
+              className='my-event-filter-select'
               options={orderStatusOption}
               value={statusSelected}
               onChange={hanleChangeStatus}
               styles={{
                 control: (baseStyles, state) => ({
                   ...baseStyles,
-                  height: "30px",
+                  height: '30px',
                 }),
               }}
             />
             <Select
-              className="my-event-filter-select"
+              className='my-event-filter-select'
               options={orderSortOption}
               value={sortSelected}
               onChange={handleChangeSort}
             />
-            <div className="my-event-filter-search ">
+            <div className='my-event-filter-search '>
               <input
-                type="text"
-                placeholder="Name/ Email/ Phone Number"
+                type='text'
+                placeholder='Name/ Email/ Phone Number'
                 value={searchKeyword}
                 onChange={(e) => setSearchKeyword(e.target.value)}
               />
@@ -327,18 +327,18 @@ const MyEvent = () => {
             handleChangePage={handleChangePage}
             handleChangeRowPerPage={handleChangeRowPerPage}
           />
-          <div className="my-event-send-email">
-            <RiMailFill className="my-event-send-email-icon" />
+          <div className='my-event-send-email'>
+            <RiMailFill className='my-event-send-email-icon' />
             <span>Gửi mail đến</span>
             <span
-              className="my-event-send-email-all"
+              className='my-event-send-email-all'
               onClick={handleClickSendMailAll}
             >
               Tất cả
             </span>
             {selected && selected.length > 0 && (
               <span
-                className="my-event-send-email-selected"
+                className='my-event-send-email-selected'
                 onClick={handleClickSendEmailSelect}
               >
                 Email đã chọn
@@ -349,16 +349,16 @@ const MyEvent = () => {
         </div>
       )}
       <Modal {...bindings} closeButton width={500}>
-        <div className="modal-cancel-event">
-          <AiOutlineCloseCircle className="close-circle-icon" />
+        <div className='modal-cancel-event'>
+          <AiOutlineCloseCircle className='close-circle-icon' />
           <h3>Bạn có chắc chắn ?</h3>
           <p>
             Bạn có thực sự chắc chắn muốn huỷ bỏ sự kiện này? Quá trình này
             không thể hoàn tác.
           </p>
-          <div className="modal-cancel-event-btns">
+          <div className='modal-cancel-event-btns'>
             <Button onClick={() => setVisible(false)}>Không</Button>
-            <Button color="error" onClick={handleCancleEvent}>
+            <Button color='error' onClick={handleCancleEvent}>
               Chắc chắn
             </Button>
           </div>

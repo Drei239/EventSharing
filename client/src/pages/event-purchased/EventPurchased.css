@@ -1,0 +1,52 @@
+.event-purchased {
+  max-width: 1200px;
+  margin: 80px auto;
+  height: 80vh;
+}
+
+.event-purchased > h3 {
+  margin-bottom: 10px;
+}
+
+.event-purchased__card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.event-purchased__card > a {
+  width: 21%;
+}
+
+.event-purchased__info {
+  padding: 0 30px;
+  display: flex;
+  text-align: left;
+}
+
+.event-purchased__info > p:first-child {
+  width: 27%;
+  font-weight: 700;
+}
+
+.event-purchased__info > p:last-child {
+  width: 73%;
+}
+
+.event-purchase__qrcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.event-purchase__qrcode #qr-code {
+  width: 200px;
+}
+
+.event-purchased__dropdown {
+  width: 190px;
+  padding: 5px 10px;
+  border: 1px solid #00abe1;
+  border-radius: 10px;
+  margin-bottom: 30px;
+}

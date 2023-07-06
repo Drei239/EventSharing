@@ -7,7 +7,7 @@ const CardOrganizers = ({ id, img, title }) => {
   return (
     <div
       className='card-organizer'
-      onClick={() => navigate(`/origanizers/${id}`)}
+      onClick={() => navigate(`/organizers/${id}`)}
     >
       <img src={img} alt='origanizers-avatar' />
       <h4>{title}</h4>
