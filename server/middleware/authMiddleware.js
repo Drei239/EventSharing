@@ -1,7 +1,7 @@
-const asyncHandler = require("express-async-handler");
-const jwt = require("jsonwebtoken");
-require("dotenv").config({ path: ".env" });
-const userModel = require("../models/userModel");
+const asyncHandler = require('express-async-handler');
+const jwt = require('jsonwebtoken');
+require('dotenv').config({ path: '.env' });
+const userModel = require('../models/userModel');
 
 const protect = asyncHandler(async (req, res, next) => {
   const accessToken = req.cookies.access;
@@ -10,12 +10,13 @@ const protect = asyncHandler(async (req, res, next) => {
     try {
       const userVerify = jwt.verify(accessToken, process.env.SECRETKEY);
       const userId = userVerify._id;
-      const userInfo = await userModel.findById(userId).select("-password");
+
+      const userInfo = await userModel.findById(userId).select('-password');
       req.user = userInfo;
-      return next();
+      next();
     } catch (error) {
       res.status(401).json({ tokenExpires: true });
-      throw new Error("Token invalid");
+      throw new Error('Token invalid');
     }
   } else {
     res.status(401).json({ tokenExpires: true });
@@ -27,7 +28,7 @@ const isAdmin = (req, res, next) => {
     next();
   } else {
     res.status(401);
-    throw new Error("Member is not admin");
+    throw new Error('Member is not admin');
   }
 };
 const verifyUser = (req, res, next) => {
@@ -35,7 +36,7 @@ const verifyUser = (req, res, next) => {
     next();
   } else {
     res.status(401);
-    throw new Error("Not authorized");
+    throw new Error('Not authorized');
   }
 };
 module.exports = { protect, isAdmin, verifyUser };

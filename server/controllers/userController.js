@@ -1,8 +1,8 @@
-const asyncHandler = require("express-async-handler");
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const userModel = require("../models/userModel");
-const userService = require("../services/userService");
+const asyncHandler = require('express-async-handler');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const userModel = require('../models/userModel');
+const userService = require('../services/userService');
 const createJwt = (value) => {
   try {
     const token = jwt.sign({ _id: value }, process.env.SECRETKEY, {
@@ -15,7 +15,7 @@ const createJwt = (value) => {
 
     return { token, refreshToken };
   } catch (error) {
-    throw new Error("Create jwt error");
+    throw new Error('Create jwt error');
   }
 };
 
@@ -31,7 +31,7 @@ const register = asyncHandler(async (req, res) => {
   const lowerCaseEmail = email.toLowerCase();
   const userExists = await userModel.findOne({ email: lowerCaseEmail });
   if (userExists) {
-    return res.status(400).json({ message: "Email đã có tài khoản" });
+    return res.status(400).json({ message: 'Email đã có tài khoản' });
   }
 
   let newUser;
@@ -52,12 +52,12 @@ const register = asyncHandler(async (req, res) => {
   if (newUser) {
     res.status(201).json({
       success: true,
-      data: "Tạo tài khoản thành công",
+      data: 'Tạo tài khoản thành công',
     });
   } else {
     return res
       .status(400)
-      .json({ success: false, message: "Tạo tài khoản thất bại" });
+      .json({ success: false, message: 'Tạo tài khoản thất bại' });
   }
 });
 
@@ -71,13 +71,13 @@ const authLogin = asyncHandler(async (req, res) => {
       if (user && (await bcrypt.compare(password, user.password))) {
         const jwt = createJwt(user._id);
 
-        res.cookie("access", jwt.token, {
+        res.cookie('access', jwt.token, {
           httpOnly: true,
           secure: true,
           expires: new Date(Date.now() + 2 * 3600000),
         });
 
-        res.cookie("refresh", jwt.refreshToken, {
+        res.cookie('refresh', jwt.refreshToken, {
           httpOnly: true,
           secure: true,
           expires: new Date(Date.now() + 720 * 3600000),
@@ -85,23 +85,23 @@ const authLogin = asyncHandler(async (req, res) => {
 
         res.status(201).json({
           success: true,
-          data: "Đăng nhập thành công",
+          data: 'Đăng nhập thành công',
         });
       } else {
         return res
           .status(401)
-          .json({ success: false, message: "Email or password is incorrect" });
+          .json({ success: false, message: 'Email or password is incorrect' });
       }
     } else {
       const jwt = createJwt(user._id);
 
-      res.cookie("access", jwt.token, {
+      res.cookie('access', jwt.token, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
       });
 
-      res.cookie("refresh", jwt.refreshToken, {
+      res.cookie('refresh', jwt.refreshToken, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 720 * 3600000),
@@ -109,7 +109,7 @@ const authLogin = asyncHandler(async (req, res) => {
 
       res.status(201).json({
         success: true,
-        data: "Đăng nhập thành công",
+        data: 'Đăng nhập thành công',
       });
     }
   } catch (err) {
@@ -146,7 +146,7 @@ const updateUserById = asyncHandler(async (req, res, next) => {
   if (oldPassword) {
     const passwordVerify = await bcrypt.compare(oldPassword, user.password);
     if (!passwordVerify) {
-      res.status(400).json({ status: 400, message: "Password is not match" });
+      res.status(400).json({ status: 400, message: 'Password is not match' });
     }
     if (passwordVerify && newPassword) {
       user.password = newPassword;
@@ -173,7 +173,7 @@ const updateUserById = asyncHandler(async (req, res, next) => {
     });
   } else {
     res.status(400);
-    throw new Error("Update fail");
+    throw new Error('Update fail');
   }
 });
 
@@ -182,7 +182,7 @@ const deleted = asyncHandler(async (req, res, next) => {
   try {
     const user = await userModel.findById(req.params.id);
     if (!user) {
-      res.status(404).json({ status: 400, message: "User not found" });
+      res.status(404).json({ status: 400, message: 'User not found' });
     }
     const comparePassword = await bcrypt.compare(
       req.body.password,
@@ -191,14 +191,14 @@ const deleted = asyncHandler(async (req, res, next) => {
 
     if (!comparePassword) {
       if (!req.user?.isAdmin) {
-        res.status(400).json({ status: 400, message: "Mật khẩu không đúng" });
+        res.status(400).json({ status: 400, message: 'Mật khẩu không đúng' });
       } else {
         await userModel.findByIdAndDelete(user._id);
-        res.status(200).json({ message: "Delete successfully" });
+        res.status(200).json({ message: 'Delete successfully' });
       }
     } else {
       await userModel.findByIdAndDelete(user._id);
-      res.status(200).json({ message: "Delete successfully" });
+      res.status(200).json({ message: 'Delete successfully' });
     }
   } catch (err) {
     next(err);
@@ -215,7 +215,7 @@ const ratingUser = asyncHandler(async (req, res, next) => {
     });
     res
       .status(200)
-      .json({ status: 200, data: updateRating, message: "comment thanh cong" });
+      .json({ status: 200, data: updateRating, message: 'comment thanh cong' });
   } catch (err) {
     next(err);
   }
@@ -225,7 +225,7 @@ const highlightUser = asyncHandler(async (req, res, next) => {
     const user = await userService.highlightUser();
     res
       .status(200)
-      .json({ status: 200, data: user, message: "get User thanh cong" });
+      .json({ status: 200, data: user, message: 'get User thanh cong' });
   } catch (err) {
     next(err);
   }
@@ -233,8 +233,8 @@ const highlightUser = asyncHandler(async (req, res, next) => {
 
 // Logout
 const logout = (req, res) => {
-  res.clearCookie("access");
-  res.clearCookie("refresh");
+  res.clearCookie('access');
+  res.clearCookie('refresh');
   res.end();
 };
 
@@ -252,7 +252,7 @@ const refreshToken = asyncHandler(async (req, res) => {
       }
     );
     if (newToken) {
-      res.cookie("access", newToken, {
+      res.cookie('access', newToken, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
@@ -260,15 +260,16 @@ const refreshToken = asyncHandler(async (req, res) => {
       res.status(200).end();
     }
   } else {
-    res.clearCookie("access");
-    res.clearCookie("refresh");
-    res.status(401);
+    res.clearCookie('access');
+    res.clearCookie('refresh');
+    res.status(401).end();
   }
 });
 
 const getOrganizers = asyncHandler(async (req, res) => {
   const id = req.params.id;
-  const result = await userModel.findById(id).select("-password");
+  const result = await userModel.findById(id).select('-password');
+  console.log(result);
   if (result) {
     res.status(200).json(result);
   }
@@ -280,7 +281,7 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
     const result = await userService.forgotPassword(email);
     res
       .status(200)
-      .json({ status: 200, data: result, message: "Gửi link thành công" });
+      .json({ status: 200, data: result, message: 'Gửi link thành công' });
   } catch (err) {
     next(err);
   }
@@ -292,7 +293,7 @@ const resetPassword = asyncHandler(async (req, res, next) => {
     const user = await userService.resetPassword(userId, token, newPassword);
     res.status(200).json({
       status: 200,
-      message: "Thay đổi mật khẩu thành công",
+      message: 'Thay đổi mật khẩu thành công',
       data: user,
     });
   } catch (err) {

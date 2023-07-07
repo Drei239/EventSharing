@@ -7,3 +7,4 @@ export { default as Organizers } from './organizers/OrganizersPage';
 export { default as ForgotPassword } from './forgot-password/forgotPassword';
 export { default as ResetPassword } from './reset-password/resetPassword';
 export { default as EventPurchased } from './event-purchased/EventPurchased';
+export { default as QRCode } from './QRCode/QRCode';

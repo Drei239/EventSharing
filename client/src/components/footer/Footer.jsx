@@ -1,6 +1,6 @@
-import React from "react";
-import "./Footer.css";
-import { useLocation } from "react-router-dom";
+import React from 'react';
+import './Footer.css';
+import { useLocation } from 'react-router-dom';
 
 const Footer = () => {
   const location = useLocation();
@@ -9,45 +9,46 @@ const Footer = () => {
     <>
       <footer
         className={
-          location.pathname === "/login-register" ||
-          location.pathname === "/forgot-password" ||
-          location.pathname.indexOf("newPass") !== -1
-            ? "active"
-            : ""
+          location.pathname === '/login-register' ||
+          location.pathname === '/forgot-password' ||
+          location.pathname === '/qrcode' ||
+          location.pathname.indexOf('newPass') !== -1
+            ? 'active'
+            : ''
         }
       >
-        <div className="wrapper">
-          <div className="footer__top">
-            <div className="footer__contacts">
-              <div className="footer__hotline_title">Hotline:</div>
-              <div className="footer__phone">999-99-99-9999</div>
-              <div className="footer__email">abc@gmail.com</div>
+        <div className='wrapper'>
+          <div className='footer__top'>
+            <div className='footer__contacts'>
+              <div className='footer__hotline_title'>Hotline:</div>
+              <div className='footer__phone'>999-99-99-9999</div>
+              <div className='footer__email'>abc@gmail.com</div>
             </div>
-            <div className="footer__info">
-              <div className="footer__info_title">Adress:</div>
-              <div className="footer__adress">99 California, Miami beach</div>
-              <div className="footer__worktime">
-                {" "}
+            <div className='footer__info'>
+              <div className='footer__info_title'>Adress:</div>
+              <div className='footer__adress'>99 California, Miami beach</div>
+              <div className='footer__worktime'>
+                {' '}
                 Thứ 2 - Thứ 6 (8:30 - 18:30)
               </div>
             </div>
-            <div className="footer__social">
-              <div className="footer__links">
-                <a className="footer__link" href="https://www.facebook.com">
-                  <img src={"../images/facebook.png"} alt="" />
+            <div className='footer__social'>
+              <div className='footer__links'>
+                <a className='footer__link' href='https://www.facebook.com'>
+                  <img src={'../images/facebook.png'} alt='' />
                 </a>
-                <a className="footer__link" href="https://www.instagram.com">
-                  <img src={"../images/instagram.png"} alt="" />
+                <a className='footer__link' href='https://www.instagram.com'>
+                  <img src={'../images/instagram.png'} alt='' />
                 </a>
-                <a className="footer__link" href="https://www.youtube.com">
+                <a className='footer__link' href='https://www.youtube.com'>
                   <img
-                    className="link__youtube"
-                    src={"../images/youtube.png"}
-                    alt=""
+                    className='link__youtube'
+                    src={'../images/youtube.png'}
+                    alt=''
                   />
                 </a>
               </div>
-              <div className="copyright">&#169; Copyright 2023</div>
+              <div className='copyright'>&#169; Copyright 2023</div>
             </div>
           </div>
         </div>
