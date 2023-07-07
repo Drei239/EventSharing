@@ -49,9 +49,11 @@ const EventPurchased = () => {
       minutes: dateEnd.getMinutes(),
     });
 
-    QRCode.toDataURL(orderDetail?._id, function (err, url) {
-      setQrUrl(url);
-    });
+    if (orderDetail.event?.isOnline === false) {
+      QRCode.toDataURL(orderDetail?._id, function (err, url) {
+        setQrUrl(url);
+      });
+    }
   }, [orderDetail]);
 
   const closeHandler = () => {
@@ -154,12 +156,12 @@ const EventPurchased = () => {
           <p>Xác nhận thanh toán: </p>
           <p>{orderDetail?.isPaid ? 'Đã thanh toán' : 'Đang chờ xác nhận'}</p>
         </section>
-        {orderDetail?.isPaid && (
+        {orderDetail?.isPaid && orderDetail.event?.isOnline === false ? (
           <section className='event-purchase__qrcode'>
             <img src={qrUrl} id='qr-code' alt='QR code' />
             <Button onClick={handleDownloadQRCode}>Tải QR Code</Button>
           </section>
-        )}
+        ) : null}
       </Modal>
     </section>
   );
