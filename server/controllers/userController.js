@@ -63,36 +63,11 @@ const register = asyncHandler(async (req, res) => {
 
 //3.USER LOGIN
 const authLogin = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const lowerCaseEmail = email.toLowerCase();
-    const user = await userModel.findOne({ email: lowerCaseEmail });
-    if (user.password) {
-      if (user && (await bcrypt.compare(password, user.password))) {
-        const jwt = createJwt(user._id);
-
-        res.cookie('access', jwt.token, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 2 * 3600000),
-        });
-
-        res.cookie('refresh', jwt.refreshToken, {
-          httpOnly: true,
-          secure: true,
-          expires: new Date(Date.now() + 720 * 3600000),
-        });
-
-        res.status(201).json({
-          success: true,
-          data: 'Đăng nhập thành công',
-        });
-      } else {
-        return res
-          .status(401)
-          .json({ success: false, message: 'Email or password is incorrect' });
-      }
-    } else {
+  const { email, password } = req.body;
+  const lowerCaseEmail = email.toLowerCase();
+  const user = await userModel.findOne({ email: lowerCaseEmail });
+  if (user.password) {
+    if (user && (await bcrypt.compare(password, user.password))) {
       const jwt = createJwt(user._id);
 
       res.cookie('access', jwt.token, {
@@ -111,10 +86,30 @@ const authLogin = asyncHandler(async (req, res) => {
         success: true,
         data: 'Đăng nhập thành công',
       });
+    } else {
+      return res
+        .status(401)
+        .json({ success: false, message: 'Email or password is incorrect' });
     }
-  } catch (err) {
-    console.log(err);
-    next(err);
+  } else {
+    const jwt = createJwt(user._id);
+
+    res.cookie('access', jwt.token, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 2 * 3600000),
+    });
+
+    res.cookie('refresh', jwt.refreshToken, {
+      httpOnly: true,
+      secure: true,
+      expires: new Date(Date.now() + 720 * 3600000),
+    });
+
+    res.status(201).json({
+      success: true,
+      data: 'Đăng nhập thành công',
+    });
   }
 });
 
