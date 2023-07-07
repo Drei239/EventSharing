@@ -26,7 +26,9 @@ const createNewOrder = asyncHandler(async (event, user) => {
     if (eventOrder.status === "Public") {
       if (eventOrder.creator._id.toString() !== user.toString()) {
         if (orderValidator.existOrderValidation(existOrder)) {
-          if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
+          if (
+            orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)
+          ) {
             if (Date.now() < eventOrder.timeEndSignup) {
               const newOrder = await orderModel.create({
                 event,
@@ -248,7 +250,8 @@ const updateRequestOrder = asyncHandler(
                   location: `${requestEvent.location.address} ${requestEvent.location.ward.name} ${requestEvent.location.district.name} ${requestEvent.location.province.name}`,
                   content: "Đơn hàng của bạn đã được xác nhận thanh toán",
                   isOnline: requestEvent.isOnline,
-                  linkOnline: "das",
+                  linkOnline: requestEvent.linkOnline,
+                  link: `${process.env.FRONTEND_HOST}/event/${requestEvent._id}`,
                 });
                 await sendEmail({
                   to: data.email,
@@ -281,11 +284,10 @@ const exportData = asyncHandler(
         .populate("event", "title")
         .populate("user", "name");
       //EVENT TỒN TẠI DANH SÁCH EVENT?
-      if (orderValidator.eventExistOrderValidation(requestOrder)) {
+      if (requestOrder.length > 0) {
         //NGƯỜI REQUEST LÀ CREATOR
-        if (
-          eventValidator.requestIsCreatorValidation(requestEvent, requestUserId)
-        ) {
+
+        if (requestEvent.creator.toString() === requestUserId.toString()) {
           const worksheet = workbook.addWorksheet("Orders");
           worksheet.columns = [
             { header: "Id No.", key: "id_No", width: 10 },
@@ -340,7 +342,8 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
         location: `${findOrder.event.location.address} ${findOrder.event.location.ward.name} ${findOrder.event.location.district.name} ${findOrder.event.location.province.name}`,
         content: "Đơn hàng của bạn đã được xác nhận thanh toán",
         isOnline: findOrder.event.isOnline,
-        linkOnline: "das",
+        linkOnline: findOrder.event.linkOnline,
+        link: `${process.env.FRONTEND_HOST}/event/${findOrder.event._id}`,
       });
       await sendEmail({
         to: findOrder.user.email,
@@ -398,11 +401,13 @@ const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
     <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
     <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
     <div>
-    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
-        }</h4>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${
+      order.event.title
+    }</h4>
     <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
-    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
-        } ${order.event.location.province.name}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${
+        order.event.location.district.name
+      } ${order.event.location.province.name}</p>
     </div>
     </div>
    <div>${content}</div>

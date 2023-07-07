@@ -35,7 +35,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
   const handleClickEvent = async (notifyItem) => {
     await dispatch(markByIdNotify(notifyItem._id));
     if (notifyItem.notifyType === "new-order") {
-      navigate(`/my-event/${notifyItem?.eventId}`);
+      navigate(`/my-event/${notifyItem?.eventId?._id || notifyItem?.eventId}`);
     } else if (notifyItem.notifyType === "new-comment") {
       navigate(
         `/event/${notifyItem?.commentId?.event}?commentId=${notifyItem.commentId._id}`

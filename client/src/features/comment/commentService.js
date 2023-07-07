@@ -1,5 +1,4 @@
 import UseCallApi from "../../hooks/useCallApi";
-
 const createComment = async (eventId, title, comment) => {
   const newComment = await UseCallApi({
     url: `/comments/create/event/${eventId}`,

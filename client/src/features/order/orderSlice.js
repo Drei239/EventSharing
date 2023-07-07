@@ -90,6 +90,16 @@ export const sendEmailAllOrder = createAsyncThunk(
     }
   }
 );
+export const exportDataOrder = createAsyncThunk(
+  "order/exportDataOrder",
+  async (eventId, { rejectWithValue }) => {
+    try {
+      return await orderService.exportData(eventId);
+    } catch (err) {
+      return rejectWithValue(err);
+    }
+  }
+);
 export const openModalSendEmail = createAction(
   "openModalSendEmail",
   function frepare(type) {
@@ -217,7 +227,16 @@ const orderSlice = createSlice({
         state.isError = true;
         state.isLoading = false;
       });
-
+    builder
+      .addCase(exportDataOrder.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(exportDataOrder.fulfilled, (state, action) => {
+        state.isLoading = false;
+      })
+      .addCase(exportDataOrder.rejected, (state, action) => {
+        state.isLoading = false;
+      });
     builder.addCase(openModalSendEmail, (state, action) => {
       state.open = true;
       state.typeSend = action.payload;

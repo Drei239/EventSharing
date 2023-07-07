@@ -11,7 +11,9 @@ import dayjs from "dayjs";
 import { MdArrowBackIosNew } from "react-icons/md";
 
 import { ExportToExcel } from "../../components/ui";
+import axios from "axios";
 import {
+  exportDataOrder,
   getOrderbyId,
   updateCancelEvent,
   updateCompletedEvent,
@@ -110,11 +112,7 @@ const MyEvent = () => {
   const handleConfirmCompletedEvent = () => {
     dispatch(confirmEventCompeleted(orders[0]?.event._id));
   };
-  useEffect(() => {
-    if (isSuccess) {
-      notify("Thay đổi trạng thái của đơn hàng thành công", "success");
-    }
-  }, [isSuccess]);
+
   const handleClickSendEmailSelect = () => {
     dispatch(openModalSendEmail("select"));
   };
@@ -127,6 +125,31 @@ const MyEvent = () => {
   const handleChangeRowPerPage = (option) => {
     setRowPerPage(option.target.value);
     setPage(0);
+  };
+  const handleExportExcel = async () => {
+    try {
+      const response = await axios.get(`/orders/export/event/${id}`, {
+        responseType: "blob", // Chỉ định kiểu phản hồi là dạng blob (binary data)
+        withCredentials: true,
+      });
+
+      // Tạo URL của blob data
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+
+      // Tạo một thẻ <a> để tải xuống file
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "orders.xlsx"); // Đặt tên file xuất
+
+      // Thêm thẻ <a> vào body và kích hoạt sự kiện click để tải xuống file
+      document.body.appendChild(link);
+      link.click();
+
+      // Xóa URL khi không cần thiết nữa
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Lỗi khi xuất file Excel:", error);
+    }
   };
   useEffect(() => {
     if (isError) {
@@ -168,6 +191,11 @@ const MyEvent = () => {
   useEffect(() => {
     console.log(orders);
   }, [orders]);
+  useEffect(() => {
+    if (isSuccess) {
+      notify("Thay đổi trạng thái của đơn hàng thành công", "success");
+    }
+  }, [isSuccess]);
   return (
     <>
       {orders && orders.length > 0 && (
@@ -316,7 +344,10 @@ const MyEvent = () => {
               </button>
             </div>
           </div>
-          <ExportToExcel data={rows} />
+          <Button onClick={handleExportExcel} style={{ marginTop: "30px" }}>
+            Xuất ra excel
+          </Button>
+
           <Table
             rows={rows}
             idEvent={id}

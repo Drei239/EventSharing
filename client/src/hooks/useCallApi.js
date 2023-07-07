@@ -7,7 +7,11 @@ const UseCallApi = async ({ method, url, data }) => {
       url: url,
       data: data,
       withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
+
     if (response.status !== 200) {
       throw new Error("Có lỗi xảy ra trong quá trình gọi API");
     }

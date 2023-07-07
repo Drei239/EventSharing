@@ -49,6 +49,12 @@ const sendEmailAllOrder = async (data) => {
   });
   return orders;
 };
+const exportData = async (eventId) => {
+  const data = await UseCallApi({
+    url: `/orders/export/event/${eventId}`,
+  });
+  return data;
+};
 const orderService = {
   getOrderbyId,
   updateOneOrder,
@@ -56,5 +62,6 @@ const orderService = {
   sendEmail,
   sendEmailAllOrder,
   createNewOrder,
+  exportData,
 };
 export default orderService;
