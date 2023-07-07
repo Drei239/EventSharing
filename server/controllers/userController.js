@@ -74,12 +74,16 @@ const authLogin = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
+        domain: "eventsharing-backend.onrender.com",
+        sameSite: "None",
       });
 
       res.cookie("refresh", jwt.refreshToken, {
         httpOnly: true,
         secure: true,
         expires: new Date(Date.now() + 720 * 3600000),
+        domain: "eventsharing-backend.onrender.com",
+        sameSite: "None",
       });
 
       res.status(201).json({
@@ -98,12 +102,16 @@ const authLogin = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 2 * 3600000),
+      domain: "https://eventsharing-backend.onrender.com",
+      sameSite: "None",
     });
 
     res.cookie("refresh", jwt.refreshToken, {
       httpOnly: true,
       secure: true,
       expires: new Date(Date.now() + 720 * 3600000),
+      domain: "https://eventsharing-backend.onrender.com",
+      sameSite: "None",
     });
 
     res.status(201).json({
