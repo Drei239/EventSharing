@@ -18,39 +18,46 @@ const createNewOrder = asyncHandler(async (event, user) => {
     event: event,
     user: user,
   });
-  console.log(event);
   const eventOrder = await eventModel
     .findOne({ _id: event })
     .populate("creator");
   const listOrder = await orderModel.find({ event: event });
   if (eventOrder) {
-    if (orderValidator.existOrderValidation(existOrder)) {
-      if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
-        if (Date.now() < eventOrder.timeEndSignup) {
-          const newOrder = await orderModel.create({
-            event,
-            user,
-          });
-          if (newOrder) {
-            const notify = await notifyModel.create({
-              notifyFrom: user,
-              notifyTo: eventOrder.creator._id,
-              notifyType: "new-order",
-              content: `đã đăng kí sự kiện của bạn`,
-              eventId: newOrder.event,
-            });
-            return { newOrder, notify };
+    if (eventOrder.status === "Public") {
+      if (eventOrder.creator._id.toString() !== user.toString()) {
+        if (orderValidator.existOrderValidation(existOrder)) {
+          if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
+            if (Date.now() < eventOrder.timeEndSignup) {
+              const newOrder = await orderModel.create({
+                event,
+                user,
+              });
+              if (newOrder) {
+                const notify = await notifyModel.create({
+                  notifyFrom: user,
+                  notifyTo: eventOrder.creator._id,
+                  notifyType: "new-order",
+                  content: `đã đăng kí sự kiện của bạn`,
+                  eventId: newOrder.event,
+                });
+                return { newOrder, notify };
+              } else {
+                throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
+              }
+            } else {
+              throw Error(resMes.orderError.ERR_8);
+            }
           } else {
-            throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
+            throw Error(resMes.orderError.ERR_2);
           }
         } else {
-          throw Error(resMes.orderError.ERR_8);
+          throw Error(resMes.orderError.ERR_1);
         }
       } else {
-        throw Error(resMes.orderError.ERR_2);
+        throw Error(resMes.orderError.ERR_9);
       }
     } else {
-      throw Error(resMes.orderError.ERR_1);
+      throw Error(resMes.orderError.ERR_10);
     }
   } else {
     throw Error(resMes.eventError.ERR_2);
@@ -391,13 +398,11 @@ const sendEmailtoId = async ({ subject, content, ordersId, creatorId }) => {
     <div style="display:flex;align-items:center;justify-content:center;width:600px;margin:0 auto;gap:30px; border-bottom:2px solid #ccc; padding:40px 0">
     <img src=${order.event.banner}  alt="" style="width:300px;height:300px " />
     <div>
-    <h4 style="text-tranform:underline;color:blue;font-size:20px">${
-      order.event.title
-    }</h4>
+    <h4 style="text-tranform:underline;color:blue;font-size:20px">${order.event.title
+        }</h4>
     <p>${dayjs(order.event.timeBegin).format("ddd, DD MMM YYYY hh:mm")}</p>
-    <p>${order.event.location.address} ${order.event.location.ward.name} ${
-        order.event.location.district.name
-      } ${order.event.location.province.name}</p>
+    <p>${order.event.location.address} ${order.event.location.ward.name} ${order.event.location.district.name
+        } ${order.event.location.province.name}</p>
     </div>
     </div>
    <div>${content}</div>
