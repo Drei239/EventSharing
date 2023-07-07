@@ -24,10 +24,9 @@ import { Rating } from "../../components";
 import notify from "../../utils/notify";
 const EventDetails = () => {
   const navigate = useNavigate();
-  const timeOutRef = useRef();
+  // const timeOutRef = useRef();
   const [searchParams] = useSearchParams();
-  const [commentsTabs, setCommentsTabs] = useState("comments");
-  const [eventStat, setEventStat] = useState("");
+  const [commentsTabs, setCommentsTabs] = useState('comments');
   const { id } = useParams();
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
@@ -38,21 +37,24 @@ const EventDetails = () => {
   const [request, setRequest] = useState(false);
   const isOnline = isOnlineEvent();
 
-  useEffect(() => {
+  let eventDate = date(eventDetail);
+
+  function date(eventDetail) {
     const now = new Date();
     const beginTime = new Date(eventDetail?.timeBegin);
     const endTime = new Date(eventDetail?.timeEnd);
 
     if (now <= beginTime) {
-      setEventStat("Sự kiện sắp diễn ra");
+      return 'Sự kiện sắp diễn ra';
     } else if (now >= beginTime && now <= endTime) {
-      setEventStat("Sự kiện đang diễn ra");
+      return 'Sự kiện đang diễn ra';
     } else if (now >= endTime) {
-      setEventStat("Sự kiện đã hoàn tất");
+      return 'Sự kiện đã hoàn tất';
     }
-  }, []);
-
+  }
+    
   const [visible, setVisible] = useState(false);
+
   useEffect(() => {
     dispatch(getEventById(id));
   }, [id]);
@@ -104,13 +106,11 @@ const EventDetails = () => {
     case "draft":
       eventStatus = "DRAFT";
       break;
-    case "Public":
-      eventStatus = eventStat;
-    case "Public":
-      eventStatus = eventStat;
+    case 'Public':
+      eventStatus = eventDate;
       break;
-    case "Canceled":
-      eventStatus = "Event đã hủy";
+    case 'Canceled':
+      eventStatus = 'Sự kiện đã hủy';
       break;
     default:
       eventStatus = "no information";
