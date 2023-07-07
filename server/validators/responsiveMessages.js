@@ -1,6 +1,6 @@
 const eventError = {
   ERR_1: "TẠO SƯ KIỆN MỚI THẤT BẠI!",
-  ERR_2: "KHÔNG TÌM THẤY SỰ KIỆN THEO YÊU CẦU!",
+  ERR_2: "KHÔNG TÌM THẤY SỰ KIỆN!",
   ERR_3: "CHỈ CÓ THỂ CẬP NHẬT SỰ KIỆN NHÁP!",
   ERR_4: "THỜI GIAN SỰ KIỆN KHÔNG HỢP LỆ!",
   ERR_5: "TIÊU ĐỀ SỰ KIỆN ĐÃ TỒN TẠI!",

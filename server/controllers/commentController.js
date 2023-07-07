@@ -28,10 +28,10 @@ const createNewComment = asyncHandler(async (req, res) => {
 const getCommentByEventId = asyncHandler(async (req, res) => {
   const requestEventId = req.params.id;
   try {
-    const comments = await commentService.getCommentByEventId(requestEventId);
+    const { comments, countDocuments } = await commentService.getCommentByEventId(requestEventId, req.query);
     return res
       .status(200)
-      .json({ status: 200, data: comments, message: resMes.commentSucc.SUC_2 });
+      .json({ status: 200, data: comments, message: resMes.commentSucc.SUC_2, countDocuments: countDocuments });
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
