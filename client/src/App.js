@@ -14,6 +14,7 @@ import {
   ForgotPassword,
   ResetPassword,
   EventPurchased,
+  QRCode,
 } from './pages';
 import { RULES } from './constants/rules';
 import eventService from './features/events/eventService';
@@ -84,6 +85,7 @@ function App() {
           <Route path='/forgot-password' element={<ForgotPassword />} />
           <Route path='/newPass/:userId/:token' element={<ResetPassword />} />
           <Route path='/event-purchased' element={<EventPurchased />} />
+          <Route path='/qrcode' element={<QRCode />} />
           <Route path='/*' element={<Home />} />
         </Routes>
         <Footer />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import Select from 'react-select';
@@ -50,6 +50,7 @@ const orderSortOption = [
 
 const MyEvent = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { setVisible, bindings } = useModal();
   const [statusSelected, setStatusSelected] = useState(orderStatusOption[0]);
@@ -167,6 +168,10 @@ const MyEvent = () => {
   }, [isErrorUpdate]);
   useEffect(() => {
     console.log(orders);
+    console.log(orders[0]?.event.timeBegin, new Date(Date.now()).toISOString());
+    console.log(
+      orders[0]?.event.timeBegin < new Date(Date.now()).toISOString()
+    );
   }, [orders]);
   return (
     <>
@@ -217,13 +222,24 @@ const MyEvent = () => {
                 </div>
               </div>
               <div className='my-event-header-address'>
-                <span>Địa chỉ: </span>
-                <p className='my-event-header-address'>
-                  {orders[0]?.event.location?.address}{' '}
-                  {orders[0]?.event.location.ward?.name}{' '}
-                  {orders[0]?.event.location.district?.name}{' '}
-                  {orders[0]?.event.location.province?.name}
-                </p>
+                {orders[0]?.event.isOnline === true ? (
+                  <>
+                    <span>Link tham gia: </span>
+                    <p className='my-event-header-address'>
+                      {orders[0]?.event.linkOnline}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <span>Địa chỉ: </span>
+                    <p className='my-event-header-address'>
+                      {orders[0]?.event.location?.address}{' '}
+                      {orders[0]?.event.location.ward?.name}{' '}
+                      {orders[0]?.event.location.district?.name}{' '}
+                      {orders[0]?.event.location.province?.name}
+                    </p>
+                  </>
+                )}
               </div>
               <div className='my-event-header-info-sold'>
                 <span style={{ fontWeight: 700 }}>Đã bán:</span>
@@ -262,6 +278,17 @@ const MyEvent = () => {
                   : 'Ngừng bán'}
               </span>
             </div>
+            {orders[0]?.event.isOnline === false &&
+            orders[0]?.event.status === 'Public' &&
+            orders[0]?.event.timeBegin < new Date(Date.now()).toISOString() &&
+            orders[0]?.event.timeEnd > new Date(Date.now()).toISOString() ? (
+              <button
+                onClick={() => navigate(`/qrcode?id=${orders[0]?.event._id}`)}
+                className='my-event-header-btn-qr'
+              >
+                Quét QR code
+              </button>
+            ) : null}
             {orders &&
             orders.length > 0 &&
             orders[0]?.event?.status === 'Public' ? (

@@ -111,7 +111,7 @@ const EventPurchased = () => {
         </Modal.Header>
 
         <section className='event-purchased__info'>
-          <p>Mã đơn hàng: </p>
+          <p>Mã: </p>
           <p>#{orderDetail?._id}</p>
         </section>
 

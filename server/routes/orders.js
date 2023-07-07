@@ -10,6 +10,7 @@ const {
   sendEmailAllOrder,
   exportData,
   getOrdersByUserId,
+  checkQRcode,
 } = require('../controllers/orderController');
 const { protect, verifyUser } = require('../middleware/authMiddleware');
 
@@ -36,4 +37,6 @@ router.get('/export/event/:id', protect, exportData);
 router.post('/send-email', protect, sendEmailtoId);
 
 router.post('/send-allOrder', protect, sendEmailAllOrder);
+
+router.get('/:orderId/:eventId/checkQrcode', protect, checkQRcode);
 module.exports = router;

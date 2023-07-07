@@ -169,6 +169,33 @@ const getOrdersByUserId = asyncHandler(async (req, res) => {
   }
 });
 
+const checkQRcode = asyncHandler(async (req, res) => {
+  const { orderId, eventId } = req.params;
+  console.log(orderId, eventId);
+  console.log(req.user._id);
+
+  const order = await orderModel
+    .findById(orderId)
+    .populate('event')
+    .populate('user');
+
+  if (
+    order &&
+    order.event._id.toString() !== eventId.toString() &&
+    order.event._id.toString() !== eventId.toString()
+  ) {
+    res.status(404).json('QR code không trùng khớp');
+  }
+
+  if (order.isCheckQr) {
+    res.status(404).json('QR code này đã được quét');
+  }
+
+  order.isCheckQr = true;
+  order.save();
+  res.status(200).json(order);
+});
+
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
@@ -179,4 +206,5 @@ module.exports = {
   sendEmailAllOrder,
   exportData,
   getOrdersByUserId,
+  checkQRcode,
 };

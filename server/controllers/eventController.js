@@ -200,7 +200,6 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     limitUser,
     status,
   } = req.body;
-  console.log(description);
   try {
     const updateEvent = await eventService.updateDraftEventInfo(
       requestEventId,
