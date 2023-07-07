@@ -7,9 +7,6 @@ const UseCallApi = async ({ method, url, data }) => {
       url: url,
       data: data,
       withCredentials: true,
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     if (response.status !== 200) {

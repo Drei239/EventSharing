@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useParams } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
@@ -10,10 +11,7 @@ import { AiOutlineCloseCircle } from "react-icons/ai";
 import dayjs from "dayjs";
 import { MdArrowBackIosNew } from "react-icons/md";
 
-import { ExportToExcel } from "../../components/ui";
-import axios from "axios";
 import {
-  exportDataOrder,
   getOrderbyId,
   updateCancelEvent,
   updateCompletedEvent,
@@ -27,28 +25,7 @@ import {
   cancelEvent,
   confirmEventCompeleted,
 } from "../../features/events/eventSlice";
-
-const orderStatusOption = [
-  {
-    label: "Tất cả đơn hàng",
-    value: "all",
-  },
-  { label: "Đã Thanh toán", value: "paid" },
-  { label: "Chưa thanh toán", value: "unpaid" },
-  { label: "Đã hoàn tiền", value: "refund" },
-  { label: "Đã tham gia", value: "joined" },
-];
-
-const orderSortOption = [
-  {
-    label: "Mới nhất",
-    value: "-createdAt",
-  },
-  {
-    label: "Cũ nhất",
-    value: "createdAt",
-  },
-];
+import { orderSortOption, orderStatusOption } from "../../data/data";
 
 const MyEvent = () => {
   const { id } = useParams();
@@ -63,7 +40,6 @@ const MyEvent = () => {
 
   const {
     orders,
-    isLoading,
     isSuccess,
     isError,
     isSuccessUpdate,

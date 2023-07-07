@@ -12,3 +12,24 @@ export const month = [
   { label: "Tháng 11", value: 10 },
   { label: "Tháng 12", value: 11 },
 ];
+export const orderStatusOption = [
+  {
+    label: "Tất cả đơn hàng",
+    value: "all",
+  },
+  { label: "Đã Thanh toán", value: "paid" },
+  { label: "Chưa thanh toán", value: "unpaid" },
+  { label: "Đã hoàn tiền", value: "refund" },
+  { label: "Đã tham gia", value: "joined" },
+];
+
+export const orderSortOption = [
+  {
+    label: "Mới nhất",
+    value: "-createdAt",
+  },
+  {
+    label: "Cũ nhất",
+    value: "createdAt",
+  },
+];

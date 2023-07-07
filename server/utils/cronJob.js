@@ -12,17 +12,12 @@ const job = new cronJob(
     const upcomingEvent = await eventModel.find({
       timeBegin: { $gte: endTimeToday, $lte: endTimeTomorrow },
     });
-
-    if (!upcomingEvent) {
-      console.log("Không có sự kiện nào diễn ra vào ngày mai");
-    }
     await Promise.all(
       upcomingEvent.map(async (item, index) => {
         const getOrder = await orderModel.find({
           event: item._id,
           isPaid: true,
         });
-        console.log(getOrder);
         if (getOrder.length > 0) {
           await Promise.all(
             getOrder.map(async (order) => {

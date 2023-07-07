@@ -12,6 +12,7 @@ const uploadImage = asyncHandler(async (req, res) => {
     const urls = await uploadService.uploadImages(req.files, nameFolder);
     res.status(200).json({ status: 200, data: urls, message: eventSucc.SUC_4 });
   } catch (err) {
+    console.log(err);
     throw Error(err);
   }
 });

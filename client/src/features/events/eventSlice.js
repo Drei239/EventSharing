@@ -205,6 +205,9 @@ const eventSlice = createSlice({
     });
     builder.addCase(getEventById.pending, (state) => {
       state.isLoading = true;
+      state.isSuccessUpdate = false;
+      state.isSuccessUpdateCancel = false;
+      state.isSuccessRemove = false;
     });
     builder.addCase(getEventById.fulfilled, (state, action) => {
       state.getEventById = action.payload;

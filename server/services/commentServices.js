@@ -165,7 +165,7 @@ const updateReplyComment = asyncHandler(
           },
           { new: true }
         );
-        console.log(updateReply);
+
         return updateReply;
       } else {
         throw Error(resMes.commentError.ERR_3);

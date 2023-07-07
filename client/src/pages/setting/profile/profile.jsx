@@ -14,7 +14,7 @@ import {
   removeImg,
   updateInfo,
 } from "../../../features/user/userSlice";
-import { uploadImage as uploadImage2 } from "../../../utils/uploadImg";
+import { uploadImage } from "../../../utils/uploadImg";
 import notify from "../../../utils/notify";
 
 const validateSchema = object().shape({
@@ -52,7 +52,7 @@ const Profile = () => {
     onSubmit: async (values) => {
       setVisible(true);
       if (imgSelect) {
-        await uploadImage2([imgSelect], "user").then((result, reject) => {
+        await uploadImage([imgSelect], "user").then((result, reject) => {
           console.log(result);
           if (result) {
             dispatch(

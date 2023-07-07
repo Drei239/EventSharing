@@ -23,6 +23,7 @@ const OrderEvent = () => {
 
   const handleBuyTicket = () => {
     dispatch(newCreateOrder({ eventId: eventDetail?._id, userInfo }));
+    setVisible(false);
   };
 
   useEffect(() => {
@@ -30,10 +31,6 @@ const OrderEvent = () => {
       dispatch(newConnetion(userInfo?._id));
     }
   }, [isLogin]);
-
-  const closeHandler = () => {
-    setVisible(false);
-  };
   return (
     <div>
       <Button

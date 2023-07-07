@@ -28,10 +28,16 @@ const createNewComment = asyncHandler(async (req, res) => {
 const getCommentByEventId = asyncHandler(async (req, res) => {
   const requestEventId = req.params.id;
   try {
-    const { comments, countDocuments } = await commentService.getCommentByEventId(requestEventId, req.query);
+    const { comments, countDocuments } =
+      await commentService.getCommentByEventId(requestEventId, req.query);
     return res
       .status(200)
-      .json({ status: 200, data: comments, message: resMes.commentSucc.SUC_2, countDocuments: countDocuments });
+      .json({
+        status: 200,
+        data: comments,
+        message: resMes.commentSucc.SUC_2,
+        countDocuments: countDocuments,
+      });
   } catch (error) {
     return res.status(400).json({ status: 400, message: error.message });
   }
@@ -89,7 +95,6 @@ const replyCommentById = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: reply, message: resMes.commentSucc.SUC_1 });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
@@ -113,7 +118,6 @@ const updateReplyComment = asyncHandler(async (req, res) => {
       message: resMes.commentSucc.SUC_3,
     });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });

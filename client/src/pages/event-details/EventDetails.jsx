@@ -35,13 +35,13 @@ const EventDetails = () => {
   const { orders, isSuccessCreate, notifyOrder } = useSelector(
     (state) => state.order
   );
+  const [request, setRequest] = useState(false);
   const isOnline = isOnlineEvent();
 
   useEffect(() => {
     const now = new Date();
     const beginTime = new Date(eventDetail?.timeBegin);
     const endTime = new Date(eventDetail?.timeEnd);
-    console.log(beginTime);
 
     if (now <= beginTime) {
       setEventStat("Sự kiện sắp diễn ra");
@@ -62,7 +62,7 @@ const EventDetails = () => {
     }
   }, [id]);
   useEffect(() => {
-    if (isSuccessCreate) {
+    if (isSuccessCreate && request) {
       notify("đăng ký kiện thành công", "success");
       dispatch(
         sendNotifyNewOrder({
@@ -71,6 +71,7 @@ const EventDetails = () => {
         })
       );
     }
+    setRequest(true);
   }, [isSuccessCreate]);
   const handleGoToComment = (commentId) => {
     const commentElement = document.getElementById(commentId);
@@ -240,6 +241,10 @@ const EventDetails = () => {
             ) : Date.parse(eventDetail.timeEndSignup) < Date.now() ? (
               <span className="event-joined-text">
                 Sự kiện đã qua thời gian đăng kí
+              </span>
+            ) : eventDetail.limitUser <= orders.length ? (
+              <span className="event-joined-text">
+                Sự kiện đã đủ số lượng người đăng kí
               </span>
             ) : (
               <OrderEvent />
