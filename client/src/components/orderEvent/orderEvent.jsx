@@ -2,19 +2,17 @@ import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Link, Modal, Text, useModal } from "@nextui-org/react";
 import { newCreateOrder } from "../../features/order/orderSlice";
-import { sendNotifyNewOrder } from "../../features/action";
+
 import { useDispatch, useSelector } from "react-redux";
 import { newConnetion } from "../../features/action";
-import notify from "../../utils/notify";
 
 const OrderEvent = () => {
   const navigate = useNavigate();
   const { setVisible, bindings } = useModal();
-  const { isSuccessCreate } = useSelector((state) => state.order);
   const dispatch = useDispatch();
   const eventDetail = useSelector((state) => state?.event?.getEventById);
   const { isLogin, userInfo } = useSelector((state) => state.user);
-  const { notifyOrder } = useSelector((state) => state.order);
+
   const handler = () => {
     if (isLogin) {
       setVisible(true);
@@ -33,21 +31,8 @@ const OrderEvent = () => {
     }
   }, [isLogin]);
 
-  useEffect(() => {
-    if (isSuccessCreate) {
-      notify("đăng ký kiện thành công", "success");
-      dispatch(
-        sendNotifyNewOrder({
-          ...notifyOrder,
-          notifyFrom: userInfo,
-        })
-      );
-    }
-  }, [isSuccessCreate]);
-
   const closeHandler = () => {
     setVisible(false);
-    console.log("closed");
   };
   return (
     <div>

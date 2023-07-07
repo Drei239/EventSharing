@@ -46,6 +46,8 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
           notifyItem?.commentId?.event || notifyItem?.eventId
         }?commentId=${notifyItem.commentId?._id || notifyItem.commentId}`
       );
+    } else {
+      navigate(`/event/${notifyItem.eventId._id}`);
     }
   };
   const markReadAll = () => {
@@ -120,6 +122,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
                       isReadMessage={item?.isReadMessage}
                       time={item?.createdAt}
                       replyContent={item?.replyContent}
+                      event={item?.eventId}
                     />
                   </div>
                 );

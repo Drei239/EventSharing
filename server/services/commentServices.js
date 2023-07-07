@@ -17,7 +17,13 @@ const createNewComment = asyncHandler(
         event,
         creator,
       });
-      if (newComment) {
+      if (!comment) {
+        throw Error(resMes.commentError.ERR_1);
+      }
+      if (
+        newComment &&
+        existEvent?.creator.toString() != requestUserId.toString()
+      ) {
         const notify = await notifyModel.create({
           notifyFrom: creator,
           notifyTo: existEvent.creator,
@@ -26,9 +32,8 @@ const createNewComment = asyncHandler(
           content: `đã bình luận trong sự kiện của bạn`,
         });
         return { newComment, notify };
-      } else {
-        throw Error(resMes.commentError.ERR_1);
       }
+      return { newComment };
     } else {
       throw Error(resMes.eventError.ERR_2);
     }
@@ -41,13 +46,17 @@ const getCommentByEventId = asyncHandler(async (requestEventId, query) => {
   const skip = (page - 1) * limit;
   const existEvent = await eventModel.findById(requestEventId);
   if (existEvent) {
-    const countDocuments = await commentModel.countDocuments({ event: requestEventId });
+    const countDocuments = await commentModel.countDocuments({
+      event: requestEventId,
+    });
     const comments = await commentModel
       .find({ event: requestEventId })
       .populate("event", "title")
       .populate("creator", "name avatar")
       .populate("reply.creator", "name avatar")
-      .sort("-createdAt").limit(limit).skip(skip);
+      .sort("-createdAt")
+      .limit(limit)
+      .skip(skip);
 
     if (comments && comments.length != 0) {
       return { comments, countDocuments };
@@ -57,7 +66,6 @@ const getCommentByEventId = asyncHandler(async (requestEventId, query) => {
   } else {
     throw Error(resMes.eventError.ERR_2);
   }
-
 });
 
 //3.UPDATE COMMENT BY COMMENT ID

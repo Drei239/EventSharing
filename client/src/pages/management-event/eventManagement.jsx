@@ -43,7 +43,7 @@ const eventTypeOption = [
     value: "draft",
   },
   {
-    label: "Public",
+    label: "Công Khai",
     value: "Public",
   },
   {
@@ -252,7 +252,7 @@ const EventManagement = () => {
                       </div>
 
                       <div className="management-events-list-item-gross">
-                        {item.fee > 0 ? `${item.fee} đ` : "free"}
+                        {item.fee > 0 ? `${item.fee} đ` : "Miễn phí"}
                       </div>
                       <div className="management-events-list-item-status">
                         <span

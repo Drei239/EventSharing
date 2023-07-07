@@ -1,5 +1,5 @@
 .my-event {
-  height: 140vh;
+  min-height: 140vh;
   width: 80%;
   margin: 80px auto;
   padding: 20px 0;

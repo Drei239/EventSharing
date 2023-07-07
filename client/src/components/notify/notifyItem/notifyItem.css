@@ -46,3 +46,8 @@
 .notify-item-comment {
   font-size: 15px;
 }
+.notify-item-content-name {
+  font-weight: 600;
+  font-size: 17px;
+  color: var(--color-primary);
+}

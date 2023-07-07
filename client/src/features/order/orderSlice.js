@@ -14,6 +14,7 @@ const initialState = {
   isSuccessEmail: false,
   isErrorEmail: false,
   isSuccessCreate: false,
+  isSuccessUpdate: false,
 };
 export const newCreateOrder = createAsyncThunk(
   "order/createOrder",
@@ -123,7 +124,7 @@ const orderSlice = createSlice({
     builder
       .addCase(updateOneOrder.pending, (state) => {
         state.isLoading = true;
-        state.isSuccess = false;
+        state.isSuccessUpdate = false;
         state.isError = false;
       })
       .addCase(updateOneOrder.fulfilled, (state, action) => {
@@ -133,7 +134,7 @@ const orderSlice = createSlice({
           (order) => order._id === data?._id
         );
         state.orders[index] = data;
-        state.isSuccess = true;
+        state.isSuccessUpdate = true;
       })
       .addCase(updateOneOrder.rejected, (state, action) => {
         state.message = action.payload?.message;
@@ -143,12 +144,12 @@ const orderSlice = createSlice({
     builder
       .addCase(updateRequest.pending, (state) => {
         state.isLoading = true;
-        state.isSuccess = false;
+        state.isSuccessUpdate = false;
         state.isError = false;
       })
       .addCase(updateRequest.fulfilled, (state, action) => {
         state.isLoading = false;
-        state.isSuccess = true;
+        state.isSuccessUpdate = true;
 
         action.payload.map((item) => {
           const index = state.orders.findIndex(
@@ -204,12 +205,12 @@ const orderSlice = createSlice({
       .addCase(newCreateOrder.fulfilled, (state, action) => {
         const data = action.payload.data;
         state.isLoading = false;
+        state.isSuccessCreate = true;
         state.notifyOrder = action.payload.data.notify;
         state.orders = [
           { ...data.newOrder, user: action.payload.creator },
           ...state.orders,
         ];
-        state.isSuccessCreate = true;
       })
       .addCase(newCreateOrder.rejected, (state, action) => {
         state.message = action.payload?.message;

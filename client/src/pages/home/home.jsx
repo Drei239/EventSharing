@@ -74,7 +74,9 @@ const Home = () => {
           {isLoading && <Loading />}
           {isLoading && <Loading />}
         </div>
-        {-page > -Math.floor(countDocument / 10) && (
+        {(countDocument % 10 > 0
+          ? Math.floor(countDocument / 10) + 1 > page
+          : Math.floor(countDocument / 10) >= page) && (
           <div className="btn-show">
             <span className="strike-left"></span>
             <button onClick={() => setPage(page + 1)}>Xem thêm</button>
