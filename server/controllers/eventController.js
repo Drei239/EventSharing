@@ -1,39 +1,39 @@
-const asyncHandler = require('express-async-handler');
-const eventModel = require('../models/eventModel');
-const eventService = require('../services/eventServices');
-const { eventError, eventSucc } = require('../validators/responsiveMessages');
-const orderModel = require('../models/orderModel');
-const eventValidators = require('../validators/eventValidators');
+const asyncHandler = require("express-async-handler");
+const eventModel = require("../models/eventModel");
+const eventService = require("../services/eventServices");
+const { eventError, eventSucc } = require("../validators/responsiveMessages");
+const orderModel = require("../models/orderModel");
+const eventValidators = require("../validators/eventValidators");
 
 //UPDATE CREATE REVIEW EVENT - UPDATE EVENT RATING - PROTECT UPDATE DRAFT EVENT
 //Lưu data theo UTC time
 //Tìm cách lấy client timezone convert cho ra giờ theo timezone của họ
 function changeTimeZone(date, timeZone) {
-  if (typeof date === 'string') {
+  if (typeof date === "string") {
     return new Date(
-      new Date(date).toLocaleString('en-US', {
+      new Date(date).toLocaleString("en-US", {
         timeZone,
       })
     );
   }
 
   return new Date(
-    date.toLocaleString('en-US', {
+    date.toLocaleString("en-US", {
       timeZone,
     })
   );
 }
 
 const date = new Date();
-console.log('new Date', date);
+console.log("new Date", date);
 
-const hcmDate = changeTimeZone(date, 'Asia/Saigon');
-console.log('Asia/Saigon Date', hcmDate);
+const hcmDate = changeTimeZone(date, "Asia/Saigon");
+console.log("Asia/Saigon Date", hcmDate);
 
 console.log(
-  'toLocaleString Date',
-  date.toLocaleString('en-US', {
-    timeZone: 'Asia/Saigon',
+  "toLocaleString Date",
+  date.toLocaleString("en-US", {
+    timeZone: "Asia/Saigon",
   })
 );
 
@@ -77,26 +77,10 @@ const createNewEvent = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
   } catch (error) {
+    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
-
-//2.GET ALL PUBLIC EVENT - CHỈ HIỂN THỊ CÁC EVENT ĐANG CÓ STATUS PUBLIC
-//"$and"[{ "status": "Draft" }, { "status": "Public" }]
-//DANH SÁCH THEO EVENT RATING GIẢM DẦN find().sort({eventRating:-1}).limit(1)
-//EVENT RATING TĂNG DẦN find().sort({eventRating:+1}).limit(1)
-// const getPublicEvent = asyncHandler(async (req, res) => {
-//     const events = await eventModel.find({ "status": "Public" });
-//     if (events) {
-//         console.log(events[0].timeBegin.toLocaleString('en-US', {
-//             timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-//         }),);
-//         res.status(200).json(events);
-//     } else {
-//         res.status(401);
-//         throw new Error("KHÔNG TÌM THẤY BẤT CỨ EVENT NÀO!");
-//     }
-// });
 
 const getPublicEvents = asyncHandler(async (req, res) => {
   try {
@@ -135,10 +119,10 @@ const highlightEvents = asyncHandler(async (req, res) => {
     const events = await eventModel
       .find({
         timeEndSignup: { $gte: Date.now() },
-        status: 'Public',
+        status: "Public",
       })
-      .populate({ path: 'creator', options: { sort: { userRating: -1 } } })
-      .populate('category')
+      .populate({ path: "creator", options: { sort: { userRating: -1 } } })
+      .populate("category")
       .limit(5);
 
     return res
@@ -153,14 +137,14 @@ const highlightEvents = asyncHandler(async (req, res) => {
 const getEventById = asyncHandler(async (req, res) => {
   const event = await eventModel
     .findById(req.params.id)
-    .populate('category')
-    .populate('creator', '_id name avatar totalRating')
-    .populate('reviews.user', 'name avatar');
+    .populate("category")
+    .populate("creator", "_id name avatar totalRating")
+    .populate("reviews.user", "name avatar");
   if (event) {
     res.status(200).json(event);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY EVENT!');
+    throw new Error("KHÔNG TÌM THẤY EVENT!");
   }
 });
 
@@ -173,7 +157,7 @@ const getEventByCreator = asyncHandler(async (req, res) => {
     res.status(200).json(event);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!');
+    throw new Error("KHÔNG TÌM THẤY EVENT CỦA NGƯỜI DÙNG!");
   }
 });
 
@@ -200,7 +184,6 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
     limitUser,
     status,
   } = req.body;
-  console.log(description);
   try {
     const updateEvent = await eventService.updateDraftEventInfo(
       requestEventId,
@@ -224,7 +207,6 @@ const updateDraftEventInfo = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: updateEvent, message: eventSucc.SUC_6 });
   } catch (error) {
-    console.log(error);
     res.status(400).json({ status: 400, message: error.message });
   }
 });
@@ -238,7 +220,7 @@ const getEventByTitle = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
 
@@ -251,7 +233,7 @@ const getQueryEvents = asyncHandler(async (req, res) => {
     res.status(200).json(searchedEvent);
   } else {
     res.status(401);
-    throw new Error('KHÔNG TÌM THẤY SỰ KIỆN!');
+    throw new Error("KHÔNG TÌM THẤY SỰ KIỆN!");
   }
 });
 
@@ -326,7 +308,7 @@ const getEventsOrganizers = asyncHandler(async (req, res) => {
     res.status(200).json(result);
   } else {
     res.status(400);
-    throw new Error('Not found');
+    throw new Error("Not found");
   }
 });
 
@@ -359,74 +341,19 @@ const confirmEventCompleted = asyncHandler(async (req, res, next) => {
     await eventService.confirmEventCompleted(eventId, userId);
     res.status(200).json({ status: 200, message: eventSucc.SUC_7 });
   } catch (err) {
-    console.log(err);
     next(err);
   }
 });
 const changeStatusPublic = asyncHandler(async (req, res) => {
-  // const {
-  //   title,
-  //   description,
-  //   banner,
-  //   imageList,
-  //   category,
-  //   isOnline,
-  //   fee,
-  //   location,
-  //   linkOnline,
-  //   timeEndSignup,
-  //   timeBegin,
-  //   timeEnd,
-  //   limitUser,
-  //   reviews,
-  //   status,
-  // } = req.body;
-  // const eventId = req.params.id;
-  // console.log(req.body);
-  // // Sau khi gán userInfo = req.user
-  // // const creator = req.user._id;
-  // // loại bỏ giá trị creator ở req.body
-  // // if (inputTimeValidation(timeEndSignup, timeBegin, timeEnd)) {
-  // try {
-  //   const newEvent = await eventService.changeStatusPublic(
-  //     eventId,
-  //     title,
-  //     description,
-  //     banner,
-  //     imageList,
-  //     category,
-  //     isOnline,
-  //     linkOnline,
-  //     fee,
-  //     location,
-  //     timeEndSignup,
-  //     timeBegin,
-  //     timeEnd,
-  //     req.user?._id,
-  //     limitUser,
-  //     reviews,
-  //     status
-  //   );
-  //   return res
-  //     .status(200)
-  //     .json({ status: 200, data: newEvent, message: eventSucc.SUC_1 });
-  // } catch (error) {
-  //   // return res.status(400).json({ status: 400, message: eventError.ERR_1 });
-  //   console.log(error);
-  //   next(error);
-  // }
-  console.log('a');
-
   const id = req.params.id;
-  console.log(id);
   const event = await eventModel.findById(id);
   if (event) {
-    event.status = 'Public';
+    event.status = "Public";
     event.save();
-    res.status(200).json({ update: 'success' });
+    res.status(200).json({ update: "success" });
   } else {
     res.status(400);
-    throw new Error('update fail');
+    throw new Error("update fail");
   }
 });
 

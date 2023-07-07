@@ -56,9 +56,6 @@ const Events = () => {
   useEffect(() => {
     setCurrentPage(1);
   }, [filter]);
-  useEffect(() => {
-    console.log(events);
-  }, [events]);
   return (
     <motion.div className="events" layout>
       <div className="banner-event">

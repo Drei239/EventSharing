@@ -29,19 +29,19 @@ const EventModal = () => {
 		}
 	}
 
-	useEffect(() => {
-		dispatch(getOrderbyId({ id, status: "all" }));
-	}, []);
+  useEffect(() => {
+    dispatch(getOrderbyId({ id, status: "all" }));
+  }, []);
 
 	useEffect(() => {
 		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
 
-	return (
-		<div>
-			<button className='members__list' onClick={() => setVisible(true)}>
-				Xem danh sách <LuFileSymlink />
-			</button>
+  return (
+    <div>
+      <button className="members__list" onClick={() => setVisible(true)}>
+        Xem danh sách <LuFileSymlink />
+      </button>
 
 			<Modal
 				scroll

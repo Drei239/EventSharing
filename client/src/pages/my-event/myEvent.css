@@ -1,5 +1,5 @@
 .my-event {
-  height: 140vh;
+  min-height: 140vh;
   width: 80%;
   margin: 80px auto;
   padding: 20px 0;
@@ -60,8 +60,7 @@
   gap: 5px;
   height: 30px;
 }
-.my-event-filter-select {
-}
+
 .my-event-filter-search input {
   border: none;
   outline: none;
@@ -254,6 +253,25 @@
   cursor: pointer;
   transition: 0.3s;
 }
+
+.my-event-header-btn-qr {
+  background-color: #fff;
+  border: 2px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 5px 15px;
+  position: absolute;
+  bottom: 55px;
+  right: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.my-event-header-btn-qr:hover {
+  background-color: var(--color-primary);
+  border-color: #fff;
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
 .my-event-return {
   display: flex;
   align-items: center;

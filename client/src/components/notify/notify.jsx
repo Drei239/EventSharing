@@ -35,7 +35,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
   const handleClickEvent = async (notifyItem) => {
     await dispatch(markByIdNotify(notifyItem._id));
     if (notifyItem.notifyType === "new-order") {
-      navigate(`/my-event/${notifyItem?.eventId}`);
+      navigate(`/my-event/${notifyItem?.eventId?._id || notifyItem?.eventId}`);
     } else if (notifyItem.notifyType === "new-comment") {
       navigate(
         `/event/${notifyItem?.commentId?.event}?commentId=${notifyItem.commentId._id}`
@@ -46,6 +46,8 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
           notifyItem?.commentId?.event || notifyItem?.eventId
         }?commentId=${notifyItem.commentId?._id || notifyItem.commentId}`
       );
+    } else {
+      navigate(`/event/${notifyItem.eventId._id}`);
     }
   };
   const markReadAll = () => {
@@ -120,6 +122,7 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
                       isReadMessage={item?.isReadMessage}
                       time={item?.createdAt}
                       replyContent={item?.replyContent}
+                      event={item?.eventId}
                     />
                   </div>
                 );

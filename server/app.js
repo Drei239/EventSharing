@@ -54,11 +54,6 @@ process.env.TZ = "Asia/Jakarta";
 app.use(function (req, res, next) {
   next(createError(404));
 });
-// function errorHandler(err, req, res, next) {
-//   console.error(err.message);
-//   res.status(500).json({ error: "Internal Server Error" });
-// }
-// app.use(errorHandler);
 app.use(function (err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;

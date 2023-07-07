@@ -12,27 +12,26 @@ const job = new cronJob(
     const upcomingEvent = await eventModel.find({
       timeBegin: { $gte: endTimeToday, $lte: endTimeTomorrow },
     });
-
-    if (!upcomingEvent) {
-      console.log("Không có sự kiện nào diễn ra vào ngày mai");
-    }
-
-    const getOrder = await orderModel.find({
-      event: upcomingEvent._id,
-      isPaid: true,
-    });
-    if (getOrder.length > 0) {
-      await Promise.all(
-        getOrder.map(async (order) => {
-          await notifyModel.create({
-            notifyTo: order.user,
-            eventId: upcomingEvent._id,
-            notifyType: "upcoming-event",
-            content: `sẽ diễn ra vào ngày mai`,
-          });
-        })
-      );
-    }
+    await Promise.all(
+      upcomingEvent.map(async (item, index) => {
+        const getOrder = await orderModel.find({
+          event: item._id,
+          isPaid: true,
+        });
+        if (getOrder.length > 0) {
+          await Promise.all(
+            getOrder.map(async (order) => {
+              await notifyModel.create({
+                notifyTo: order.user,
+                eventId: item._id,
+                notifyType: "upcoming-event",
+                content: `sẽ diễn ra vào ngày mai`,
+              });
+            })
+          );
+        }
+      })
+    );
   },
   null,
   true,

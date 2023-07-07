@@ -15,8 +15,11 @@
   justify-content: space-between;
   margin-top: 20px;
 }
-.rating-event-btns button {
+.rating-event-btns > button:last-child {
   width: 50%;
+}
+.rating-event-create-btn {
+  width: 100%;
 }
 .rating-event-total {
   display: flex;

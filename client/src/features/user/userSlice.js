@@ -74,7 +74,6 @@ export const forgotPassword = createAsyncThunk(
       const res = await userService.forgotPasswordUser(email);
       return res;
     } catch (err) {
-      console.log(err);
       return rejectWithValue(err);
     }
   }

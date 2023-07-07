@@ -1,6 +1,6 @@
 const eventError = {
   ERR_1: "TẠO SƯ KIỆN MỚI THẤT BẠI!",
-  ERR_2: "KHÔNG TÌM THẤY SỰ KIỆN THEO YÊU CẦU!",
+  ERR_2: "KHÔNG TÌM THẤY SỰ KIỆN!",
   ERR_3: "CHỈ CÓ THỂ CẬP NHẬT SỰ KIỆN NHÁP!",
   ERR_4: "THỜI GIAN SỰ KIỆN KHÔNG HỢP LỆ!",
   ERR_5: "TIÊU ĐỀ SỰ KIỆN ĐÃ TỒN TẠI!",
@@ -30,7 +30,9 @@ const orderError = {
   ERR_5: "CẬP NHẬT THÔNG TIN DANH SÁCH ĐĂNG KÝ SỰ KIỆN THẤT BẠI!",
   ERR_6: "CHỈ CÓ NGƯỜI TỔ CHỨC MỚI CÓ QUYỀN CẬP NHẬT THÔNG TIN NÀY!",
   ERR_7: "BẠN KHÔNG PHẢI NGƯỜI TỔ CHỨC SỰ KIỆN",
-  ERR_8: "THỜI GIAN ĐĂNG KÝ THAM GIA SỰ KIỆN ĐÃ KẾT THÚC!"
+  ERR_8: "THỜI GIAN ĐĂNG KÝ THAM GIA SỰ KIỆN ĐÃ KẾT THÚC!",
+  ERR_9: "KHÔNG THỂ ĐĂNG KÝ THAM GIA SỰ KIỆN DO BẢN THÂN TỔ CHỨC!",
+  ERR_10: "TÌNH TRẠNG SỰ KIỆN KHÔNG HỢP LỆ!"
 };
 
 const orderSucc = {

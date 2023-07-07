@@ -62,3 +62,17 @@
   font-size: 13px;
   font-weight: 600;
 }
+.comment-content {
+  display: flex;
+  align-items: center;
+  font-size: 13px;
+  gap: 5px;
+}
+.comment-isAuthor {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  gap: 4px;
+  color: #bcbcbc;
+  margin-left: 50px;
+}

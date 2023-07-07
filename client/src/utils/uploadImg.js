@@ -9,6 +9,7 @@ export const uploadImage = async (files, folder) => {
     }
   }
   if (formData) {
+    console.log(formData);
     const response = await UseCallApi({
       data: formData,
       url: `/upload?folder=${folder}`,
@@ -16,6 +17,6 @@ export const uploadImage = async (files, folder) => {
     });
     return response?.data;
   } else {
-    throw new Error("Không có ảnh hoặc định dạng sai");
+    throw Error("Không có ảnh hoặc định dạng sai");
   }
 };

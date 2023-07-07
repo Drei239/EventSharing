@@ -18,6 +18,7 @@ const getAllNotify = async (userId, query) => {
     .limit(pagesize)
     .populate({ path: "notifyFrom", select: "name avatar" })
     .populate("commentId")
+    .populate("eventId", "title banner")
     .sort("-createdAt");
   const countDocument = await notifyModel
     .find({ notifyTo: userId.toString(), isNew: true })

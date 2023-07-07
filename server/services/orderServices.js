@@ -18,39 +18,48 @@ const createNewOrder = asyncHandler(async (event, user) => {
     event: event,
     user: user,
   });
-  console.log(event);
   const eventOrder = await eventModel
     .findOne({ _id: event })
     .populate("creator");
   const listOrder = await orderModel.find({ event: event });
   if (eventOrder) {
-    if (orderValidator.existOrderValidation(existOrder)) {
-      if (orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)) {
-        if (Date.now() < eventOrder.timeEndSignup) {
-          const newOrder = await orderModel.create({
-            event,
-            user,
-          });
-          if (newOrder) {
-            const notify = await notifyModel.create({
-              notifyFrom: user,
-              notifyTo: eventOrder.creator._id,
-              notifyType: "new-order",
-              content: `đã đăng kí sự kiện của bạn`,
-              eventId: newOrder.event,
-            });
-            return { newOrder, notify };
+    if (eventOrder.status === "Public") {
+      if (eventOrder.creator._id.toString() !== user.toString()) {
+        if (orderValidator.existOrderValidation(existOrder)) {
+          if (
+            orderValidator.limitUserValidation(eventOrder.limitUser, listOrder)
+          ) {
+            if (Date.now() < eventOrder.timeEndSignup) {
+              const newOrder = await orderModel.create({
+                event,
+                user,
+              });
+              if (newOrder) {
+                const notify = await notifyModel.create({
+                  notifyFrom: user,
+                  notifyTo: eventOrder.creator._id,
+                  notifyType: "new-order",
+                  content: `đã đăng kí sự kiện của bạn`,
+                  eventId: newOrder.event,
+                });
+                return { newOrder, notify };
+              } else {
+                throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
+              }
+            } else {
+              throw Error(resMes.orderError.ERR_8);
+            }
           } else {
-            throw Error("ĐĂNG KÝ SỰ KIỆN THẤT BẠI!");
+            throw Error(resMes.orderError.ERR_2);
           }
         } else {
-          throw Error(resMes.orderError.ERR_8);
+          throw Error(resMes.orderError.ERR_1);
         }
       } else {
-        throw Error(resMes.orderError.ERR_2);
+        throw Error(resMes.orderError.ERR_9);
       }
     } else {
-      throw Error(resMes.orderError.ERR_1);
+      throw Error(resMes.orderError.ERR_10);
     }
   } else {
     throw Error(resMes.eventError.ERR_2);
@@ -241,7 +250,8 @@ const updateRequestOrder = asyncHandler(
                   location: `${requestEvent.location.address} ${requestEvent.location.ward.name} ${requestEvent.location.district.name} ${requestEvent.location.province.name}`,
                   content: "Đơn hàng của bạn đã được xác nhận thanh toán",
                   isOnline: requestEvent.isOnline,
-                  linkOnline: "das",
+                  linkOnline: requestEvent.linkOnline,
+                  link: `${process.env.FRONTEND_HOST}/event/${requestEvent._id}`,
                 });
                 await sendEmail({
                   to: data.email,
@@ -274,11 +284,10 @@ const exportData = asyncHandler(
         .populate("event", "title")
         .populate("user", "name");
       //EVENT TỒN TẠI DANH SÁCH EVENT?
-      if (orderValidator.eventExistOrderValidation(requestOrder)) {
+      if (requestOrder.length > 0) {
         //NGƯỜI REQUEST LÀ CREATOR
-        if (
-          eventValidator.requestIsCreatorValidation(requestEvent, requestUserId)
-        ) {
+
+        if (requestEvent.creator.toString() === requestUserId.toString()) {
           const worksheet = workbook.addWorksheet("Orders");
           worksheet.columns = [
             { header: "Id No.", key: "id_No", width: 10 },
@@ -333,7 +342,8 @@ const updateOrder = async ({ creatorId, orderId, status }) => {
         location: `${findOrder.event.location.address} ${findOrder.event.location.ward.name} ${findOrder.event.location.district.name} ${findOrder.event.location.province.name}`,
         content: "Đơn hàng của bạn đã được xác nhận thanh toán",
         isOnline: findOrder.event.isOnline,
-        linkOnline: "das",
+        linkOnline: findOrder.event.linkOnline,
+        link: `${process.env.FRONTEND_HOST}/event/${findOrder.event._id}`,
       });
       await sendEmail({
         to: findOrder.user.email,

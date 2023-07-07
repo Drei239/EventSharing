@@ -1,10 +1,10 @@
-import axios from 'axios';
+import axios from "axios";
 
 const customFetch = axios.create({
-  baseURL: 'http://localhost:3002',
+  baseURL: "http://localhost:3002",
   withCredentials: true,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
@@ -12,7 +12,7 @@ customFetch.interceptors.response.use(
   (response) => response,
   async (error) => {
     if (error.response.data.tokenExpires === true) {
-      const resp = await customFetch.get('/users/refresh');
+      const resp = await customFetch.get("/users/refresh");
       return customFetch(error.config);
     }
 

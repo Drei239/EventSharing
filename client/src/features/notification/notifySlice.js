@@ -117,7 +117,9 @@ const notifySlice = createSlice({
         const notifyUpdateIndex = state.notify.findIndex(
           (item) => item._id === data
         );
-        state.notify[notifyUpdateIndex].isReadMessage = true;
+        if (state.notify[notifyUpdateIndex]) {
+          state.notify[notifyUpdateIndex].isReadMessage = true;
+        }
       })
       .addCase(markByIdNotify.rejected, (state, action) => {
         state.isLoading = false;

@@ -14,7 +14,6 @@ const createNewOrder = asyncHandler(async (req, res) => {
       .status(200)
       .json({ status: 200, data: newOrder, message: resMes.orderSucc.SUCC_1 });
   } catch (error) {
-    console.log(error);
     return res.status(400).json({ status: 400, message: error.message });
   }
 });
@@ -156,6 +155,46 @@ const sendEmailAllOrder = asyncHandler(async (req, res, next) => {
     next(err);
   }
 });
+
+const getOrdersByUserId = asyncHandler(async (req, res) => {
+  const orderList = await orderModel
+    .find({ user: req.user._id })
+    .populate("event");
+  if (orderList) {
+    res.status(200).json(orderList);
+  } else {
+    res.status(400);
+    throw new Error("Fail");
+  }
+});
+
+const checkQRcode = asyncHandler(async (req, res) => {
+  const { orderId, eventId } = req.params;
+  console.log(orderId, eventId);
+  console.log(req.user._id);
+
+  const order = await orderModel
+    .findById(orderId)
+    .populate('event')
+    .populate('user');
+
+  if (
+    order &&
+    order.event._id.toString() !== eventId.toString() &&
+    order.event._id.toString() !== eventId.toString()
+  ) {
+    res.status(404).json('QR code không trùng khớp');
+  }
+
+  if (order.isCheckQr) {
+    res.status(404).json('QR code này đã được quét');
+  }
+
+  order.isCheckQr = true;
+  order.save();
+  res.status(200).json(order);
+});
+
 module.exports = {
   createNewOrder,
   getOrdersByEventId,
@@ -165,4 +204,6 @@ module.exports = {
   sendEmailtoId,
   sendEmailAllOrder,
   exportData,
+  getOrdersByUserId,
+  checkQRcode,
 };

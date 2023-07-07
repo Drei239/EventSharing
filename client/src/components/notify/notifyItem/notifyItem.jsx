@@ -13,15 +13,23 @@ const NotifyItem = ({
   comment,
   isReadMessage,
   replyContent,
+  event,
 }) => {
-  const navigate = useNavigate();
   return (
     <div className="notify-item">
       {!isReadMessage && <div className="notify-item-isRead"></div>}
-      <img src={avatar} alt="" className="notify-item-avatar" />
+      <img
+        src={avatar || event?.banner}
+        alt=""
+        className="notify-item-avatar"
+      />
       <div>
         <p className="notify-item-content">
-          {name} <span>{content}</span>
+          <span className="notify-item-content-name">
+            {" "}
+            {name || `Sự kiện ${event?.title}`}
+          </span>{" "}
+          <span>{content}</span>
         </p>
         {notifyType === "new-comment" && (
           <div className="notify-item-comment">

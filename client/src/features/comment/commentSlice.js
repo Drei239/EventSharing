@@ -58,7 +58,6 @@ export const deleteComment = createAsyncThunk(
   async ({ id }, { rejectWithValue }) => {
     try {
       const res = await commentService.deleteComment(id);
-      console.log("###", res);
       return id;
     } catch (err) {
       return rejectWithValue(err);
@@ -145,7 +144,6 @@ const commentSlice = createSlice({
         state.isLoading = false;
         state.isSuccessCreate = true;
         state.comments = [action.payload.comment, ...state.comments];
-        console.log(action.payload.notify);
         state.notifyComment = action.payload.notify;
       })
       .addCase(createComment.rejected, (state, action) => {

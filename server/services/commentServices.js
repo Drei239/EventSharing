@@ -9,46 +9,62 @@ const createNewComment = asyncHandler(
   async (title, comment, requestEventId, requestUserId) => {
     const event = requestEventId;
     const existEvent = await eventModel.findById(requestEventId);
-
-    if (!existEvent) {
-      throw Error(resMes.eventError.ERR_4);
-    }
-
-    const creator = requestUserId;
-    const newComment = await commentModel.create({
-      title,
-      comment,
-      event,
-      creator,
-    });
-    if (newComment) {
-      const notify = await notifyModel.create({
-        notifyFrom: creator,
-        notifyTo: existEvent.creator,
-        notifyType: "new-comment",
-        commentId: newComment._id,
-        content: `đã bình luận trong sự kiện của bạn`,
+    if (existEvent) {
+      const creator = requestUserId;
+      const newComment = await commentModel.create({
+        title,
+        comment,
+        event,
+        creator,
       });
-      return { newComment, notify };
+      if (!comment) {
+        throw Error(resMes.commentError.ERR_1);
+      }
+      if (
+        newComment &&
+        existEvent?.creator.toString() != requestUserId.toString()
+      ) {
+        const notify = await notifyModel.create({
+          notifyFrom: creator,
+          notifyTo: existEvent.creator,
+          notifyType: "new-comment",
+          commentId: newComment._id,
+          content: `đã bình luận trong sự kiện của bạn`,
+        });
+        return { newComment, notify };
+      }
+      return { newComment };
     } else {
-      throw Error(resMes.commentError.ERR_1);
+      throw Error(resMes.eventError.ERR_2);
     }
   }
 );
 
 //2.GET COMMENT BY EVENT ID
-const getCommentByEventId = asyncHandler(async (requestEventId) => {
-  const comments = await commentModel
-    .find({ event: requestEventId })
-    .populate("event", "title")
-    .populate("creator", "name avatar")
-    .populate("reply.creator", "name avatar")
-    .sort("-createdAt");
+const getCommentByEventId = asyncHandler(async (requestEventId, query) => {
+  const { page = 1, limit = 5 } = query;
+  const skip = (page - 1) * limit;
+  const existEvent = await eventModel.findById(requestEventId);
+  if (existEvent) {
+    const countDocuments = await commentModel.countDocuments({
+      event: requestEventId,
+    });
+    const comments = await commentModel
+      .find({ event: requestEventId })
+      .populate("event", "title")
+      .populate("creator", "name avatar")
+      .populate("reply.creator", "name avatar")
+      .sort("-createdAt")
+      .limit(limit)
+      .skip(skip);
 
-  if (comments && comments.length != 0) {
-    return comments;
+    if (comments && comments.length != 0) {
+      return { comments, countDocuments };
+    } else {
+      throw Error(resMes.commentError.ERR_2);
+    }
   } else {
-    throw Error(resMes.commentError.ERR_2);
+    throw Error(resMes.eventError.ERR_2);
   }
 });
 
@@ -149,7 +165,7 @@ const updateReplyComment = asyncHandler(
           },
           { new: true }
         );
-        console.log(updateReply);
+
         return updateReply;
       } else {
         throw Error(resMes.commentError.ERR_3);
