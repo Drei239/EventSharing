@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, useModal, Text, Link, Button } from '@nextui-org/react';
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,34 +13,29 @@ const EventModal = () => {
 	const { userInfo } = useSelector((state) => state.user);
 	const eventDetail = useSelector((state) => state?.event?.getEventById);
 	const dispatch = useDispatch();
-	const [message, setMessage] = useState('');
+	const now = new Date();
+	const beginTime = new Date(eventDetail?.timeBegin);
+	const endTime = new Date(eventDetail?.timeEnd);
 
-	useEffect(() => {
-		dispatch(getOrderbyId({ id, status: "all" }));
-	}, []);
-
-	useEffect(() => {
-		dispatch(getOrderbyId({ id, status: "all" }));
-	}, []);
-	useEffect(() => {
-		const now = new Date();
-		const beginTime = new Date(eventDetail?.timeBegin);
-		const endTime = new Date(eventDetail?.timeEnd);
-
-		if (now >= beginTime && now <= endTime && userStatusArr == true) {
-			setMessage('đang tham gia');
-		} else if (now >= endTime && userStatusArr == true) {
-			setMessage('đã tham gia');
-		} else if (now >= beginTime && userStatusArr == false) {
-			setMessage('Không tham gia');
-		} else if (now <= beginTime && userStatusArr == false) {
-			setMessage('Sẽ tham gia');
+	const statusComponents = (order) => {
+		if (now >= beginTime && now <= endTime && order.isJoined == true) {
+			return <div className="user__status">'Đang tham gia'</div>
+		} else if (now >= beginTime && now >= endTime && order.isJoined == true) {
+			return <div className="user__status">'Đã tham gia'</div>
+		} else if (now >= beginTime && order.isJoined == false) {
+			return <div className="user__status">'Không tham gia'</div>
+		} else if (now <= beginTime && order.isJoined == false) {
+			return <div className="user__status">'Sẽ tham gia'</div>
 		}
+	}
+
+	useEffect(() => {
+		dispatch(getOrderbyId({ id, status: "all" }));
 	}, []);
 
-	let userStatusArr = orders?.map(order => [
-		order?.isJoined,
-	]);
+	useEffect(() => {
+		dispatch(getOrderbyId({ id, status: "all" }));
+	}, []);
 
 	return (
 		<div>
@@ -70,14 +65,14 @@ const EventModal = () => {
 				}
 				<div className="participants__container">
 					{
-						orders?.map((item) => (
-							<Link>
+						orders?.map((item, idx) => (
+							<Link key={idx}>
 								<div className="participants">
 									<div className="user__info">
 										<img className="user__avatar" src={item?.user?.avatar} alt="" />
 										<div className="user__name">
 											{item?.user?.name}
-											<div className="user__status">{message}</div>
+											{statusComponents(item)}
 										</div>
 									</div>
 
