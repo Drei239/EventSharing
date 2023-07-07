@@ -63,11 +63,38 @@ const register = asyncHandler(async (req, res) => {
 
 //3.USER LOGIN
 const authLogin = asyncHandler(async (req, res) => {
-  const { email, password } = req.body;
-  const lowerCaseEmail = email.toLowerCase();
-  const user = await userModel.findOne({ email: lowerCaseEmail });
-  if (user.password) {
-    if (user && (await bcrypt.compare(password, user.password))) {
+  try {
+    const { email, password } = req.body;
+    const lowerCaseEmail = email.toLowerCase();
+    const user = await userModel.findOne({ email: lowerCaseEmail });
+    if (user.password) {
+      if (user && (await bcrypt.compare(password, user.password))) {
+        const jwt = createJwt(user._id);
+
+        res.cookie("access", jwt.token, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 2 * 3600000),
+          domain: "eventsharing-backend.onrender.com",
+        });
+
+        res.cookie("refresh", jwt.refreshToken, {
+          httpOnly: true,
+          secure: true,
+          expires: new Date(Date.now() + 720 * 3600000),
+          domain: "eventsharing-backend.onrender.com",
+        });
+
+        res.status(201).json({
+          success: true,
+          data: "Đăng nhập thành công",
+        });
+      } else {
+        return res
+          .status(401)
+          .json({ success: false, message: "Email or password is incorrect" });
+      }
+    } else {
       const jwt = createJwt(user._id);
 
       res.cookie("access", jwt.token, {
@@ -75,7 +102,6 @@ const authLogin = asyncHandler(async (req, res) => {
         secure: true,
         expires: new Date(Date.now() + 2 * 3600000),
         domain: "eventsharing-backend.onrender.com",
-        sameSite: "None",
       });
 
       res.cookie("refresh", jwt.refreshToken, {
@@ -83,41 +109,16 @@ const authLogin = asyncHandler(async (req, res) => {
         secure: true,
         expires: new Date(Date.now() + 720 * 3600000),
         domain: "eventsharing-backend.onrender.com",
-        sameSite: "None",
       });
 
       res.status(201).json({
         success: true,
         data: "Đăng nhập thành công",
       });
-    } else {
-      return res
-        .status(401)
-        .json({ success: false, message: "Email or password is incorrect" });
     }
-  } else {
-    const jwt = createJwt(user._id);
-
-    res.cookie("access", jwt.token, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 2 * 3600000),
-      domain: "https://eventsharing-backend.onrender.com",
-      sameSite: "None",
-    });
-
-    res.cookie("refresh", jwt.refreshToken, {
-      httpOnly: true,
-      secure: true,
-      expires: new Date(Date.now() + 720 * 3600000),
-      domain: "https://eventsharing-backend.onrender.com",
-      sameSite: "None",
-    });
-
-    res.status(201).json({
-      success: true,
-      data: "Đăng nhập thành công",
-    });
+  } catch (err) {
+    console.log(err);
+    next(err);
   }
 });
 
