@@ -1,0 +1,32 @@
+.rating-event {
+  margin-top: 30px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  width: 700px;
+}
+.rating-event-create-btn {
+  margin: 20px 0;
+}
+.rating-event-btns {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.rating-event-btns > button:last-child {
+  width: 50%;
+}
+.rating-event-create-btn {
+  width: 100%;
+}
+.rating-event-total {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rating-event-total span:first-child {
+  font-size: 18px;
+  font-weight: 600;
+}

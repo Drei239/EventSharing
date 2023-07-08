@@ -1,0 +1,282 @@
+.my-event {
+  min-height: 140vh;
+  width: 80%;
+  margin: 80px auto;
+  padding: 20px 0;
+}
+.my-event-header {
+  padding: 40px 20px;
+  border-bottom: 1px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0px 0px 4px 0px #ccc;
+  position: relative;
+  margin-top: 40px;
+}
+.my-event-header > img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+}
+.my-event-header h3 {
+  font-size: 25px;
+  font-weight: 600;
+}
+.my-event-header-status {
+  color: #77c47f;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.my-event-header-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.my-event-filter {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background-color: #e4e1e1;
+  margin-top: 20px;
+  padding: 5px 10px;
+  position: relative;
+  gap: 15px;
+}
+.my-event-filter-search {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2px 10px;
+  border-radius: 5px;
+  gap: 5px;
+  height: 30px;
+}
+
+.my-event-filter-search input {
+  border: none;
+  outline: none;
+}
+.my-event-filter-search button {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.my-event-header-address {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.my-event-header-address > span {
+  font-weight: 700;
+  font-size: 18px;
+}
+.my-event-header-address > p {
+  font-size: 15px;
+}
+.my-event-header-info-sold {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.my-event-table-status {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9;
+}
+.my-event-more-icon {
+  font-size: 25px;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.my-event-header-status-sale {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.my-event-header-status-sale-on {
+  width: 7px;
+  height: 7px;
+  background-color: #77c47f;
+  border-radius: 50%;
+}
+.my-event-header-status-sale-end {
+  width: 7px;
+  height: 7px;
+  background-color: gray;
+  border-radius: 50%;
+}
+.my-event-header-status-sale-on-text {
+  font-size: 15px;
+  color: #77c47f;
+  font-weight: 600;
+}
+.my-event-header-status-sale-end-text {
+  font-size: 15px;
+  color: gray;
+  font-weight: 600;
+}
+.my-event-header-info-fee > span:first-child {
+  font-weight: 700;
+  font-size: 18px;
+}
+.my-event-header-info-fee > span:last-child {
+  color: red;
+}
+.my-event-header-info-time {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-bottom: 5px;
+}
+.my-event-header-info-time > span:first-child {
+  font-weight: 700;
+  font-size: 18px;
+}
+.my-event-send-email {
+  display: flex;
+  background-color: #e4e1e1;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  padding: 10px 0;
+}
+.my-event-send-email-icon {
+  font-size: 20px;
+}
+.my-event-send-email-all,
+.my-event-send-email-selected {
+  background-color: var(--color-primary);
+  color: var(--color-primary2);
+  height: 35px;
+  padding: 0 15px;
+  border-bottom: 1px solid var(--color-primary2);
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.my-event-header-btn-cancel {
+  background-color: #ff3333;
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 15px;
+  border: none;
+  box-shadow: 1px 0px 5px 0px red;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+.my-event-header-btn-cancel:active {
+  box-shadow: none;
+}
+.my-event-header-btn-cancel:hover {
+  opacity: 0.8;
+}
+.modal-cancel-event {
+  display: flex;
+  width: 500px;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px;
+}
+.modal-cancel-event p {
+  width: 400px;
+}
+.modal-cancel-event .close-circle-icon {
+  font-size: 50px;
+  color: #ff3333;
+}
+.modal-cancel-event h3 {
+  text-decoration: none;
+}
+.modal-cancel-event-btns {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+.my-event-header-status-cancel {
+  color: #ff3333;
+}
+.my-event-btn-exportExcel {
+  margin-top: 20px;
+  background-color: var(--color-primary);
+  border: none;
+  outline: none;
+  border-bottom: 2px solid #3c99a8;
+  color: white;
+  padding: 4px 10px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.my-event-btn-exportExcel:active {
+  border: none;
+}
+.my-event-header-btn-confirm {
+  background-color: var(--color-primary);
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  padding: 5px 15px;
+  border: none;
+  box-shadow: 1px 0px 5px 0px var(--color-primary);
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.my-event-header-btn-qr {
+  background-color: #fff;
+  border: 2px solid var(--color-primary);
+  border-radius: 10px;
+  padding: 5px 15px;
+  position: absolute;
+  bottom: 55px;
+  right: 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.my-event-header-btn-qr:hover {
+  background-color: var(--color-primary);
+  border-color: #fff;
+  box-shadow: 0 0 10px var(--color-primary);
+}
+
+.my-event-return {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  position: absolute;
+  top: 0px;
+  left: 20px;
+}

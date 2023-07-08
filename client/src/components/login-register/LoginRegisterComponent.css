@@ -1,0 +1,117 @@
+.login__logo {
+  width: 40px;
+  position: relative;
+  top: -340px;
+  left: -80px;
+}
+
+.register__logo {
+  width: 40px;
+  position: relative;
+  top: -340px;
+  left: -80px;
+}
+
+.login {
+  width: 60%;
+  opacity: 1;
+}
+
+.login h2 {
+  color: #161f6d;
+}
+
+.login p:nth-child(2) {
+  color: gray;
+  margin-top: -10px;
+  margin-bottom: 30px;
+  font-size: 0.9rem;
+}
+
+.login > p:last-child {
+  color: gray;
+  text-align: center;
+  margin-top: 30px;
+  font-size: 0.9rem;
+  display: none;
+}
+
+.login p:last-child span {
+  color: #161f6d;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.login p:last-child span:hover {
+  color: #00abe1;
+}
+
+.login__form .nextui-c-iwmZdB-iiIdOsz-css {
+  width: 100%;
+  margin-bottom: 30px;
+}
+
+.login__form .nextui-c-iwmZdB-iiIdOsz-css:last-of-type {
+  margin-bottom: 10px;
+}
+
+.login__forget-password {
+  color: gray;
+  font-size: 0.9rem;
+  padding-left: 5px;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+.login__form button {
+  width: 100%;
+  background-color: #161f6d;
+  margin-top: 5px;
+  font-weight: 700;
+}
+
+.login__form .nextui-c-cwdhZi {
+  font-size: 0.8rem;
+}
+
+.login .S9gUrf-YoZ4jf {
+  left: 15%;
+}
+
+.login__text-line {
+  position: relative;
+  top: -14px;
+  display: inline-block;
+  font-size: 0.8rem;
+  color: #889096;
+  text-align: center;
+  width: 10%;
+  left: 45%;
+  background-color: #fff;
+}
+
+.login .login__goole-button {
+  background-color: #fff;
+  color: #161f6d;
+  width: 100%;
+  font-weight: 700;
+  border: 1px solid #161f6d;
+}
+
+@media screen and (max-width: 992px) {
+  .login {
+    width: 80%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .login > p:last-child {
+    display: block;
+  }
+}
+
+@media screen and (max-width: 576px) {
+  .login {
+    width: 90%;
+  }
+}

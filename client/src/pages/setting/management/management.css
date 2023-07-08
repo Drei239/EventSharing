@@ -1,0 +1,77 @@
+.management {
+  padding: 80px 50px;
+  height: 120vh;
+}
+.mangement-deactivate {
+  margin-top: 20px;
+}
+.password-input-items {
+  margin-top: 40px;
+  margin-bottom: 40px;
+  display: flex;
+  gap: 50px;
+  flex-direction: column;
+}
+
+.btn-show-changePass {
+  margin: 20px 0;
+}
+.btn-show-deleteAcc {
+  margin-top: 20px;
+}
+.deactivate-content {
+  padding: 20px;
+}
+.deactivate-title {
+  font-size: 30px;
+  margin-bottom: 30px;
+  font-weight: 600;
+}
+.deactivate-content p {
+  text-align: left;
+}
+.deactivate-info1 {
+  color: var(--color-primary2);
+}
+.deactivate-password {
+  width: 100%;
+  margin-top: 20px;
+}
+.deactivate-password input {
+  width: 100%;
+}
+.deactive-password-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.deactive-password-info span {
+  font-weight: 600;
+}
+.deactive-password-info button {
+  background-color: transparent;
+  border: none;
+  color: var(--color-primary);
+  cursor: pointer;
+}
+.btn-submit-deactivate {
+  width: 100%;
+  margin-top: 40px;
+}
+
+.password-input-item {
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.password-input-item label {
+  font-size: 15px;
+}
+.password-input-item .password-err-text {
+  position: absolute;
+  bottom: -25px;
+  left: 0;
+  color: red;
+  font-size: 13px;
+}

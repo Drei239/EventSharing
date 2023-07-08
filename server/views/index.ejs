@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Email Template</title>
+  </head>
+  <body
+    style="width: 100%; background-color: #ccc; height: 120vh; padding: 30px 0"
+  >
+    <div
+      style="
+        background-color: white;
+        margin: 0px auto;
+        width: 500px;
+        padding: 10px;
+        position: relative;
+        top: 50px;
+      "
+    >
+      <h3><%= title %></h3>
+      <img src="<%= img %>" alt="" style="width: 100%; height: auto" />
+      <div style="display: flex; align-items: center">
+        <img
+          src="https://ci3.googleusercontent.com/proxy/t9w4rGB2UCCV_hN6Yfbat8UQeU5FgWPQbXlFkPQ-lmGfzw-1qk8b84l1XgZgdd2VPrOW9fM16eZFRIPbVoc60lEnD-6Dpsv7RPtrUiPxg1vqfv1x19TczYfQlawkADVSQRRJxjt50uSVCk0G3dhqGvizvzF0mDDW=s0-d-e1-ft#https://cdn.evbstatic.com/s3-build/perm_001/17c084/django/images/emails_2018_rebrand/date-icon@2x.png"
+          alt="time"
+          style="
+            width: 20px;
+            height: 20px;
+            margin-right: 20px;
+            margin-top: 10px;
+          "
+        />
+        <p><%= time %></p>
+      </div>
+      <% if( isOnline===true ) { %>
+      <div style="display: flex; align-items: center">
+        <p style="margin-right: 15px; font-size: 18px; font-weight: 600">
+          Link zoom:
+        </p>
+        <p><%= linkOnline %></p>
+      </div>
+      <% } else { %>
+      <div style="display: flex; align-items: center">
+        <img
+          src="https://ci3.googleusercontent.com/proxy/-2gmI98pkLW96MvKIY-89NSsHOnIN5rQvg3ThvHc4dcQZh9vuGePp6Ko9Rw2oyNL1eO_1MlzyYEq-eaKWHuIslaTnjJTvIpwwrgQ-zvCWXoyCPgI59Mbu7iincdPEGinl9TBaavX30A37gIZ_K-82iOfzf2QcteencY=s0-d-e1-ft#https://cdn.evbstatic.com/s3-build/perm_001/02618c/django/images/emails_2018_rebrand/locPin-icon@2x.png"
+          alt=""
+          style="
+            width: 20px;
+            height: 20px;
+            margin-right: 20px;
+            margin-top: 10px;
+          "
+        />
+        <p><%= location %></p>
+      </div>
+      <% } %>
+
+      <div
+        style="
+          text-align: center;
+          padding: 30px 0;
+          border-bottom: 1px solid #ccc;
+        "
+      >
+        <a href="<%= link %>">View event details</a>
+      </div>
+      <h2><%= content %></h2>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,143 @@
+.banner-content {
+  position: absolute;
+  top: 50%;
+  left: 200px;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+
+  flex-direction: column;
+  justify-content: start;
+  align-items: start;
+  color: white;
+}
+.banner-content p {
+  font-size: 14px;
+}
+.banner-content h2 {
+  font-size: 60px;
+  letter-spacing: 3px;
+}
+.banner {
+  width: 1200px;
+  margin: 20px auto;
+  height: 230px;
+  border-radius: 5px;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+  padding: 0 10px;
+}
+.banner-topic {
+  text-transform: capitalize;
+}
+.img-background {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  object-fit: cover;
+  filter: brightness(0.6) contrast(0.8) grayscale(0.3);
+}
+/* .banner h2 {
+  color: var(--color-primary2);
+  margin-left: 170px;
+  text-transform: uppercase;
+  font-weight: 800;
+  letter-spacing: 3px;
+  position: relative;
+  overflow: hidden;
+  font-size: 35px;
+} */
+
+.banner .img-banner-1 img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.img-banner-6 {
+  position: absolute;
+  right: 220px;
+  top: 0;
+}
+.img-banner-5 {
+  position: absolute;
+  right: 230px;
+  bottom: 60px;
+}
+.img-banner-4 {
+  position: absolute;
+  bottom: -18px;
+  right: 200px;
+}
+
+.wave {
+  bottom: 0;
+  position: absolute;
+  left: 0;
+  transform: translateY(40px);
+}
+
+.img-banner-3 {
+  position: absolute;
+  right: 30px;
+  top: 65px;
+}
+.img-banner-2 {
+  position: absolute;
+  right: 60px;
+  top: 0px;
+  z-index: 1;
+}
+.img-banner-1 {
+  position: absolute;
+  right: 110px;
+  top: 50%;
+  transform: translateY(-50%);
+  box-shadow: inset -10px 0 10px 0px black;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
+  border: 5px solid white;
+  overflow: hidden;
+  background-color: white;
+  z-index: 2;
+}
+
+.banner .img-banner-2 img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+}
+
+.banner .img-banner-3 img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+}
+.banner .img-banner-4 img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  border: 5px solid white;
+  object-fit: cover;
+}
+
+.banner .img-banner-5 img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 5px solid white;
+}

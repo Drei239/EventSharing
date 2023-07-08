@@ -1,14 +1,49 @@
-var express = require('express');
-var router = express.Router();
-const { getAllUser, registerUser, getUserProfile } = require('../controllers/userController');
+const express = require('express');
+const router = express.Router();
 
-//1.GET ALL USER INFO
-router.get('/all', getAllUser);
+const {
+  getAllUser,
+  register,
+  authLogin,
+  profileUser,
+  updateUserById,
+  getOrganizers,
+  logout,
+  deleted,
+  refreshToken,
+  ratingUser,
+  highlightUser,
+  forgotPassword,
+  resetPassword,
+} = require('../controllers/userController');
+const {
+  protect,
+  isAdmin,
+  verifyUser,
+} = require('../middleware/authMiddleware');
 
-//2.REGISTER NEW USER
-router.post('/register', registerUser);
+const {
+  registerValidate,
+  loginValidate,
+  updateUserValidate,
+} = require('../middleware/validate');
+const { ref } = require('joi');
 
-//3.GET USER INFO BY ID
-router.get("/profile/:id", getUserProfile);
+router.get('/profile', protect, profileUser);
+router.get('/organizers/:id', getOrganizers);
+router.get('/getall', getAllUser);
+router.post('/login', authLogin);
+router.post('/register', registerValidate, register);
+router.get('/logout', logout);
+router.get('/refresh', refreshToken);
+router.put('/update/:id', protect, verifyUser, updateUserById);
+router.delete('/delete/:id', protect, verifyUser, deleted);
+router.put('/rating/:id', protect, ratingUser);
 
+router.get('/highlight', highlightUser);
+
+router.post('/forgot-password', forgotPassword);
+
+router.put('/reset-password/:userId/:token', resetPassword);
+// router.get("update", updateUser);
 module.exports = router;
