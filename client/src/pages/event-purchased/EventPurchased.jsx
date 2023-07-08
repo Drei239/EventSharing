@@ -1,11 +1,13 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import customFetch from '../../utils/axios.config';
 import Card from '../../components/cardEvent/cardEvent';
 import { Button, Modal } from '@nextui-org/react';
+import { useNavigate } from 'react-router-dom';
 import QRCode from 'qrcode';
 import './EventPurchased.css';
 
 const EventPurchased = () => {
+  const navigate = useNavigate();
   const [orderList, setOrderList] = useState([]);
   const [orderDetail, setOrderDetail] = useState({});
   const [dateTimeStart, setDateTimeStart] = useState({
@@ -60,9 +62,12 @@ const EventPurchased = () => {
     setVisible(false);
   };
 
-  const handleVisibleModal = (id) => {
+  const handleVisibleModal = (order) => {
+    if (order.event?.status === 'Complete') {
+      navigate(`/event/${order.event?._id}`);
+      return;
+    }
     setVisible(true);
-    const order = orderList.find((item) => item.event._id === id);
     setOrderDetail(order);
   };
 
@@ -93,7 +98,7 @@ const EventPurchased = () => {
             <Card
               {...item.event}
               key={index}
-              handleVisibleModal={handleVisibleModal}
+              handleVisibleModal={() => handleVisibleModal(item)}
               purchased={true}
             />
           ))}
