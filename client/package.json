@@ -23,7 +23,6 @@
     "formik": "^2.4.1",
     "framer-motion": "^10.12.16",
     "html-react-parser": "^4.0.0",
-    "libphonenumber-js": "^1.10.34",
     "modern-react-qr-reader": "^1.0.12",
     "qrcode": "^1.5.3",
     "query-string": "^8.1.0",

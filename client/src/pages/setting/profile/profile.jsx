@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useFormik, ErrorMessage } from "formik";
+import { useFormik } from "formik";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { object, string } from "yup";
 import { useSelector, useDispatch } from "react-redux";
-import { isValidNumber } from "libphonenumber-js";
-import { Button, useModal } from "@nextui-org/react";
+
+import { useModal } from "@nextui-org/react";
 import { motion } from "framer-motion";
 import { UploadImage } from "../../../components/ui";
 import "./profile.css";
@@ -18,16 +18,7 @@ import { uploadImage } from "../../../utils/uploadImg";
 import notify from "../../../utils/notify";
 
 const validateSchema = object().shape({
-  phoneNumber: string().test(
-    "phoneNumber",
-    "Số điện thoại không hợp lệ",
-    (value) => {
-      if (!value) {
-        return true; // Cho phép giá trị trống
-      }
-      return isValidNumber(value, "VN");
-    }
-  ),
+  phoneNumber: string().test("phoneNumber", "Số điện thoại không hợp lệ"),
 
   name: string().required("Tên là bắt buộc").max(30, "Tên tối đa 30 kí tự"),
   description: string().max(200, "Thông tin giới thiệu tối đa 200 kí tự "),
@@ -36,9 +27,7 @@ const Profile = () => {
   const dispatch = useDispatch();
   const { setVisible, bindings } = useModal();
   const imgSelect = useSelector((state) => state.user.imgSelect);
-  const { isLoading, userInfo, message, isSuccess } = useSelector(
-    (state) => state.user
-  );
+  const { userInfo, message, isSuccess } = useSelector((state) => state.user);
   const [requestSuccess, setRequestSuccess] = useState(false);
   const [requestError, setRequestError] = useState(false);
   const formik = useFormik({

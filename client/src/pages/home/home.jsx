@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
-import { GoOrganization } from "react-icons/go";
 import { CardEvent, CardOrg, Carousel, Loading } from "../../components";
 import { BsCalendar4Event } from "react-icons/bs";
 import "./home.css";

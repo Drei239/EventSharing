@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Modal } from "@nextui-org/react";
 import { Editor } from "@tinymce/tinymce-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AiFillCloseCircle } from "react-icons/ai";
