@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { motion } from "framer-motion";
+import { useSelector } from "react-redux";
+
 import { Tooltip } from "@mui/material";
 import Rating2 from "@mui/material/Rating";
 import Button from "@mui/material/Button";

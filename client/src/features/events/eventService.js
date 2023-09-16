@@ -34,9 +34,7 @@ const getHighlightEvent = async () => {
 const getNewEvent = async (page) => {
   const data = await UseCallApi({
     method: "GET",
-    url: `/events/getFilter?sort=timeBegin&timeEndSignup[gte]=${dayjs().format(
-      "YYYY-MM-DDTHH:mm:ss.SSS[Z]"
-    )}&page=${page ? page : 1}&limit=10`,
+    url: `/events/getFilter?page=${page ? page : 1}&limit=10`,
   });
 
   return data;

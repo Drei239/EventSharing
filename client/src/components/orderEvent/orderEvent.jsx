@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Link, Modal, Text, useModal } from "@nextui-org/react";
+import { Button, Modal, Text, useModal } from "@nextui-org/react";
 import { newCreateOrder } from "../../features/order/orderSlice";
 
 import { useDispatch, useSelector } from "react-redux";

@@ -18,7 +18,7 @@ import { uploadImage } from "../../../utils/uploadImg";
 import notify from "../../../utils/notify";
 
 const validateSchema = object().shape({
-  phoneNumber: string().test("phoneNumber", "Số điện thoại không hợp lệ"),
+  phoneNumber: string(),
 
   name: string().required("Tên là bắt buộc").max(30, "Tên tối đa 30 kí tự"),
   description: string().max(200, "Thông tin giới thiệu tối đa 200 kí tự "),

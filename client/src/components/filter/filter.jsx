@@ -5,7 +5,7 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import { MdPriceCheck } from "react-icons/md";
 import { CgSortAz } from "react-icons/cg";
 import { RiVidiconLine } from "react-icons/ri";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import dayjs from "dayjs";
 import { BsFillGrid3X3GapFill } from "react-icons/bs";
@@ -17,12 +17,7 @@ import "./filter.css";
 import "react-datepicker/dist/react-datepicker.css";
 import { handleChangeEvents } from "../../features/events/eventSlice";
 import { getAllCategory } from "../../features/category/categorySlice";
-import {
-  feeFilter,
-  formFilter,
-  locationFil,
-  sortFilter,
-} from "../../data/filter";
+import { feeFilter, formFilter, sortFilter } from "../../data/filter";
 import data from "../../data/provinces.json";
 import { CustomSelect } from "../ui/select";
 const createCustomControl =

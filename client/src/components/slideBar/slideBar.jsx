@@ -3,7 +3,6 @@ import { NavLink } from "react-router-dom";
 import { BsFillPersonFill } from "react-icons/bs";
 import { IoDocumentText } from "react-icons/io5";
 import { AiFillSetting } from "react-icons/ai";
-// import { motion } from 'framer-motion';
 
 import "./slideBar.css";
 

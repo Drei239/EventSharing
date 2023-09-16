@@ -6,7 +6,6 @@ import dayjs from "dayjs";
 import SwiperCore, {
   Navigation,
   Pagination,
-  EffectCoverflow,
   EffectFade,
   Autoplay,
 } from "swiper";
