@@ -1,1 +1,1 @@
-export const base_url="http://localhost:3002"
+export const base_url="https://eventsharing-backend.onrender.com"
