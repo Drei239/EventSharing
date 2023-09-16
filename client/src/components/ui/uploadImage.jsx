@@ -12,9 +12,6 @@ import { useDropzone } from "react-dropzone";
 import { MdRotate90DegreesCw } from "react-icons/md";
 import { motion } from "framer-motion";
 import Cropper from "react-easy-crop";
-import { Modal } from "@nextui-org/react";
-
-import "react-image-crop/dist/ReactCrop.css";
 import { CropImage } from ".";
 const UploadImage = () => {
   const dispatch = useDispatch();
