@@ -19,7 +19,6 @@
     "@tinymce/tinymce-react": "^4.3.0",
     "axios": "^1.4.0",
     "browser-image-compression": "^2.0.2",
-    "clsx": "^1.2.1",
     "dayjs": "^1.11.8",
     "formik": "^2.4.1",
     "framer-motion": "^10.12.16",
