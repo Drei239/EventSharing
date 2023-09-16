@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineClose } from "react-icons/ai";
 import { BsCheck2All } from "react-icons/bs";
-import { notificationToast } from "./notificationToast/notificationToast";
 import notifyIcon from "../../assets/notifycation-icon.svg";
 import {
   getAllNotify,
@@ -16,8 +15,8 @@ const Notify = ({ closeNotify, isOpenNotify }) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const scrollRef = useRef(null);
-  const timeRef = useRef();
-  const { notify, isLoading, isSuccess, countDocument } = useSelector(
+
+  const { notify, isLoading, countDocument } = useSelector(
     (state) => state.notify
   );
   const { isLogin } = useSelector((state) => state.user);

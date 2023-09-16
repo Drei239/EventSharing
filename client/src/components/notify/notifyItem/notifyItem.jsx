@@ -1,8 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
 import getRelativeTimeFromNow from "../../../utils/getRelativeTimeFromNow";
-import dayjs from "dayjs";
 import "./notifyItem.css";
 const NotifyItem = ({
   avatar,

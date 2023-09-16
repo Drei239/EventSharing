@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "./CommentForm.css";
-import { Button } from "@nextui-org/react";
-import { createComment } from "../../features/comment/commentSlice";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useSelector } from "react-redux";
 import notify from "../../utils/notify";
 
 const CommentForm = ({
